@@ -23,6 +23,7 @@ project "Tic-Tac-Toe"
         links {
             "GL",
             "X11",
+            "glfw",
             "glad"
         }
     filter {}

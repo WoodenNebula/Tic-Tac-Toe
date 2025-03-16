@@ -1,28 +1,23 @@
+/*#include "glad/glad.h"*/
 #include <iostream>
-#include <GL/glut.h>
+#include <GLFW/glfw3.h>
 
-void RenderFunc() {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glFlush();
-}
+int main(int argc, char *argv[]) {
+  if (!glfwInit())
+  {
+    std::cout << "[ERROR-GLAD] Initialization failed" << std::endl;
+  }
 
-int main(int argc, char* argv[]) {
-    glutInit(&argc, argv);
 
-    // creating a window
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+  /*int x =   gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);*/
 
-    int width = 800, height = 600;
-    glutInitWindowSize(width, height);
-    int x_pos = 0, y_pos = 0;
-    glutInitWindowPosition(x_pos, y_pos);
-    const char* windowTitle = "Tic-Tac-Toe";
-    glutCreateWindow(windowTitle);
+  // creating a window
 
-    // displaying single color
-    glClearColor(1, .69, .69, 0);
-    glutDisplayFunc(RenderFunc);
-    glutMainLoop();
+  int width = 800, height = 600;
+  int x_pos = 0, y_pos = 0;
+  const char *windowTitle = "Tic-Tac-Toe";
 
-    return 0;
+  // displaying single color
+  glfwTerminate();
+  return 0;
 }
