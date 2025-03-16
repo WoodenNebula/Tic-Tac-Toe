@@ -8,6 +8,7 @@ project "Tic-Tac-Toe"
 
     includedirs {
         "src",
+        "dependencies/glad/include"
     }
 
     libdirs {
@@ -22,7 +23,6 @@ project "Tic-Tac-Toe"
         links {
             "GL",
             "X11",
-            "glut",
-            -- "glu"
+            "glad"
         }
     filter {}
