@@ -8,9 +8,11 @@ A simple graphics Tic-Tac-Toe game created in C++.
 
 ## Pre-requisite
 
-Install OpenGL if you dont have it by running
+OpenGL 4.6, glfw
 
-`sudo apt-get install mesa-utils freeglut3-dev libglut-dev libglu1-mesa-dev mesa-common-dev`
+To install everything in linux mint run the following in terminal
+
+`sudo apt-get install mesa-utils mesa-common-dev libglfw3 libglfw3-dev`
 
 or equivalent package manager commands
 
