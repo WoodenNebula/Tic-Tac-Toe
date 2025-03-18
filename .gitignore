@@ -34,3 +34,6 @@
 #Folders
 /build
 /bin
+
+[Mm]ake[Ff]ile
+**.make
