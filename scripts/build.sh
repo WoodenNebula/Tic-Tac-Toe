@@ -8,7 +8,7 @@ BuildProject(){
     echo "==== Building Process Started ($CONFIG) ===="
     echo "Generating makefiles..."
     ./vendor/premake/premake5 gmake2
-    cd "$PROJECT_NAME/" && make
+    cd "$PROJECT_NAME/" && bear -- make
     echo "==== BUILD FINISHED ===="
     echo
 }

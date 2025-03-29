@@ -37,3 +37,6 @@
 
 [Mm]ake[Ff]ile
 **.make
+
+*.cache
+**compile_commands.json
