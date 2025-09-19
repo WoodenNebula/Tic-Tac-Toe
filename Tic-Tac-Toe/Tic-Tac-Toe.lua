@@ -3,16 +3,24 @@ project "Tic-Tac-Toe"
     cppdialect "C++20"
     kind "ConsoleApp"
 
-    targetdir("%{wks.location}/build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
-    objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
+    targetdir("%{wks.location}/../build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
+    objdir("%{wks.location}/../build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
+
+    prebuildmessage ("---- Building Dependencies-GLFW ----")
+
+    prebuildcommands {
+        "cmake -S %{wks.location}/dependencies/GLFW/ -B %{wks.location}/../build/GLFW/"
+    }
+-- postbuildmessage ("Building Dependencies (GLFW) Complete")
 
     includedirs {
         "src",
-        "dependencies/glad/include"
+        "dependencies/glad/include",
+        "dependencies/GLFW/include"
     }
 
     libdirs {
-
+        "../build/GLFW/src"
     }
 
     files { "src/**.h", "src/**.cpp" }
@@ -23,7 +31,7 @@ project "Tic-Tac-Toe"
         links {
             "GL",
             "X11",
-            "glfw",
-            "glad"
+            "glad",
+            "glfw3"
         }
     filter {}
