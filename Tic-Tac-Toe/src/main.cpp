@@ -13,7 +13,10 @@ static void key_callback(GLFWwindow *windowHandle, int key, int scancode,
 int main(int argc, char *argv[]) {
   // glfw should always be initialized first!!!
   if (!glfwInit()) {
-    std::cerr << "[ERROR-GLFW] Initialization failed" << std::endl;
+    const char *error_desc = "";
+    int error_code = glfwGetError(&error_desc);
+    std::cerr << "[ERROR-GLFW] Initialization failed" << error_desc << ", "
+              << error_code << std::endl;
     abort();
   }
 
@@ -31,7 +34,11 @@ int main(int argc, char *argv[]) {
       glfwCreateWindow(width, height, windowTitle, NULL, NULL);
 
   if (!windowHandle) {
-    std::cerr << "[ERROR-GLFW]  Window Initialization failed" << std::endl;
+    const char *error_desc = "";
+    int error_code = glfwGetError(&error_desc);
+    std::cerr << "[ERROR-GLFW] Window Initialization failed" << error_desc
+              << ", " << error_code << std::endl;
+    abort();
     abort();
   }
 

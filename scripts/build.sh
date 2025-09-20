@@ -3,31 +3,43 @@
 PROJECT_NAME="Tic-Tac-Toe"
 CONFIG="Debug"
 
-BuildProject(){
+ConfigProject() {
     ./vendor/premake/premake5 clean
-    echo "==== Building Process Started ($CONFIG) ===="
-    echo "Generating makefiles..."
+    echo "==== Generating ($CONFIG) Build Files ===="
     ./vendor/premake/premake5 gmake2
+    echo "==== Build Files Generation Complete ===="
+    echo
+}
+
+BuildProject(){
+    echo "==== BUILDING PROJECT $PROJECT_NAME ===="
     cd "$PROJECT_NAME/" && bear -- make
     echo "==== BUILD FINISHED ===="
+    cd ..
     echo
 }
 
 RunProject(){
-    echo "==== Running the executable ===="
-    exedir=$(find -name "$PROJECT_NAME.out")
+    echo "==== Running the executable:$PROJECT_NAME.out ===="
+    exedir=$(find . -name "$PROJECT_NAME.out")
     if [ -z "$exedir" ]
     then
-        echo "$exedir doesnt exist"
-        echo "$PROJECT_NAME.out not found"
+        echo "Executable $PROJECT_NAME.out not found"
         echo "Project Not Compiled"
         echo "==== ===="
     else
         $exedir
-    echo "==== ===="
+    echo "========"
     echo
     fi
 }
 
-BuildProject
-RunProject
+if [[ $# = 0 ]]; then
+    ConfigProject
+    BuildProject
+    RunProject
+elif [[ "$1" = "-b" ]]; then
+    BuildProject
+elif [[ "$1" = "-c" ]]; then
+    ConfigProject
+fi
