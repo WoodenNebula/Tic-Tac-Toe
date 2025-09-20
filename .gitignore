@@ -32,8 +32,8 @@
 *.app
 
 #Folders
-/build
-/bin
+**[Bb][Uu][Ii][Ll][Dd]
+**[Bb][Ii][Nn]
 
 [Mm]ake[Ff]ile
 **.make
