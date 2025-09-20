@@ -12,7 +12,7 @@ OpenGL 4.6, glfw
 
 To install everything in linux mint run the following in terminal
 
-`sudo apt-get install mesa-utils mesa-common-dev libglfw3 libglfw3-dev`
+`sudo apt-get install mesa-utils mesa-common-dev libglfw3 libglfw3-dev bear`
 
 or equivalent package manager commands
 
