@@ -9,7 +9,7 @@ project "Tic-Tac-Toe"
     prebuildmessage ("---- Building Dependencies-GLFW ----")
 
     prebuildcommands {
-        "cmake -S %{wks.location}/dependencies/GLFW/ -B %{wks.location}/../build/GLFW/"
+        "cmake -S %{wks.location}/dependencies/GLFW/ -B %{wks.location}/../build/GLFW/ && make -C %{wks.location}/../build/GLFW/"
     }
 -- postbuildmessage ("Building Dependencies (GLFW) Complete")
 
