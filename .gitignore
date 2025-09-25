@@ -42,3 +42,5 @@
 
 # Nvim files
 **compile_commands.json
+
+!vendor/premake/*
