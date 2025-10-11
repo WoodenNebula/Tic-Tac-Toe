@@ -4,8 +4,8 @@ project "glad"
     staticruntime "off"
     warnings "off"
 
-    targetdir ("%{wks.location}/build/bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{wks.location}/build/obj/" .. outputdir .. "/%{prj.name}")
+    targetdir ("%{wks.location}/build/bin/%{wks.outputdir}/%{prj.name}")
+    objdir ("%{wks.location}/build/obj/%{wks.outputdir}/%{prj.name}")
 
     files
     {

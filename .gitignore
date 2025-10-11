@@ -42,3 +42,14 @@
 
 # Nvim files
 **compile_commands.json
+
+# Unignore premake binary
+!vendor/premake/*
+
+
+##########
+#   VS   #
+##########
+**vcxproj**
+**.sln
+**.vs/

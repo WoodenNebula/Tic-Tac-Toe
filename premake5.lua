@@ -14,6 +14,7 @@ workspace "Tic-Tac-Toe"
     filter{}
 
     filter "system:windows"
+        startproject "Tic-Tac-Toe"
         defines { "WINDOWS" }
     filter{}
 
@@ -25,6 +26,7 @@ workspace "Tic-Tac-Toe"
     outputdir = "%{cfg.architecture}-%{cfg.system}-%{cfg.buildcfg}"
 
     include "Tic-Tac-Toe/dependencies/glad/glad.lua"
+    include "Tic-Tac-Toe/dependencies/GLFW/glfw.lua"
     include "Tic-Tac-Toe/Tic-Tac-Toe.lua"
 
 
