@@ -3,8 +3,8 @@ project "Tic-Tac-Toe"
     cppdialect "C++20"
     kind "ConsoleApp"
 
-    targetdir("%{wks.location}/../build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
-    objdir("%{wks.location}/../build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
+    targetdir("%{wks.location}/build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
+    objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
 
     
     filter  "system:linux"
@@ -23,9 +23,9 @@ project "Tic-Tac-Toe"
         "dependencies/GLFW/include"
     }
 
-    libdirs {
-        "../build/GLFW/src"
-    }
+    -- libdirs {
+        -- "../build/GLFW/src"
+    -- }
 
     files { "src/**.h", "src/**.cpp" }
 

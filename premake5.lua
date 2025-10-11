@@ -14,6 +14,7 @@ workspace "Tic-Tac-Toe"
     filter{}
 
     filter "system:windows"
+        startproject "Tic-Tac-Toe"
         defines { "WINDOWS" }
     filter{}
 
