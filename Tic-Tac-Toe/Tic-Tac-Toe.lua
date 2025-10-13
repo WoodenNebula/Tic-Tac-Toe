@@ -7,11 +7,6 @@ project "Tic-Tac-Toe"
     objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
 
     
-    filter  "system:linux"
-
-    filter {}
-
--- postbuildmessage ("Building Dependencies (GLFW) Complete")
     dependson { "glad", "GLFW" }
 
     includedirs {
@@ -44,6 +39,6 @@ project "Tic-Tac-Toe"
             "GL",
             "X11",
             "glad",
-            "glfw3"
+            "GLFW"
         }
     filter {}
