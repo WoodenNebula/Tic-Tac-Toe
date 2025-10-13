@@ -23,25 +23,26 @@ project "Tic-Tac-Toe"
         "dependencies/GLFW/include"
     }
 
-    -- libdirs {
-        -- "../build/GLFW/src"
-    -- }
-
+    
     files { "src/**.h", "src/**.cpp" }
-
+    
     filter "system:windows"
-        targetname("Tic-Tac-Toe.exe")
-
-        links {
-            "opengl32",
-            "glad",
-            "GLFW"
-        }
+    targetname("Tic-Tac-Toe.exe")
+    
+    links {
+        "opengl32",
+        "glad",
+        "GLFW"
+    }
     filter {}
-
+    
     filter "system:linux"
         targetname("Tic-Tac-Toe.out")
-
+    
+        libdirs {
+            "../build/GLFW/src"
+        }
+        
         links {
             "GL",
             "X11",
