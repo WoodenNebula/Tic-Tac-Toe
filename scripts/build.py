@@ -31,7 +31,7 @@ def config_project():
     if IS_WINDOWS:
         run_cmd(f"{premake} vs2022")   # Use Visual Studio on Windows
     else:
-        run_cmd(f"{premake} gmake2")   # Use GNU Make on Linux
+        run_cmd(f"{premake} gmake")   # Use GNU Make on Linux
     
     print("==== Build Files Generation Complete ====\n")
 

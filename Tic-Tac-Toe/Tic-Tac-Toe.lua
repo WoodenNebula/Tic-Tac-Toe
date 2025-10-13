@@ -7,14 +7,6 @@ project "Tic-Tac-Toe"
     objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
 
     
-    filter  "system:linux"
-        prebuildmessage ("---- Building Dependencies-GLFW ----")
-        prebuildcommands {
-            "cmake -S %{wks.location}/dependencies/GLFW/ -B %{wks.location}/../build/%{wks.outputdir}/GLFW/ && make -C %{wks.location}/../build/%{wks.outputdir}/GLFW/"
-        }
-    filter {}
-
--- postbuildmessage ("Building Dependencies (GLFW) Complete")
     dependson { "glad", "GLFW" }
 
     includedirs {
@@ -23,29 +15,30 @@ project "Tic-Tac-Toe"
         "dependencies/GLFW/include"
     }
 
-    -- libdirs {
-        -- "../build/GLFW/src"
-    -- }
-
+    
     files { "src/**.h", "src/**.cpp" }
-
+    
     filter "system:windows"
-        targetname("Tic-Tac-Toe.exe")
-
-        links {
-            "opengl32",
-            "glad",
-            "GLFW"
-        }
+    targetname("Tic-Tac-Toe.exe")
+    
+    links {
+        "opengl32",
+        "glad",
+        "GLFW"
+    }
     filter {}
-
+    
     filter "system:linux"
         targetname("Tic-Tac-Toe.out")
+    
+        libdirs {
+            "%{wks.location}/build/bin/%{wks.outputdir}/GLFW/"
+        }
 
         links {
             "GL",
             "X11",
             "glad",
-            "glfw3"
+            "GLFW"
         }
     filter {}
