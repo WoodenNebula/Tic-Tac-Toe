@@ -8,10 +8,7 @@ project "Tic-Tac-Toe"
 
     
     filter  "system:linux"
-        prebuildmessage ("---- Building Dependencies-GLFW ----")
-        prebuildcommands {
-            "cmake -S %{wks.location}/dependencies/GLFW/ -B %{wks.location}/../build/%{wks.outputdir}/GLFW/ && make -C %{wks.location}/../build/%{wks.outputdir}/GLFW/"
-        }
+
     filter {}
 
 -- postbuildmessage ("Building Dependencies (GLFW) Complete")
@@ -40,9 +37,9 @@ project "Tic-Tac-Toe"
         targetname("Tic-Tac-Toe.out")
     
         libdirs {
-            "../build/GLFW/src"
+            "%{wks.location}/build/bin/%{wks.outputdir}/GLFW/"
         }
-        
+
         links {
             "GL",
             "X11",
