@@ -1,7 +1,6 @@
 workspace "Tic-Tac-Toe"
     configurations { "Debug", "Release" }
     architecture "x64"
-    location "."
 
     filter "configurations:Debug"
         defines { "DEBUG", "_DEBUG" }
