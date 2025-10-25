@@ -49,7 +49,7 @@ python ./scripts/build.py
 
 ### Windows
 
-After running the above commands, you need to open the visual studio solution generated in [Tic-Tac-Toe/Tic-Tac-Toe](Tic-Tac-Toe/Tic-Tac-Toe) folder and hitting play button should work out of the box
+After running the above commands, you need to open the visual studio solution generated in project directory and hitting play button should work out of the box
 
 ### Linux
 
