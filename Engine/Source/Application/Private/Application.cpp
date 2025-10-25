@@ -26,7 +26,7 @@ namespace Engine
     {
         m_Window = std::make_unique<Window>(m_ApplicationProps.WindowProps);
         SGenericError Err = m_Window->Init();
-        std::cout << "Window Init\n" << Err;
+        std::cout << "Window Init\n";
 
         if (Err)
         {
