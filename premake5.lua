@@ -1,7 +1,6 @@
 workspace "Tic-Tac-Toe"
     configurations { "Debug", "Release" }
     architecture "x64"
-    location "./Tic-Tac-Toe"
 
     filter "configurations:Debug"
         defines { "DEBUG", "_DEBUG" }
@@ -25,8 +24,7 @@ workspace "Tic-Tac-Toe"
 
     outputdir = "%{cfg.architecture}-%{cfg.system}-%{cfg.buildcfg}"
 
-    include "Tic-Tac-Toe/dependencies/glad/glad.lua"
-    include "Tic-Tac-Toe/dependencies/GLFW/glfw.lua"
+    include "Engine/Engine.lua"
     include "Tic-Tac-Toe/Tic-Tac-Toe.lua"
 
 
@@ -35,7 +33,7 @@ newaction {
     description = "Remove all binaries and intermediate binaries, and vs files.",
     execute = function()
         print("==== Cleaning Up ====")
-        os.chdir("Tic-Tac-Toe")
+        -- os.chdir("Tic-Tac-Toe")
 
         os.rmdir("build")
         os.rmdir("./.vs")

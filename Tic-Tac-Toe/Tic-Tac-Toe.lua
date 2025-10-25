@@ -7,38 +7,27 @@ project "Tic-Tac-Toe"
     objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
 
     
-    dependson { "glad", "GLFW" }
+    dependson { "Engine" }
 
     includedirs {
         "src",
-        "dependencies/glad/include",
-        "dependencies/GLFW/include"
+        "../Engine/Source",
+        "../Engine/dependencies/glad/include",
+        "../Engine/dependencies/GLFW/include",
     }
 
     
     files { "src/**.h", "src/**.cpp" }
     
-    filter "system:windows"
-    targetname("Tic-Tac-Toe.exe")
-    
-    links {
-        "opengl32",
-        "glad",
-        "GLFW"
+    links 
+    {
+        "Engine",
     }
+
+    filter "system:windows"
+        targetname("Tic-Tac-Toe.exe")
     filter {}
     
     filter "system:linux"
         targetname("Tic-Tac-Toe.out")
-    
-        libdirs {
-            "%{wks.location}/build/bin/%{wks.outputdir}/GLFW/"
-        }
-
-        links {
-            "GL",
-            "X11",
-            "glad",
-            "GLFW"
-        }
     filter {}
