@@ -1,40 +1,47 @@
 #pragma once
 
-#include "Utils.h"
+#include "Core/Util/Utils.h"
 #include "Error/Error.h"
+
+#include "Events/Event.h"
+
 #include <functional>
 
 struct GLFWwindow;
 
 namespace Engine
 {
-    struct SWindowProps
-    {
-        Point2D<uint32_t> Dimension;
-        Point2D<uint32_t> Position;
-        std::string_view Title;
-    };
+struct SWindowProps
+{
+    Point2D<uint32_t> Dimension;
+    Point2D<uint32_t> Position;
+    std::string_view Title;
+};
 
-    class Window
-    {
-    public:
-        Window();
-        Window(const SWindowProps& inWindowProps);
-        ~Window();
+class Window
+{
+public:
+    Window();
+    Window(const SWindowProps& inWindowProps);
+    ~Window();
 
-        SGenericError Init();
-        void Update();
-        void Terminate();
+    SGenericError Init();
+    void Update();
+    void Terminate();
 
-        /// TODO: Move to Event System
-        void RegisterWindowQuitInputCallback(const std::function<void()>& callback);
+    void OnEvent(const Events::EventBase& event);
 
-        void BroadCastWindowQuitInputCallback();
+    void HandleGLFWEvents(const Events::EventBase& event);
 
-    private:
-        SWindowProps m_WindowProps;
-        GLFWwindow* m_WindowHandle;
+    /// TODO: Move to Event System
+    void RegisterWindowQuitInputCallback(const std::function<void()>& callback);
 
-        std::function<void()> m_WindowQuitInputCb;
-    };
+    void BroadCastWindowQuitInputCallback();
+
+private:
+    SWindowProps m_WindowProps;
+    GLFWwindow* m_WindowHandle;
+
+    std::function<void()> m_WindowQuitInputCb;
+};
 }
