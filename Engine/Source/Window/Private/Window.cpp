@@ -1,5 +1,7 @@
 #include "Window/Window.h"
 
+#include "Window/glfw_event_callbacks.h"
+
 #include "Events/EventManager.h"
 #include "Events/CoreEvents.h"
 
@@ -23,88 +25,6 @@ static void glfw_error_callback(int error_code, const char* description)
     std::string errorMsg = std::string(description) + ", " + std::to_string(error_code);
     Logger::LogError("GLFW", errorMsg);
 }
-
-static void key_callback(GLFWwindow* windowHandle, int key, int scancode,
-    int action, int mods)
-{
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        switch (action)
-        {
-        case GLFW_PRESS:
-        {
-            Events::InputEvents::KeyPressedEvent pressEvent(static_cast<Events::Key>(key), false);
-            window->HandleGLFWEvents(pressEvent);
-            break;
-        }
-        case GLFW_RELEASE:
-        {
-            Events::InputEvents::KeyReleasedEvent releaseEvent(static_cast<Events::Key>(key));
-            window->HandleGLFWEvents(releaseEvent);
-            break;
-        }
-        default:
-            break;
-        }
-    }
-
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(windowHandle, GLFW_TRUE);
-        Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-        if (window)
-        {
-            window->BroadCastWindowQuitInputCallback();
-        }
-    }
-}
-
-static void mouse_button_callback(GLFWwindow* windowHandle, int button, int action, int mods)
-{
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        switch (action)
-        {
-        case GLFW_PRESS:
-        {
-            Events::InputEvents::MouseButtonPressedEvent pressEvent(static_cast<Events::Mouse>(button));
-            window->HandleGLFWEvents(pressEvent);
-            break;
-        }
-        case GLFW_RELEASE:
-        {
-            Events::InputEvents::MouseButtonReleasedEvent releaseEvent(static_cast<Events::Mouse>(button));
-            window->HandleGLFWEvents(releaseEvent);
-            break;
-        }
-        default:
-            break;
-        }
-    }
-}
-
-static void mouse_scroll_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
-{
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        Events::InputEvents::MouseScrolledEvent scrollEvent(xoffset, yoffset);
-        window->HandleGLFWEvents(scrollEvent);
-    }
-}
-
-static void mouse_move_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
-{
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        Events::InputEvents::MouseMovedEvent moveEvent(xoffset, yoffset);
-        window->HandleGLFWEvents(moveEvent);
-    }
-}
-
 
 Window::Window() {}
 
@@ -155,11 +75,16 @@ SGenericError Window::Init()
 
     glfwSetWindowUserPointer(m_WindowHandle, this);
 
-    glfwSetKeyCallback(m_WindowHandle, key_callback);
+    // GLFW Callbacks
+    glfwSetKeyCallback(m_WindowHandle, GLFWEventCallbacks::key_callback);
 
-    glfwSetMouseButtonCallback(m_WindowHandle, mouse_button_callback);
-    glfwSetScrollCallback(m_WindowHandle, mouse_scroll_callback);
-    glfwSetCursorPosCallback(m_WindowHandle, mouse_move_callback);
+    glfwSetMouseButtonCallback(m_WindowHandle, GLFWEventCallbacks::mouse_button_callback);
+    glfwSetScrollCallback(m_WindowHandle, GLFWEventCallbacks::mouse_scroll_callback);
+    glfwSetCursorPosCallback(m_WindowHandle, GLFWEventCallbacks::mouse_move_callback);
+    glfwSetWindowCloseCallback(m_WindowHandle, GLFWEventCallbacks::window_close_callback);
+    glfwSetWindowFocusCallback(m_WindowHandle, GLFWEventCallbacks::window_focus_callback);
+    glfwSetWindowSizeCallback(m_WindowHandle, GLFWEventCallbacks::window_size_callback);
+    glfwSetWindowPosCallback(m_WindowHandle, GLFWEventCallbacks::window_pos_callback);
 
     // this creates a valid window context for opengl to render to
     glfwMakeContextCurrent(m_WindowHandle);

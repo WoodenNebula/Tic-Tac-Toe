@@ -6,7 +6,7 @@ namespace Engine::Events
 enum class EventTypes
 {
     None = 0,
-    WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
+    WindowClose, WindowResize, WindowGainFocus, WindowLostFocus, WindowMoved,
     MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled, MouseEntered,
     KeyPressed, KeyReleased, KeyHeld,
     ApplicationTick, ApplicationUpdate, ApplicationRender
