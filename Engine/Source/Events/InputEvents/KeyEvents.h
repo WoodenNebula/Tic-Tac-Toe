@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Events/Event.h"
-#include "Events/KeyCodes.h"
+#include "Events/InputEvents/KeyCodes.h"
 
 #ifdef DEBUG
 #include "Core/Util/magic_enum.hpp"

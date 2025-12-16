@@ -1,6 +1,5 @@
 #include "Events/EventManager.h"
-#include "Events/MouseEvents.h"
-#include "Events/KeyEvents.h"
+#include "Events/CoreEvents.h"
 #include "Logger/Logger.h"
 
 namespace Engine::Events

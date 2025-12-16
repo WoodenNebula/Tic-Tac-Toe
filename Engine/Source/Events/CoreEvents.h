@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Events/MouseEvents.h"
-#include "Events/MouseCodes.h"
+#include "Events/InputEvents/MouseEvents.h"
+#include "Events/InputEvents/MouseCodes.h"
 
-#include "Events/KeyEvents.h"
-#include "Events/KeyCodes.h"
+#include "Events/InputEvents/KeyEvents.h"
+#include "Events/InputEvents/KeyCodes.h"
 
 #include "Events/WindowEvents.h"

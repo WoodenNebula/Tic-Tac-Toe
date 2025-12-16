@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Events/Event.h"
-#include "Events/MouseCodes.h"
+#include "Events/InputEvents/MouseCodes.h"
 
 #include "Core/Util/Utils.h"
 
