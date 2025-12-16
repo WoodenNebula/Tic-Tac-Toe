@@ -17,6 +17,13 @@
 
 namespace Engine
 {
+
+static void glfw_error_callback(int error_code, const char* description)
+{
+    std::string errorMsg = std::string(description) + ", " + std::to_string(error_code);
+    Logger::LogError("GLFW", errorMsg);
+}
+
 static void key_callback(GLFWwindow* windowHandle, int key, int scancode,
     int action, int mods)
 {
@@ -53,7 +60,7 @@ static void key_callback(GLFWwindow* windowHandle, int key, int scancode,
     }
 }
 
-static void mouse_callback(GLFWwindow* windowHandle, int button, int action, int mods)
+static void mouse_button_callback(GLFWwindow* windowHandle, int button, int action, int mods)
 {
     Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
     if (window)
@@ -75,9 +82,29 @@ static void mouse_callback(GLFWwindow* windowHandle, int button, int action, int
         default:
             break;
         }
-
     }
 }
+
+static void mouse_scroll_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
+{
+    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
+    if (window)
+    {
+        Events::InputEvents::MouseScrolledEvent scrollEvent(xoffset, yoffset);
+        window->HandleGLFWEvents(scrollEvent);
+    }
+}
+
+static void mouse_move_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
+{
+    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
+    if (window)
+    {
+        Events::InputEvents::MouseMovedEvent moveEvent(xoffset, yoffset);
+        window->HandleGLFWEvents(moveEvent);
+    }
+}
+
 
 Window::Window() {}
 
@@ -85,6 +112,8 @@ Window::Window(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
 {
     /// TODO: Engine Init
     /// Engine::Core::Init()
+    glfwSetErrorCallback(glfw_error_callback);
+
     if (!glfwInit())
     {
         const char* errorDesc = "";
@@ -125,8 +154,12 @@ SGenericError Window::Init()
     Logger::LogInfo("Window-GLFW", "Window Created");
 
     glfwSetWindowUserPointer(m_WindowHandle, this);
+
     glfwSetKeyCallback(m_WindowHandle, key_callback);
-    glfwSetMouseButtonCallback(m_WindowHandle, mouse_callback);
+
+    glfwSetMouseButtonCallback(m_WindowHandle, mouse_button_callback);
+    glfwSetScrollCallback(m_WindowHandle, mouse_scroll_callback);
+    glfwSetCursorPosCallback(m_WindowHandle, mouse_move_callback);
 
     // this creates a valid window context for opengl to render to
     glfwMakeContextCurrent(m_WindowHandle);

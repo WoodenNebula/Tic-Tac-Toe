@@ -22,7 +22,7 @@ void EventManager::DispatchEvent(const EventBase& Event)
         Logger::LogInfo("EventManager", "Dispatched Window Event " + Event.ToString());
         break;
     case EventCategoryTypes::Mouse:
-        Logger::LogInfo("EventManager", "Dispatched Mouse Event " + Event.ToString());
+        //Logger::LogInfo("EventManager", "Dispatched Mouse Event " + Event.ToString());
         break;
     case EventCategoryTypes::Key:
         Logger::LogInfo("EventManager", "Dispatched Key Event " + Event.ToString());

@@ -40,7 +40,7 @@ public:
 
 private:
     SWindowProps m_WindowProps;
-    GLFWwindow* m_WindowHandle;
+    GLFWwindow* m_WindowHandle{ nullptr };
 
     std::function<void()> m_WindowQuitInputCb;
 };
