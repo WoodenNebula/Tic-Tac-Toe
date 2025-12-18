@@ -29,7 +29,7 @@ def config_project():
     print(f"==== Generating ({CONFIG}) Build Files ====")
     
     if IS_WINDOWS:
-        run_cmd(f"{premake} vs2022")   # Use Visual Studio on Windows
+        run_cmd(f"{premake} vs2026")   # Use Visual Studio on Windows
     else:
         run_cmd(f"{premake} gmake")   # Use GNU Make on Linux
     

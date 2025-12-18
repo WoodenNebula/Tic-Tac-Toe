@@ -39,6 +39,7 @@ newaction {
         os.rmdir("./.vs")
 
         os.remove("**.sln")
+        os.remove("**.slnx")
         os.remove("**.vcxproj")
         os.remove("**.vcxproj.**")
         os.remove("**Makefile")
