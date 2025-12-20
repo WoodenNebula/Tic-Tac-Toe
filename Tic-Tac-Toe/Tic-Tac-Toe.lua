@@ -3,6 +3,7 @@ project "Tic-Tac-Toe"
     cppdialect "C++20"
     kind "ConsoleApp"
 
+
     targetdir("%{wks.location}/build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
     objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
 
@@ -25,6 +26,7 @@ project "Tic-Tac-Toe"
     }
 
     filter "system:windows"
+        systemversion "latest"
         targetname("Tic-Tac-Toe.exe")
     filter {}
     

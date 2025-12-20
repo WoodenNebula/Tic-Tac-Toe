@@ -1,40 +1,48 @@
 #pragma once
 
-#include "Utils.h"
+#include "Core/Util/Utils.h"
 #include "Error/Error.h"
+
+#include "Events/Event.h"
+#include "Logger/Logger.h"
+
 #include <functional>
+
+DECLARE_LOG_CATEGORY(Window)
 
 struct GLFWwindow;
 
 namespace Engine
 {
-    struct SWindowProps
-    {
-        Point2D<uint32_t> Dimension;
-        Point2D<uint32_t> Position;
-        std::string_view Title;
-    };
 
-    class Window
-    {
-    public:
-        Window();
-        Window(const SWindowProps& inWindowProps);
-        ~Window();
+using EventCallbackFn = std::function<void(Events::EventBase&)>;
 
-        SGenericError Init();
-        void Update();
-        void Terminate();
+struct SWindowProps
+{
+    Point2D<uint32_t> Dimension;
+    Point2D<uint32_t> Position;
+    std::string_view Title;
 
-        /// TODO: Move to Event System
-        void RegisterWindowQuitInputCallback(const std::function<void()>& callback);
+    EventCallbackFn EventCallback;
+};
 
-        void BroadCastWindowQuitInputCallback();
+class Window
+{
 
-    private:
-        SWindowProps m_WindowProps;
-        GLFWwindow* m_WindowHandle;
+public:
+    Window();
+    Window(const SWindowProps& inWindowProps);
+    ~Window();
 
-        std::function<void()> m_WindowQuitInputCb;
-    };
+    SGenericError Init();
+    void OnUpdate();
+    void Terminate();
+
+    void SetWindowEventCallback(const EventCallbackFn& callback);
+    void CloseWindow();
+private:
+    GLFWwindow* m_WindowHandle{ nullptr };
+    SWindowProps m_WindowProps;
+};
+
 }

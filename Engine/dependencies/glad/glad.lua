@@ -28,6 +28,8 @@ project "glad"
         symbols "on"
         sanitize { "Address" }
         flags { "NoRuntimeChecks", "NoIncrementalLink" }
+        systemversion "latest"
+
 
     filter "configurations:Release"
         runtime "Release"

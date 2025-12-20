@@ -1,115 +1,132 @@
 #include "Window/Window.h"
+
+#include "Window/glfw_event_callbacks.h"
+
+#include "Events/EventManager.h"
+#include "Events/CoreEvents.h"
+
+#include "Logger/Logger.h"
+
 #include <string>
 #include <glad/glad.h>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
-#include <iostream>
+DECLARE_LOG_CATEGORY(GLFW);
 
 namespace Engine
 {
-    static void key_callback(GLFWwindow *windowHandle, int key, int scancode,
-                             int action, int mods)
-    {
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        {
-            glfwSetWindowShouldClose(windowHandle, GLFW_TRUE);
-            Window *window = static_cast<Window *>(glfwGetWindowUserPointer(windowHandle));
-            if (window)
-            {
-                window->BroadCastWindowQuitInputCallback();
-            }
-        }
-    }
 
-    Window::Window() {}
-
-    Window::Window(const SWindowProps &inWindowProps) : m_WindowProps(inWindowProps)
-    {
-        /// TODO: Engine Init
-        /// Engine::Core::Init()
-        if (!glfwInit())
-        {
-            const char* error_desc = "";
-            int error_code = glfwGetError(&error_desc);
-            std::cerr << "[ERROR-GLFW] Initialization failed" << error_desc << ", "
-                << error_code << std::endl;
-            abort();
-        }
-
-        // set opengl version
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        /// !Engine::Core::Init()
-
-        std::cout << "Engine Core Init\n";
-    }
-
-    Window::~Window()
-    {
-        Terminate();
-        std::cout << "Window Destroyed\n";
-    }
-
-    SGenericError Window::Init()
-    {
-        std::cout << "Window Init Called\n";
-
-        m_WindowHandle = glfwCreateWindow(m_WindowProps.Dimension.x, m_WindowProps.Dimension.y, m_WindowProps.Title.data(), NULL, NULL);
-
-        std::cout << "Window Created\n";
-
-
-        if (!m_WindowHandle)
-        {
-            const char *error_desc = "";
-            int error_code = glfwGetError(&error_desc);
-
-            return {error_code, error_desc};
-        }
-
-        glfwSetWindowUserPointer(m_WindowHandle, this);
-        glfwSetKeyCallback(m_WindowHandle, key_callback);
-
-        // this creates a valid window context for opengl to render to
-        glfwMakeContextCurrent(m_WindowHandle);
-
-        // glad should only be initialized after a valid context has been created
-        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        {
-            return {-1, "GLAD LoadGlLoader Failed"};
-        }
-
-        return {};
-    }
-
-    void Window::Update()
-    {
-        glClearColor(.69, .69, .69, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(m_WindowHandle);
-    }
-
-    void Window::Terminate()
-    {
-        std::cout << "Window Terminated\n";
-        glfwDestroyWindow(m_WindowHandle);
-    }
-
-    void Window::BroadCastWindowQuitInputCallback()
-    {
-        if (m_WindowQuitInputCb)
-            m_WindowQuitInputCb();
-    }
-
-    void Window::RegisterWindowQuitInputCallback(const std::function<void()> &callback)
-    {
-        if (callback)
-        {
-            m_WindowQuitInputCb = callback;
-        }
-    }
-
+static void glfw_error_callback(int error_code, const char* description)
+{
+    LOG(GLFW, ERROR, "{}: {}", error_code, description);
 }
+
+Window::Window() {}
+
+Window::Window(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
+{
+    /// TODO: Engine Init
+    /// Engine::Core::Init()
+
+    if (!glfwInit())
+    {
+        const char* errorDesc = "";
+        int errorCode = glfwGetError(&errorDesc);
+        LOG(GLFW, FATAL, "Initialization failed -> {}, {}", errorCode, errorDesc);
+        abort();
+    }
+
+    glfwSetErrorCallback(glfw_error_callback);
+
+    // set opengl version
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    /// !Engine::Core::Init()
+
+    LOG(Window, TRACE, "Engine Core Init");
+}
+
+Window::~Window()
+{
+    Terminate();
+    LOG(Window, TRACE, "Window Destroyed");
+}
+
+SGenericError Window::Init()
+{
+    LOG(Window, TRACE, "Window Init Called");
+
+    m_WindowHandle = glfwCreateWindow(m_WindowProps.Dimension.x, m_WindowProps.Dimension.y, m_WindowProps.Title.data(), NULL, NULL);
+
+    if (!m_WindowHandle)
+    {
+        const char* error_desc = "";
+        int error_code = glfwGetError(&error_desc);
+
+        return { error_code, error_desc };
+    }
+    LOG(Window, TRACE, "Window Created");
+
+    glfwSetWindowUserPointer(m_WindowHandle, &m_WindowProps);
+
+    // GLFW Callbacks
+    glfwSetKeyCallback(m_WindowHandle, GLFWEventCallbacks::key_callback);
+
+    glfwSetMouseButtonCallback(m_WindowHandle, GLFWEventCallbacks::mouse_button_callback);
+    glfwSetScrollCallback(m_WindowHandle, GLFWEventCallbacks::mouse_scroll_callback);
+    glfwSetCursorPosCallback(m_WindowHandle, GLFWEventCallbacks::mouse_move_callback);
+
+    glfwSetWindowCloseCallback(m_WindowHandle, GLFWEventCallbacks::window_close_callback);
+    glfwSetWindowFocusCallback(m_WindowHandle, GLFWEventCallbacks::window_focus_callback);
+    glfwSetWindowSizeCallback(m_WindowHandle, GLFWEventCallbacks::window_size_callback);
+    glfwSetWindowPosCallback(m_WindowHandle, GLFWEventCallbacks::window_pos_callback);
+
+    // this creates a valid window context for opengl to render to
+    glfwMakeContextCurrent(m_WindowHandle);
+
+    // glad should only be initialized after a valid context has been created
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        return { -1, "GLAD LoadGlLoader Failed" };
+    }
+
+    return {};
+}
+
+void Window::OnUpdate()
+{
+    glClearColor(.69, .69, .69, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glfwSwapBuffers(m_WindowHandle);
+}
+
+void Window::CloseWindow()
+{
+    if (m_WindowHandle)
+    {
+        glfwSetWindowShouldClose(m_WindowHandle, GLFW_TRUE);
+        LOG(Window, TRACE, "Window Close Requested");
+    }
+}
+
+void Window::Terminate()
+{
+    if (m_WindowHandle)
+    {
+        LOG(Window, TRACE, "Terminating Window");
+        glfwDestroyWindow(m_WindowHandle);
+        m_WindowHandle = nullptr;
+    }
+}
+
+
+void Window::SetWindowEventCallback(const EventCallbackFn& callback)
+{
+    m_WindowProps.EventCallback = callback;
+    LOG(Window, TRACE, "Window Event Callback Set");
+}
+
+}; // namespace Engine

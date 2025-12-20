@@ -3,6 +3,7 @@ project "Engine"
     cppdialect "C++20"
     kind "StaticLib"
     staticruntime "off"
+
     -- location "%{wks.location} " .. "/" .. "{prj.name}"
 
     targetdir("%{wks.location}/build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
@@ -23,11 +24,11 @@ project "Engine"
     filter "system:windows"
     -- targetname("Engine.dll")
     
-    links {
-        "opengl32",
-        "glad",
-        "GLFW"
-    }
+        links {
+            "opengl32",
+            "glad",
+            "GLFW"
+        }
     filter {}
     
     filter "system:linux"
