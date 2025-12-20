@@ -7,135 +7,118 @@
 #include "Events/CoreEvents.h"
 
 
-namespace Engine::GLFWEventCallbacks
+namespace Engine
 {
-void key_callback(GLFWwindow* windowHandle, int key, int scancode,
+void GLFWEventCallbacks::key_callback(GLFWwindow* windowHandle, int key, int scancode,
     int action, int mods)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+
+    switch (action)
     {
-        switch (action)
-        {
-        case GLFW_PRESS:
-        {
-            Events::InputEvents::KeyPressedEvent pressEvent(static_cast<Events::Key>(key), false);
-            window->HandleGLFWEvents(pressEvent);
-            break;
-        }
-        case GLFW_RELEASE:
-        {
-            Events::InputEvents::KeyReleasedEvent releaseEvent(static_cast<Events::Key>(key));
-            window->HandleGLFWEvents(releaseEvent);
-            break;
-        }
-        default:
-            break;
-        }
+    case GLFW_PRESS:
+    {
+        Events::InputEvents::KeyPressedEvent pressEvent(static_cast<Events::Key>(key), false);
+        window.EventCallback(pressEvent);
+        break;
+    }
+    case GLFW_RELEASE:
+    {
+        Events::InputEvents::KeyReleasedEvent releaseEvent(static_cast<Events::Key>(key));
+        window.EventCallback(releaseEvent);
+        break;
+    }
+    default:
+        break;
     }
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(windowHandle, GLFW_TRUE);
-        Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-        if (window)
         {
-            window->BroadCastWindowQuitInputCallback();
+            //window->BroadCastWindowQuitInputCallback();
         }
     }
 }
 
-void mouse_button_callback(GLFWwindow* windowHandle, int button, int action, int mods)
+void GLFWEventCallbacks::mouse_button_callback(GLFWwindow* windowHandle, int button, int action, int mods)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+    switch (action)
     {
-        switch (action)
-        {
-        case GLFW_PRESS:
-        {
-            Events::InputEvents::MouseButtonPressedEvent pressEvent(static_cast<Events::Mouse>(button));
-            window->HandleGLFWEvents(pressEvent);
-            break;
-        }
-        case GLFW_RELEASE:
-        {
-            Events::InputEvents::MouseButtonReleasedEvent releaseEvent(static_cast<Events::Mouse>(button));
-            window->HandleGLFWEvents(releaseEvent);
-            break;
-        }
-        default:
-            break;
-        }
+    case GLFW_PRESS:
+    {
+        Events::InputEvents::MouseButtonPressedEvent pressEvent(static_cast<Events::Mouse>(button));
+        window.EventCallback(pressEvent);
+        break;
+    }
+    case GLFW_RELEASE:
+    {
+        Events::InputEvents::MouseButtonReleasedEvent releaseEvent(static_cast<Events::Mouse>(button));
+        window.EventCallback(releaseEvent);
+        break;
+    }
+    default:
+        break;
     }
 }
 
-void mouse_scroll_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
+void GLFWEventCallbacks::mouse_scroll_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        Events::InputEvents::MouseScrolledEvent scrollEvent(xoffset, yoffset);
-        window->HandleGLFWEvents(scrollEvent);
-    }
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+
+    Events::InputEvents::MouseScrolledEvent scrollEvent(xoffset, yoffset);
+    window.EventCallback(scrollEvent);
 }
 
-void mouse_move_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
+void GLFWEventCallbacks::mouse_move_callback(GLFWwindow* windowHandle, double xoffset, double yoffset)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        Events::InputEvents::MouseMovedEvent moveEvent(xoffset, yoffset);
-        window->HandleGLFWEvents(moveEvent);
-    }
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+
+    Events::InputEvents::MouseMovedEvent moveEvent(xoffset, yoffset);
+    window.EventCallback(moveEvent);
 }
 
 
-void window_pos_callback(GLFWwindow* windowHandle, int xpos, int ypos)
+void GLFWEventCallbacks::window_pos_callback(GLFWwindow* windowHandle, int xpos, int ypos)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        Events::WindowMovedEvent movedEvent(xpos, ypos);
-        window->HandleGLFWEvents(movedEvent);
-    }
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+    window.Position = { (uint32_t)xpos, (uint32_t)ypos };
+
+    Events::WindowMovedEvent movedEvent(xpos, ypos);
+    window.EventCallback(movedEvent);
 }
 
-void window_size_callback(GLFWwindow* windowHandle, int width, int height)
+void GLFWEventCallbacks::window_size_callback(GLFWwindow* windowHandle, int width, int height)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        Events::WindowResizeEvent resizeEvent(width, height);
-        window->HandleGLFWEvents(resizeEvent);
-    }
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+    window.Dimension = { (uint32_t)width, (uint32_t)height };
+
+    Events::WindowResizeEvent resizeEvent(width, height);
+    window.EventCallback(resizeEvent);
 }
 
-void Engine::GLFWEventCallbacks::window_close_callback(GLFWwindow* windowHandle)
+void GLFWEventCallbacks::window_close_callback(GLFWwindow* windowHandle)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
-    {
-        Events::WindowCloseEvent windowCloseEvent;
-        window->HandleGLFWEvents(windowCloseEvent);
-    }
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+
+    Events::WindowCloseEvent windowCloseEvent;
+    window.EventCallback(windowCloseEvent);
 }
 
-void window_focus_callback(GLFWwindow* windowHandle, int focused)
+void GLFWEventCallbacks::window_focus_callback(GLFWwindow* windowHandle, int focused)
 {
-    Window* window = static_cast<Window*>(glfwGetWindowUserPointer(windowHandle));
-    if (window)
+    SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
+
+    if (focused == GLFW_TRUE)
     {
-        if (focused == GLFW_TRUE)
-        {
-            Events::WindowGainFocusEvent focusEvent;
-            window->HandleGLFWEvents(focusEvent);
-        }
-        else
-        {
-            Events::WindowLostFocus focusEvent;
-            window->HandleGLFWEvents(focusEvent);
-        }
+        Events::WindowGainFocusEvent focusEvent;
+        window.EventCallback(focusEvent);
+    }
+    else
+    {
+        Events::WindowLostFocus focusEvent;
+        window.EventCallback(focusEvent);
     }
 }
 };

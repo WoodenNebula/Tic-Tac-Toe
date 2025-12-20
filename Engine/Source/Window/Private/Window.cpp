@@ -13,17 +13,14 @@
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
-#ifdef DEBUG
-#include "Core/Util/magic_enum.hpp"
-#endif
+DECLARE_LOG_CATEGORY(GLFW);
 
 namespace Engine
 {
 
 static void glfw_error_callback(int error_code, const char* description)
 {
-    std::string errorMsg = std::string(description) + ", " + std::to_string(error_code);
-    Logger::LogError("GLFW", errorMsg);
+    LOG(GLFW, ERROR, "{}: {}", error_code, description);
 }
 
 Window::Window() {}
@@ -32,16 +29,16 @@ Window::Window(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
 {
     /// TODO: Engine Init
     /// Engine::Core::Init()
-    glfwSetErrorCallback(glfw_error_callback);
 
     if (!glfwInit())
     {
         const char* errorDesc = "";
         int errorCode = glfwGetError(&errorDesc);
-        std::string errorMsg = "GLFW Initialization failed: " + std::string(errorDesc) + ", " + std::to_string(errorCode);
-        Logger::LogError("Window-GLFW", errorMsg);
+        LOG(GLFW, FATAL, "Initialization failed -> {}, {}", errorCode, errorDesc);
         abort();
     }
+
+    glfwSetErrorCallback(glfw_error_callback);
 
     // set opengl version
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -49,18 +46,18 @@ Window::Window(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /// !Engine::Core::Init()
 
-    Logger::LogInfo("Window-GLFW", "Engine Core Init");
+    LOG(Window, TRACE, "Engine Core Init");
 }
 
 Window::~Window()
 {
     Terminate();
-    Logger::LogInfo("Window", "Window Destroyed");
+    LOG(Window, TRACE, "Window Destroyed");
 }
 
 SGenericError Window::Init()
 {
-    Logger::LogInfo("Window-GLFW", "Window Init Called");
+    LOG(Window, TRACE, "Window Init Called");
 
     m_WindowHandle = glfwCreateWindow(m_WindowProps.Dimension.x, m_WindowProps.Dimension.y, m_WindowProps.Title.data(), NULL, NULL);
 
@@ -71,9 +68,9 @@ SGenericError Window::Init()
 
         return { error_code, error_desc };
     }
-    Logger::LogInfo("Window-GLFW", "Window Created");
+    LOG(Window, TRACE, "Window Created");
 
-    glfwSetWindowUserPointer(m_WindowHandle, this);
+    glfwSetWindowUserPointer(m_WindowHandle, &m_WindowProps);
 
     // GLFW Callbacks
     glfwSetKeyCallback(m_WindowHandle, GLFWEventCallbacks::key_callback);
@@ -81,6 +78,7 @@ SGenericError Window::Init()
     glfwSetMouseButtonCallback(m_WindowHandle, GLFWEventCallbacks::mouse_button_callback);
     glfwSetScrollCallback(m_WindowHandle, GLFWEventCallbacks::mouse_scroll_callback);
     glfwSetCursorPosCallback(m_WindowHandle, GLFWEventCallbacks::mouse_move_callback);
+
     glfwSetWindowCloseCallback(m_WindowHandle, GLFWEventCallbacks::window_close_callback);
     glfwSetWindowFocusCallback(m_WindowHandle, GLFWEventCallbacks::window_focus_callback);
     glfwSetWindowSizeCallback(m_WindowHandle, GLFWEventCallbacks::window_size_callback);
@@ -98,49 +96,37 @@ SGenericError Window::Init()
     return {};
 }
 
-void Window::Update()
+void Window::OnUpdate()
 {
     glClearColor(.69, .69, .69, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(m_WindowHandle);
 }
 
+void Window::CloseWindow()
+{
+    if (m_WindowHandle)
+    {
+        glfwSetWindowShouldClose(m_WindowHandle, GLFW_TRUE);
+        LOG(Window, TRACE, "Window Close Requested");
+    }
+}
+
 void Window::Terminate()
 {
     if (m_WindowHandle)
     {
-        Logger::LogInfo("Window-GLFW", "Window Terminated");
+        LOG(Window, TRACE, "Terminating Window");
         glfwDestroyWindow(m_WindowHandle);
         m_WindowHandle = nullptr;
     }
 }
 
-void OnEvent(const Events::EventBase& event)
-{
-    //switch (event.GetEventCategory())
-    //{
-    //    case Events::A
 
-    //}
-}
-
-void Window::BroadCastWindowQuitInputCallback()
+void Window::SetWindowEventCallback(const EventCallbackFn& callback)
 {
-    if (m_WindowQuitInputCb)
-        m_WindowQuitInputCb();
-}
-
-void Window::RegisterWindowQuitInputCallback(const std::function<void()>& callback)
-{
-    if (callback)
-    {
-        m_WindowQuitInputCb = callback;
-    }
-}
-
-void Window::HandleGLFWEvents(const Events::EventBase& event)
-{
-    Events::EventManager::Get().DispatchEvent(event);
+    m_WindowProps.EventCallback = callback;
+    LOG(Window, TRACE, "Window Event Callback Set");
 }
 
 }; // namespace Engine

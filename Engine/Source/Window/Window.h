@@ -4,44 +4,45 @@
 #include "Error/Error.h"
 
 #include "Events/Event.h"
+#include "Logger/Logger.h"
 
 #include <functional>
+
+DECLARE_LOG_CATEGORY(Window)
 
 struct GLFWwindow;
 
 namespace Engine
 {
+
+using EventCallbackFn = std::function<void(Events::EventBase&)>;
+
 struct SWindowProps
 {
     Point2D<uint32_t> Dimension;
     Point2D<uint32_t> Position;
     std::string_view Title;
+
+    EventCallbackFn EventCallback;
 };
 
 class Window
 {
+
 public:
     Window();
     Window(const SWindowProps& inWindowProps);
     ~Window();
 
     SGenericError Init();
-    void Update();
+    void OnUpdate();
     void Terminate();
 
-    void OnEvent(const Events::EventBase& event);
-
-    void HandleGLFWEvents(const Events::EventBase& event);
-
-    /// TODO: Move to Event System
-    void RegisterWindowQuitInputCallback(const std::function<void()>& callback);
-
-    void BroadCastWindowQuitInputCallback();
-
+    void SetWindowEventCallback(const EventCallbackFn& callback);
+    void CloseWindow();
 private:
-    SWindowProps m_WindowProps;
     GLFWwindow* m_WindowHandle{ nullptr };
-
-    std::function<void()> m_WindowQuitInputCb;
+    SWindowProps m_WindowProps;
 };
+
 }
