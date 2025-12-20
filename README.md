@@ -21,10 +21,14 @@ It is used for windowing and input events handling.
 
 Used to run the main build script to invoke premake
 
+### [Magic-Enum](https://github.com/Neargye/magic_enum)
+
+A header file for enum reflection for debugging purpose. 
+
 
 ### Windows Specifics
 
-- Visual Studio version 2022 
+- Visual Studio version 2026 
 
 
 ###  Linux Specifics  
