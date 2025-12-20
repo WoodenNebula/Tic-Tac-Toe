@@ -20,6 +20,9 @@ public:
     ~Application();
 
     SGenericError Init();
+
+    void OnEvent(const Events::EventBase& event);
+
     void Run();
     void Shutdown();
     void OnWindowQuitInput();
