@@ -15,6 +15,11 @@ workspace "Tic-Tac-Toe"
     filter "system:windows"
         startproject "Tic-Tac-Toe"
         defines { "WINDOWS" }
+        systemversion "latest"
+
+        filter "action:vs2026"
+            buildoptions { "/Zc:preprocessor" }
+        filter{}
     filter{}
 
     filter "system:linux"
