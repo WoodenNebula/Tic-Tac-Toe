@@ -2,13 +2,17 @@
 #include "Events/CoreEvents.h"
 #include "Logger/Logger.h"
 
+#include "Core/Util/magic_enum.hpp"
+
+DECLARE_LOG_CATEGORY(EventManager)
+
 namespace Engine::Events
 {
 
 void EventManager::Subscribe(EventTypes eventType, const EventCallbackFn cb)
 {
     // Subscription logic would go here
-    Logger::LogInfo("EventManager", "Subscribed to event type");
+    LOG(EventManager, INFO, "Subscribed to event type {}", magic_enum::enum_name<EventTypes>(eventType));
 }
 
 
@@ -18,19 +22,19 @@ void EventManager::DispatchEvent(const EventBase& Event)
     switch (Event.GetEventCategory())
     {
     case EventCategoryTypes::Window:
-        Logger::LogInfo("EventManager", "Dispatched Window Event " + Event.ToString());
+        LOG(EventManager, TRACE, "Dispatched Window Event {}", Event.ToString());
         break;
     case EventCategoryTypes::Mouse:
-        //Logger::LogInfo("EventManager", "Dispatched Mouse Event " + Event.ToString());
+        // LOG(EventManager, TRACE, "Dispatched Mouse Event {}", Event.ToString());
         break;
     case EventCategoryTypes::Key:
-        Logger::LogInfo("EventManager", "Dispatched Key Event " + Event.ToString());
+        LOG(EventManager, TRACE, "Dispatched Key Event {}", Event.ToString());
         break;
     case EventCategoryTypes::Application:
-        Logger::LogInfo("EventManager", "Dispatched Application Event " + Event.ToString());
+        LOG(EventManager, TRACE, "Dispatched Application Event {}", Event.ToString());
         break;
     default:
-        Logger::LogWarning("EventManager", "Dispatched Unknown Event Category " + Event.ToString());
+        LOG(EventManager, WARN, "Dispatched Unknown Event Category {}", Event.ToString());
         break;
     }
 }
