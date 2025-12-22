@@ -85,3 +85,4 @@ inline Engine::LogCategory Log##CategoryName{#CategoryName, Level };
         ); \
     } while (0)
 }; // namespace Engine
+DECLARE_LOG_CATEGORY(Any);
