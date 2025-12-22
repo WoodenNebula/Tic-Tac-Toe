@@ -35,6 +35,9 @@ public:
     EventCategoryTypes GetEventCategory() const { return m_EventCategory; }
 
     virtual std::string ToString() const = 0;
+
+public:
+    bool Handled{ false };
 protected:
     EventTypes m_EventType{ EventTypes::None };
     EventCategoryTypes m_EventCategory{ EventCategoryTypes::None };
