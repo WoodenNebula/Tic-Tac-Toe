@@ -13,9 +13,9 @@ DECLARE_LOG_CATEGORY(Application)
 
 namespace Engine
 {
-Application::Application() {}
+Application::Application() : m_IsRunning(true) {}
 
-Application::Application(const SApplicationProps& inApplicationProps) : m_ApplicationProps(inApplicationProps)
+Application::Application(const SApplicationProps& inApplicationProps) : m_ApplicationProps(inApplicationProps), m_IsRunning(true)
 {
     // Application specific pre init code here
 }
@@ -48,29 +48,44 @@ SGenericError Application::Init()
 
 void Application::OnEvent(const Events::EventBase& event)
 {
-    switch (event.GetEventType())
+    // Reverse iterate through layer stack
+    for (auto itr = m_LayerStack.end(); itr != m_LayerStack.begin(); )
     {
-    case Events::EventTypes::WindowClose:
-        OnWindowQuitInput();
-        break;
-    default:
-        Events::EventManager::Get().DispatchEvent(event);
-        break;
+        auto layer = *(--itr);
+        layer->OnEvent(event);
+        if (event.Handled)
+        {
+            break;
+        }
     }
+
+
+    //switch (event.GetEventType())
+    //{
+    //case Events::EventTypes::WindowClose:
+    //    OnWindowQuitInput();
+    //    break;
+    //default:
+    //    Events::EventManager::Get().DispatchEvent(event);
+    //    break;
+    //}
 }
 
 void Application::OnWindowQuitInput()
 {
     m_Window->CloseWindow();
-    m_ShouldClose = true;
+    m_IsRunning = false;
 }
 
 void Application::Run()
 {
     /// Engine Loop first?
-    while (!m_ShouldClose)
+    while (m_IsRunning)
     {
-        m_Window->OnUpdate();
+        for (auto layer : m_LayerStack)
+        {
+            layer->OnUpdate(0.0f);
+        }
         glfwPollEvents();
     }
 }
