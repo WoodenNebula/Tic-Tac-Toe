@@ -2,6 +2,7 @@
 
 #include "Error/Error.h"
 #include "Window/Window.h"
+#include "Core/LayerStack.h"
 #include <memory>
 
 namespace Engine
@@ -27,10 +28,14 @@ public:
     void Shutdown();
     void OnWindowQuitInput();
 
-private:
+protected:
     SApplicationProps m_ApplicationProps;
-    std::unique_ptr<Window> m_Window;
+    bool m_IsRunning;
 
-    bool m_ShouldClose{ false };
+    std::unique_ptr<Window> m_Window;
+    LayerStack m_LayerStack;
 };
+
+// Entry point to be defined in GAME project
+Application* CreateApplication(int argc, char* argv[]);
 }; // !namespace Engine
