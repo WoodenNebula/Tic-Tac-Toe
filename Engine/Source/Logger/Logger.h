@@ -1,4 +1,10 @@
 #pragma once
+
+#ifdef DEBUG
+#include "Core/Util/magic_enum.hpp"
+#endif // DEBUG
+
+
 #include <iostream>
 #include <format>
 #include <string_view>
@@ -39,12 +45,14 @@ struct LogCategory
 
 inline static void LogWrite(const LogCategory& category, ELogLevel level, std::string_view msg)
 {
+    if (level < ENGINE_LOG_LEVEL)
+        return;
     if (level < category.LogLevel)
         return;
 
     std::string logLevelStr;
 
-    switch (category.LogLevel)
+    switch (level)
     {
     case ELogLevel::Trace: logLevelStr = "TRACE"; break;
     case ELogLevel::Info: logLevelStr = "INFO"; break;

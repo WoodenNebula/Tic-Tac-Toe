@@ -123,7 +123,7 @@ void Window::Terminate()
 }
 
 
-void Window::SetWindowEventCallback(const EventCallbackFn& callback)
+void Window::SetWindowEventCallback(const WindowEventCallbackFn& callback)
 {
     m_WindowProps.EventCallback = callback;
     LOG(Window, TRACE, "Window Event Callback Set");

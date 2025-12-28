@@ -28,16 +28,14 @@ void GLFWEventCallbacks::key_callback(GLFWwindow* windowHandle, int key, int sca
         window.EventCallback(releaseEvent);
         break;
     }
-    default:
+    case GLFW_REPEAT:
+    {
+        Events::InputEvents::KeyHeldEvent repeatEvent(static_cast<Events::Key>(key));
+        window.EventCallback(repeatEvent);
         break;
     }
-
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(windowHandle, GLFW_TRUE);
-        {
-            //window->BroadCastWindowQuitInputCallback();
-        }
+    default:
+        break;
     }
 }
 

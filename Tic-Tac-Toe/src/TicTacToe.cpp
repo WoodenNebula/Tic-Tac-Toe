@@ -1,7 +1,8 @@
 #include <Engine.h>
 #include "Core/EntryPoint.h"
 
-DECLARE_LOG_CATEGORY(TicTacToe)
+DECLARE_LOG_CATEGORY_LEVEL(TicTacToe, INFO)
+
 
 class TicTacToeLayer : public Engine::Layer
 {
@@ -26,7 +27,7 @@ public:
     virtual void OnEvent(const Engine::Events::EventBase& event) override
     {
         // Event handling logic for the Tic-Tac-Toe layer
-        LOG(TicTacToe, TRACE, "Event Received in {}", m_Name);
+        LOG(TicTacToe, TRACE, "Event {} Received in {}", event, m_Name);
     }
 };
 

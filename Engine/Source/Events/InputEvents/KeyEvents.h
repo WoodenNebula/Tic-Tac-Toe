@@ -16,9 +16,13 @@ class KeyEvent : public EventBase
 {
 public:
     Key GetKey() const { return m_Key; }
+    virtual EventTypes GetEventType() const override { return m_EventType; }
+    virtual EventCategoryTypes GetEventCategory() const override { return m_EventCategory; }
 protected:
     KeyEvent() = delete;
-    KeyEvent(Key Key) : EventBase(EventTypes::None, EventCategoryTypes::Key), m_Key(Key) {}
+    KeyEvent(Key Key, EventTypes eventType) : EventBase(eventType, EventCategoryTypes::Key), m_Key(Key)
+    {
+    }
 protected:
     Key m_Key;
 };
@@ -28,10 +32,11 @@ class KeyPressedEvent : public KeyEvent
 {
 public:
     KeyPressedEvent(Key Key, bool IsRepeat)
-        :KeyEvent(Key), m_IsRepeat(IsRepeat)
+        :KeyEvent(Key, GetStaticEventType()), m_IsRepeat(IsRepeat)
     {
-        m_EventType = EventTypes::KeyPressed;
     }
+
+    static EventTypes GetStaticEventType() { return EventTypes::KeyPressed; }
 
     virtual std::string ToString() const override
     {
@@ -53,10 +58,9 @@ private:
 class KeyReleasedEvent : public KeyEvent
 {
 public:
-    KeyReleasedEvent(Key Key) :KeyEvent(Key)
-    {
-        m_EventType = EventTypes::KeyReleased;
-    }
+    KeyReleasedEvent(Key Key) :KeyEvent(Key, GetStaticEventType()) {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::KeyReleased; }
 
     virtual std::string ToString() const override
     {
@@ -73,14 +77,24 @@ public:
 class KeyHeldEvent : public KeyEvent
 {
 public:
-    KeyHeldEvent(Key Key) :KeyEvent(Key)
-    {
-        m_EventType = EventTypes::KeyHeld;
-    }
+    KeyHeldEvent(Key Key) :KeyEvent(Key, GetStaticEventType()) {}
+    static EventTypes GetStaticEventType() { return EventTypes::KeyHeld; }
 
     virtual std::string ToString() const override
     {
-        return "KeyHeldEvent: " + std::to_string(static_cast<std::underlying_type_t<Key>>(m_Key));
+#ifdef DEBUG
+        std::string msg("KeyHeldEvent: ");
+        msg.append((magic_enum::enum_name(m_Key)));
+        msg.append(", IsRepeat: " + std::to_string(m_RepeatCount));
+        return msg;
+#else
+        return "KeyHeldEvent: " + std::to_string(static_cast<std::underlying_type_t<Key>>(m_Key)) + ", IsRepeat" + std::to_string(m_RepeatCount);
+#endif 
     }
+
+    int RepeatCount() const { return m_RepeatCount; }
+protected:
+    int m_RepeatCount{ 1 };
+
 };
 }; // namespace Engine::Events::InputEvents

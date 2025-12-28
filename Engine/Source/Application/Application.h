@@ -3,6 +3,8 @@
 #include "Error/Error.h"
 #include "Window/Window.h"
 #include "Core/LayerStack.h"
+#include "Events/CoreEvents.h"
+
 #include <memory>
 
 namespace Engine
@@ -22,13 +24,14 @@ public:
 
     SGenericError Init();
 
-    void OnEvent(const Events::EventBase& event);
+    void OnEvent(Events::EventBase& event);
 
     void Run();
     void Shutdown();
-    void OnWindowQuitInput();
 
 protected:
+    bool OnWindowCloseEvent(Events::WindowCloseEvent& e);
+
     SApplicationProps m_ApplicationProps;
     bool m_IsRunning;
 

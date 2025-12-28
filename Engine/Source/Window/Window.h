@@ -15,7 +15,7 @@ struct GLFWwindow;
 namespace Engine
 {
 
-using EventCallbackFn = std::function<void(Events::EventBase&)>;
+using WindowEventCallbackFn = std::function<void(Events::EventBase&)>;
 
 struct SWindowProps
 {
@@ -23,13 +23,13 @@ struct SWindowProps
     Point2D<uint32_t> Position;
     std::string_view Title;
 
-    EventCallbackFn EventCallback;
+    WindowEventCallbackFn EventCallback;
 };
 
 class Window
 {
-
 public:
+
     Window();
     Window(const SWindowProps& inWindowProps);
     ~Window();
@@ -38,11 +38,12 @@ public:
     void OnUpdate();
     void Terminate();
 
-    void SetWindowEventCallback(const EventCallbackFn& callback);
+    void SetWindowEventCallback(const WindowEventCallbackFn& callback);
     void CloseWindow();
 private:
     GLFWwindow* m_WindowHandle{ nullptr };
     SWindowProps m_WindowProps;
 };
+
 
 }
