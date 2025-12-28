@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef MAIN
+
+#else
+#define MAIN
 /// TODO: Abstract out Platform specific entry point handling
 #include "Error/Error.h"
 #include "Application/Application.h"
@@ -22,3 +26,4 @@ int main(int argc, char* argv[])
 
     delete App;
 }
+#endif

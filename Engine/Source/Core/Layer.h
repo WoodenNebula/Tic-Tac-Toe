@@ -14,7 +14,7 @@ public:
     virtual void OnAttach() {}
     virtual void OnDetach() {}
     virtual void OnUpdate(float deltaTime) {}
-    virtual void OnEvent(const Events::EventBase& event) {}
+    virtual void OnEvent(Events::EventBase& event) {}
 
     std::string_view GetName() const { return m_Name; }
 protected:

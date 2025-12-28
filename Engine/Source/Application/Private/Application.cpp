@@ -14,6 +14,7 @@ DECLARE_LOG_CATEGORY(Application)
 
 namespace Engine
 {
+
 Application::Application() : m_IsRunning(true) {}
 
 Application::Application(const SApplicationProps& inApplicationProps) : m_ApplicationProps(inApplicationProps), m_IsRunning(true)
