@@ -31,6 +31,8 @@ public:
 
 protected:
     bool OnWindowCloseEvent(Events::WindowCloseEvent& e);
+    bool OnWindowResizeEvent(Events::WindowResizeEvent& e);
+    bool OnWindowMovedEvent(Events::WindowMovedEvent& e);
 
     SApplicationProps m_ApplicationProps;
     bool m_IsRunning;

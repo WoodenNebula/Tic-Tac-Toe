@@ -20,7 +20,7 @@ using WindowEventCallbackFn = std::function<void(Events::EventBase&)>;
 struct SWindowProps
 {
     Point2D<uint32_t> Dimension;
-    Point2D<uint32_t> Position;
+    Point2D<int32_t> Position;
     std::string_view Title;
 
     WindowEventCallbackFn EventCallback;

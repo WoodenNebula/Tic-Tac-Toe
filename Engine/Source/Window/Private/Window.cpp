@@ -98,7 +98,7 @@ SGenericError Window::Init()
 
 void Window::OnUpdate()
 {
-    glClearColor(.69, .69, .69, 1);
+    glClearColor(.69f, .69f, .69f, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(m_WindowHandle);
 }

@@ -63,6 +63,8 @@ public:
 
     static EventTypes GetStaticEventType() { return EventTypes::WindowResize; }
 
+    Point2D<uint32_t> GetDimensions() const { return m_Dimensions; }
+
     std::string ToString() const override
     {
         return "WindowResizedEvent: " + m_Dimensions.ToString();
@@ -74,9 +76,11 @@ private:
 class WindowMovedEvent : public WindowEvent
 {
 public:
-    WindowMovedEvent(int width, int height) : WindowEvent(GetStaticEventType()), m_Position{ width, height } {}
+    WindowMovedEvent(int width, int height) : WindowEvent(GetStaticEventType()), m_Position{ static_cast<int32_t>(width), static_cast<int32_t>(height) } {}
 
     static EventTypes GetStaticEventType() { return EventTypes::WindowMoved; }
+
+    Point2D<int32_t> GetPosition() const { return m_Position; }
 
     std::string ToString() const override
     {
@@ -84,7 +88,7 @@ public:
     }
 
 private:
-    Point2D<int> m_Position;
+    Point2D<int32_t> m_Position;
 };
 
 

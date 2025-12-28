@@ -52,6 +52,9 @@ void Application::OnEvent(Events::EventBase& event)
 {
     Events::EventDispatcher dispatcher(event);
     dispatcher.DispatchEvent<Events::WindowCloseEvent>(BIND_EVENT_CB(Application::OnWindowCloseEvent));
+    dispatcher.DispatchEvent<Events::WindowMovedEvent>(BIND_EVENT_CB(Application::OnWindowMovedEvent));
+    dispatcher.DispatchEvent<Events::WindowResizeEvent>(BIND_EVENT_CB(Application::OnWindowResizeEvent));
+
 
     // Reverse iterate through layer stack
     for (auto itr = m_LayerStack.end(); itr != m_LayerStack.begin(); )
@@ -68,11 +71,27 @@ void Application::OnEvent(Events::EventBase& event)
 bool Application::OnWindowCloseEvent(Events::WindowCloseEvent& e)
 {
     e.Handled = true;
-
     m_IsRunning = false;
-    //m_Window->CloseWindow();
+
     return true;
 }
+
+bool Application::OnWindowResizeEvent(Events::WindowResizeEvent& e)
+{
+    e.Handled = true;
+    m_ApplicationProps.WindowProps.Dimension = e.GetDimensions();
+
+    return true;
+}
+
+bool Application::OnWindowMovedEvent(Events::WindowMovedEvent& e)
+{
+    e.Handled = true;
+    m_ApplicationProps.WindowProps.Position = e.GetPosition();
+
+    return true;
+}
+
 
 void Application::Run()
 {

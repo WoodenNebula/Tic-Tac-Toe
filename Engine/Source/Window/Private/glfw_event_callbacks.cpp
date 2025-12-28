@@ -81,7 +81,7 @@ void GLFWEventCallbacks::mouse_move_callback(GLFWwindow* windowHandle, double xo
 void GLFWEventCallbacks::window_pos_callback(GLFWwindow* windowHandle, int xpos, int ypos)
 {
     SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
-    window.Position = { (uint32_t)xpos, (uint32_t)ypos };
+    window.Position = { (int32_t)xpos, (int32_t)ypos };
 
     Events::WindowMovedEvent movedEvent(xpos, ypos);
     window.EventCallback(movedEvent);
