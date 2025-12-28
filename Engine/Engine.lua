@@ -12,14 +12,26 @@ project "Engine"
     
     dependson { "glad", "GLFW" }
 
+    defines { "GLFW_INCLUDE_NONE" }
+
     includedirs {
         "Source",
         "dependencies/glad/include",
-        "dependencies/GLFW/include"
+        "dependencies/GLFW/include",
+        "dependencies/stb_image",
+        "dependencies/glm",
     }
 
     
-    files { "Source/**.h", "Source/**.cpp" }
+    files { 
+        "Source/**.h", 
+        "Source/**.cpp", 
+        "dependencies/glm/**.hpp",
+        "dependencies/glm/**.inl",
+
+        "dependencies/stb_image/*.cpp",
+        "dependencies/stb_image/*.h",
+    }
     
     filter "system:windows"
     -- targetname("Engine.dll")

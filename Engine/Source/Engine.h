@@ -6,9 +6,12 @@
 #include "Application/Application.h"
 #include "Core/Layer.h"
 
+#include "Events/Event.h"
 #include "Events/CoreEvents.h"
+
+#include "Renderer/Renderer.h"
 
 #include "Logger/Logger.h"
 #include "Error/Error.h"
 
-#include "Core/EntryPoint.h"
+#include <glm.hpp>

@@ -21,6 +21,8 @@ public:
     }
     virtual void OnUpdate(float deltaTime) override
     {
+        Engine::Renderer::SetClearColor({ 0.2f, 0.2f, 0.2f });
+        Engine::Renderer::Clear();
         // Update logic for the Tic-Tac-Toe layer
         //LOG(TicTacToe, TRACE, "Layer Updated in {} with deltaTime {}", m_Name, deltaTime);
     }

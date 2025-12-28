@@ -8,6 +8,7 @@
 #include "Events/EventManager.h"
 #include "Events/CoreEvents.h"
 #include "Logger/Logger.h"
+#include "Renderer/Renderer.h"
 
 DECLARE_LOG_CATEGORY(Application)
 
@@ -44,6 +45,7 @@ SGenericError Application::Init()
     m_Window->SetWindowEventCallback(BIND_EVENT_CB(Application::OnEvent));
     LOG(Application, TRACE, "Event callback bound to window events");
 
+    Renderer::Init();
     return {};
 }
 
@@ -102,6 +104,7 @@ void Application::Run()
         {
             layer->OnUpdate(0.0f);
         }
+        m_Window->OnUpdate(0.0f);
         glfwPollEvents();
     }
 }

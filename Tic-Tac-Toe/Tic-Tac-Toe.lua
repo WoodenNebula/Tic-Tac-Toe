@@ -7,6 +7,7 @@ project "Tic-Tac-Toe"
     targetdir("%{wks.location}/build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
     objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
 
+    defines { "GLFW_INCLUDE_NONE" }
     
     dependson { "Engine" }
 
@@ -15,6 +16,9 @@ project "Tic-Tac-Toe"
         "../Engine/Source",
         "../Engine/dependencies/glad/include",
         "../Engine/dependencies/GLFW/include",
+        "../Engine/dependencies/glm",
+        "../Engine/dependencies/stb_image",
+
     }
 
     
