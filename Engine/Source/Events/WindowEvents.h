@@ -9,18 +9,20 @@ namespace Engine::Events
 
 class WindowEvent : public EventBase
 {
+public:
+    virtual EventTypes GetEventType() const override { return m_EventType; }
+    virtual EventCategoryTypes GetEventCategory() const override { return m_EventCategory; }
 protected:
-    WindowEvent() : EventBase(EventTypes::None, EventCategoryTypes::Window) {}
-    ~WindowEvent() = default;
+    WindowEvent(EventTypes eventType) : EventBase(eventType, EventCategoryTypes::Window) {}
+    virtual ~WindowEvent() = default;
 };
 
 class WindowCloseEvent : public WindowEvent
 {
 public:
-    WindowCloseEvent()
-    {
-        m_EventType = EventTypes::WindowClose;
-    }
+    WindowCloseEvent() : WindowEvent(GetStaticEventType()) {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::WindowClose; }
 
     std::string ToString() const override
     {
@@ -31,10 +33,9 @@ public:
 class WindowGainFocusEvent : public WindowEvent
 {
 public:
-    WindowGainFocusEvent()
-    {
-        m_EventType = EventTypes::WindowGainFocus;
-    }
+    WindowGainFocusEvent() : WindowEvent(GetStaticEventType()) {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::WindowGainFocus; }
 
     std::string ToString() const override
     {
@@ -45,10 +46,9 @@ public:
 class WindowLostFocus : public WindowEvent
 {
 public:
-    WindowLostFocus()
-    {
-        m_EventType = EventTypes::WindowLostFocus;
-    }
+    WindowLostFocus() : WindowEvent(GetStaticEventType()) {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::WindowLostFocus; }
 
     std::string ToString() const override
     {
@@ -59,10 +59,11 @@ public:
 class WindowResizeEvent : public WindowEvent
 {
 public:
-    WindowResizeEvent(uint32_t width, uint32_t height) : m_Dimensions{ width, height }
-    {
-        m_EventType = EventTypes::WindowResize;
-    }
+    WindowResizeEvent(uint32_t width, uint32_t height) : WindowEvent(GetStaticEventType()), m_Dimensions{ width, height } {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::WindowResize; }
+
+    Point2D<uint32_t> GetDimensions() const { return m_Dimensions; }
 
     std::string ToString() const override
     {
@@ -75,10 +76,11 @@ private:
 class WindowMovedEvent : public WindowEvent
 {
 public:
-    WindowMovedEvent(int width, int height) : m_Position{ width, height }
-    {
-        m_EventType = EventTypes::WindowMoved;
-    }
+    WindowMovedEvent(int width, int height) : WindowEvent(GetStaticEventType()), m_Position{ static_cast<int32_t>(width), static_cast<int32_t>(height) } {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::WindowMoved; }
+
+    Point2D<int32_t> GetPosition() const { return m_Position; }
 
     std::string ToString() const override
     {
@@ -86,7 +88,7 @@ public:
     }
 
 private:
-    Point2D<int> m_Position;
+    Point2D<int32_t> m_Position;
 };
 
 

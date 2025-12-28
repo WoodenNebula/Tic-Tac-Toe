@@ -23,9 +23,11 @@ Application::Application(const SApplicationProps& inApplicationProps) : m_Applic
 Application::~Application()
 {
     // TODO: DEINIT APPLICATION AND THEN CORE
-    Shutdown();
-    std::cout << "Application Destroyed\n";
-
+    if (m_IsRunning)
+    {
+        Shutdown();
+    }
+    LOG(Application, TRACE, "Application Shutdown Complete");
 }
 
 SGenericError Application::Init()
@@ -39,43 +41,57 @@ SGenericError Application::Init()
         return Err;
     }
 
-    m_Window->SetWindowEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+    m_Window->SetWindowEventCallback(BIND_EVENT_CB(Application::OnEvent));
     LOG(Application, TRACE, "Event callback bound to window events");
 
     return {};
 }
 
 
-void Application::OnEvent(const Events::EventBase& event)
+void Application::OnEvent(Events::EventBase& event)
 {
+    Events::EventDispatcher dispatcher(event);
+    dispatcher.DispatchEvent<Events::WindowCloseEvent>(BIND_EVENT_CB(Application::OnWindowCloseEvent));
+    dispatcher.DispatchEvent<Events::WindowMovedEvent>(BIND_EVENT_CB(Application::OnWindowMovedEvent));
+    dispatcher.DispatchEvent<Events::WindowResizeEvent>(BIND_EVENT_CB(Application::OnWindowResizeEvent));
+
+
     // Reverse iterate through layer stack
     for (auto itr = m_LayerStack.end(); itr != m_LayerStack.begin(); )
     {
-        auto layer = *(--itr);
-        layer->OnEvent(event);
         if (event.Handled)
         {
             break;
         }
+        auto layer = *(--itr);
+        layer->OnEvent(event);
     }
-
-
-    //switch (event.GetEventType())
-    //{
-    //case Events::EventTypes::WindowClose:
-    //    OnWindowQuitInput();
-    //    break;
-    //default:
-    //    Events::EventManager::Get().DispatchEvent(event);
-    //    break;
-    //}
 }
 
-void Application::OnWindowQuitInput()
+bool Application::OnWindowCloseEvent(Events::WindowCloseEvent& e)
 {
-    m_Window->CloseWindow();
+    e.Handled = true;
     m_IsRunning = false;
+
+    return true;
 }
+
+bool Application::OnWindowResizeEvent(Events::WindowResizeEvent& e)
+{
+    e.Handled = true;
+    m_ApplicationProps.WindowProps.Dimension = e.GetDimensions();
+
+    return true;
+}
+
+bool Application::OnWindowMovedEvent(Events::WindowMovedEvent& e)
+{
+    e.Handled = true;
+    m_ApplicationProps.WindowProps.Position = e.GetPosition();
+
+    return true;
+}
+
 
 void Application::Run()
 {
@@ -95,10 +111,10 @@ void Application::Shutdown()
     m_Window->Terminate();
 
     /// TODO: Engine Shutdown thing
-    std::cout << "Application Shutdown\n";
+    //std::cout << "Application Shutdown\n";
 
-    glfwTerminate();
-    std::cout << "GLFW Terminated\n";
+    //glfwTerminate();
+    //std::cout << "GLFW Terminated\n";
 
 }
 };

@@ -16,17 +16,23 @@ namespace Engine::Events::InputEvents
 
 class MouseEvent : public EventBase
 {
+public:
+    virtual EventTypes GetEventType() const override { return m_EventType; }
+    virtual EventCategoryTypes GetEventCategory() const override { return m_EventCategory; }
 protected:
-    MouseEvent() : EventBase(EventTypes::None, EventCategoryTypes::Mouse) {}
+    MouseEvent(EventTypes eventType) : EventBase(eventType, EventCategoryTypes::Mouse) {}
+    virtual ~MouseEvent() = default;
 };
 
 class MouseButtonPressedEvent : public MouseEvent
 {
 public:
-    MouseButtonPressedEvent(Mouse Button) : m_Button(Button)
+    MouseButtonPressedEvent(Mouse Button) : MouseEvent(GetStaticEventType()), m_Button(Button)
     {
         m_EventType = EventTypes::MouseButtonPressed;
     }
+
+    static EventTypes GetStaticEventType() { return EventTypes::MouseButtonPressed; }
 
     virtual std::string ToString() const override
     {
@@ -47,10 +53,11 @@ private:
 class MouseButtonReleasedEvent : public MouseEvent
 {
 public:
-    MouseButtonReleasedEvent(Mouse Button) : m_Button(Button)
+    MouseButtonReleasedEvent(Mouse Button) : MouseEvent(GetStaticEventType()), m_Button(Button)
     {
-        m_EventType = EventTypes::MouseButtonReleased;
     }
+
+    static EventTypes GetStaticEventType() { return EventTypes::MouseButtonReleased; }
 
     virtual std::string ToString() const override
     {
@@ -73,10 +80,9 @@ class MouseMovedEvent : public MouseEvent
 public:
     using Position = Point2D<double>;
 
-    MouseMovedEvent(double xPos, double yPos) : m_Pos{ xPos, yPos }
-    {
-        m_EventType = EventTypes::MouseMoved;
-    }
+    MouseMovedEvent(double xPos, double yPos) : MouseEvent(GetStaticEventType()), m_Pos{ xPos, yPos } {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::MouseMoved; }
 
     virtual std::string ToString() const override
     {
@@ -93,10 +99,9 @@ class MouseScrolledEvent : public MouseEvent
 public:
     using Position = Point2D<double>;
 
-    MouseScrolledEvent(double xOffset, double yOffset) : m_Offset{ xOffset, yOffset }
-    {
-        m_EventType = EventTypes::MouseScrolled;
-    }
+    MouseScrolledEvent(double xOffset, double yOffset) : MouseEvent(GetStaticEventType()), m_Offset{ xOffset, yOffset } {}
+
+    static EventTypes GetStaticEventType() { return EventTypes::MouseScrolled; }
 
     virtual std::string ToString() const override
     {

@@ -98,7 +98,7 @@ SGenericError Window::Init()
 
 void Window::OnUpdate()
 {
-    glClearColor(.69, .69, .69, 1);
+    glClearColor(.69f, .69f, .69f, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(m_WindowHandle);
 }
@@ -123,7 +123,7 @@ void Window::Terminate()
 }
 
 
-void Window::SetWindowEventCallback(const EventCallbackFn& callback)
+void Window::SetWindowEventCallback(const WindowEventCallbackFn& callback)
 {
     m_WindowProps.EventCallback = callback;
     LOG(Window, TRACE, "Window Event Callback Set");
