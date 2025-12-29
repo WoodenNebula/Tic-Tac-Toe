@@ -91,11 +91,11 @@ void Renderer::SetClearColor(const glm::vec3& Color)
     glClearColor(Color.r, Color.g, Color.b, 1.0f);
 }
 
-void Renderer::Draw(const VertexArray& VA, const IndexBuffer& IBO,
-    const Shader& shader)
+void Renderer::Draw(const CVertexArray& VA, const CIndexBuffer& IBO,
+    const CShader& shader)
 {
 /* Color of background of window */
-    glClearColor(0.2f, 0.39f, 0.32f, 1.0f);
+    //glClearColor(0.2f, 0.39f, 0.32f, 1.0f);
 
     shader.Bind();
     VA.Bind();
@@ -107,10 +107,11 @@ void Renderer::Draw(const VertexArray& VA, const IndexBuffer& IBO,
     /// Data type of indices
     /// Index of indices
     ///
+
     glDrawElements(GL_TRIANGLES, IBO.GetCount(), GL_UNSIGNED_INT, 0);
 }
 
-static void DrawLine(const VertexArray& VA, uint32_t vertexCount)
+void Renderer::DrawLine(const CVertexArray& VA, uint32_t vertexCount)
 {
     VA.Bind();
     glDrawArrays(GL_LINES, 0, vertexCount);

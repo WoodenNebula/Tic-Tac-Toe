@@ -12,7 +12,7 @@
 
 namespace Engine
 {
-Shader::Shader(const std::filesystem::path& vertexFilePath, const std::filesystem::path& fragmentFilePath)
+CShader::CShader(const std::filesystem::path& vertexFilePath, const std::filesystem::path& fragmentFilePath)
     : m_VertexFilePath(vertexFilePath),
     m_FragmentFilePath(fragmentFilePath),
     m_ProgramID(0)
@@ -23,13 +23,13 @@ Shader::Shader(const std::filesystem::path& vertexFilePath, const std::filesyste
     m_ProgramID = CreateShaderProgram(vertexSrc, fragmentSrc);
 }
 
-void Shader::Bind() const { glUseProgram(m_ProgramID); }
+void CShader::Bind() const { glUseProgram(m_ProgramID); }
 
-void Shader::UnBind() const { glUseProgram(0); }
+void CShader::UnBind() const { glUseProgram(0); }
 
-uint32_t Shader::GetProgramID() { return m_ProgramID; }
+uint32_t CShader::GetProgramID() { return m_ProgramID; }
 
-std::string Shader::ParseShader(const std::filesystem::path& filePath)
+std::string CShader::ParseShader(const std::filesystem::path& filePath)
 {
     std::fstream shaderFile(filePath);
     std::string line;
@@ -52,7 +52,7 @@ std::string Shader::ParseShader(const std::filesystem::path& filePath)
 }
 
 /* creates a shader program that has to be attached and linked */
-uint32_t Shader::CreateShaderProgram(const std::string& vertexShaderSrc,
+uint32_t CShader::CreateShaderProgram(const std::string& vertexShaderSrc,
     const std::string& fragmentShaderSrc)
 {
     uint32_t vertexShader, fragmentShader;
@@ -93,7 +93,7 @@ uint32_t Shader::CreateShaderProgram(const std::string& vertexShaderSrc,
     return shaderProgram;
 }
 
-uint32_t Shader::CompileShader(ShaderType type, const std::string& shaderSrc)
+uint32_t CShader::CompileShader(ShaderType type, const std::string& shaderSrc)
 {
 /// Compilation Process
     uint32_t shaderID = 0;
@@ -138,30 +138,30 @@ uint32_t Shader::CompileShader(ShaderType type, const std::string& shaderSrc)
     return shaderID;
 }
 
-void Shader::SetUniform1i(const std::string& name, int value) const
+void CShader::SetUniform1i(const std::string& name, int value) const
 {
     glUniform1i(GetUniformLocation(name), value);
 }
 
-void Shader::SetUniform1f(const std::string& name, float value) const
+void CShader::SetUniform1f(const std::string& name, float value) const
 {
     glUniform1f(GetUniformLocation(name), value);
 }
 
-void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2,
+void CShader::SetUniform4f(const std::string& name, float v0, float v1, float v2,
     float v3) const
 {
     glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }
 
-void Shader::SetUniformMat4f(const std::string& name,
+void CShader::SetUniformMat4f(const std::string& name,
     const glm::mat4& matrix) const
 {
 // transpose is necessary if matrix is row major
     glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
 }
 
-uint32_t Shader::GetUniformLocation(const std::string& name) const
+uint32_t CShader::GetUniformLocation(const std::string& name) const
 {
 // check if the uniform already exists and if it does, return its location
     if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())

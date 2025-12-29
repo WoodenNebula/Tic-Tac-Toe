@@ -32,41 +32,43 @@ struct VertexBufferElement
     }
 };
 
-enum class DataType { FLOAT = 0, U_INT, U_CHAR };
+enum class EShaderDataType { FLOAT = 0, U_INT, U_CHAR };
 
-class VertexBufferLayout
+class CVertexBufferLayout
 {
 
 public:
-    VertexBufferLayout() : m_Stride(0) {};
-    ~VertexBufferLayout() {};
+    CVertexBufferLayout() : m_Stride(0) {};
+    ~CVertexBufferLayout() {};
 
     /// <param name="count">:number of elements per vertex attrib. For more than
     /// one attrib, this function has to be called each time with the count of
     /// elements in each attrib separately</param>
-    void Push(uint32_t count, DataType type)
+    template <EShaderDataType T>
+    void Push(uint32_t count)
     {
-        switch (type)
-        {
-        case DataType::FLOAT:
-            m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });
-            m_Stride +=
-                count * VertexBufferElement::GetSizeOfType(GL_FLOAT);
-            break;
+        ASSERT(false);
+    }
 
-        case DataType::U_INT:
-            m_Stride +=
-                count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_INT);
-            m_Elements.push_back({ GL_UNSIGNED_INT, count, GL_FALSE });
+    template<>
+    void Push<EShaderDataType::FLOAT>(uint32_t count)
+    {
+        m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });
+        m_Stride += count * VertexBufferElement::GetSizeOfType(GL_FLOAT);
+    }
 
-        case DataType::U_CHAR:
-            m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
-            m_Stride += count * VertexBufferElement::GetSizeOfType(
-                GL_UNSIGNED_BYTE);
-        default:
-            ASSERT(false);
-            break;
-        }
+    template<>
+    void Push<EShaderDataType::U_INT>(uint32_t count)
+    {
+        m_Elements.push_back({ GL_UNSIGNED_INT, count, GL_FALSE });
+        m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_INT);
+    }
+
+    template<>
+    void Push<EShaderDataType::U_CHAR>(uint32_t count)
+    {
+        m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
+        m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
     }
 
     inline const std::vector<VertexBufferElement>& GetElements() const
@@ -77,6 +79,7 @@ public:
     inline uint32_t GetStride() const { return m_Stride; }
 private:
     std::vector<VertexBufferElement> m_Elements;
+    // Stride is the total size of all attributes in a single vertex i.e. Pos + Color + TexCoord + ...
     uint32_t m_Stride;
 };
 } // namespace Engine

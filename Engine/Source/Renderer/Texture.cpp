@@ -3,10 +3,12 @@
 #include "glad/glad.h"
 #include "stb_image.h"
 
+#include <filesystem>
+
 namespace Engine
 {
 
-Texture::Texture(const std::string& path)
+Texture::Texture(const std::filesystem::path& path)
     : m_RendererID(0),
     m_FilePath(path),
     m_LocalBufer(nullptr),
@@ -15,7 +17,7 @@ Texture::Texture(const std::string& path)
     m_BPP(0)
 {
     stbi_set_flip_vertically_on_load(1);
-    m_LocalBufer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+    m_LocalBufer = stbi_load(path.string().c_str(), &m_Width, &m_Height, &m_BPP, 4);
 
     glGenTextures(1, &m_RendererID);
     glBindTexture(GL_TEXTURE_2D, m_RendererID);

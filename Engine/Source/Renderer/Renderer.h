@@ -32,9 +32,9 @@ public:
     /// <param name="VA">: Vertex Array Object</param>
     /// <param name="IBO">: Elemnt/Index Buffer Object</param>
     /// <param name="shader">: Shader Object</param>
-    static void Draw(const VertexArray& VA, const IndexBuffer& IBO,
-        const Shader& shader);
+    static void Draw(const CVertexArray& VA, const CIndexBuffer& IBO,
+        const CShader& shader);
 
-    static void DrawLine(const VertexArray& VA, uint32_t vertexCount);
+    static void DrawLine(const CVertexArray& VA, uint32_t vertexCount);
 };
 } // namespace Engine

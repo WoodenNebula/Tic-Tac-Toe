@@ -1,20 +1,13 @@
 #pragma once
-#include <string>
+#include <filesystem>
 
 namespace Engine
 {
 
 class Texture
 {
-private:
-    uint32_t m_RendererID;
-    std::string m_FilePath;
-    unsigned char* m_LocalBufer;
-    // m_BPP = BytesPerPixel
-    int m_Width, m_Height, m_BPP;
-
 public:
-    Texture(const std::string& path);
+    Texture(const std::filesystem::path& path);
     ~Texture();
 
     void Bind(uint32_t slot = 0) const;
@@ -24,5 +17,11 @@ public:
     inline int GetWidth() const { return m_Width; }
     inline int GetHeight() const { return m_Width; }
     inline int GetBytesPerPixel() const { return m_BPP; }
+private:
+    uint32_t m_RendererID;
+    std::filesystem::path m_FilePath;
+    unsigned char* m_LocalBufer;
+    // m_BPP = BytesPerPixel
+    int m_Width, m_Height, m_BPP;
 };
 } // namespace Engine

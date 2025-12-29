@@ -6,52 +6,51 @@
 
 namespace Engine
 {
-
-VertexArray::VertexArray(uint32_t size) : m_RendererID(0)
+CVertexArray::CVertexArray()
 {
-    glCreateBuffers(1, &m_RendererID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-    glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+    glCreateVertexArrays(1, &m_RendererID);
 }
 
-VertexArray::VertexArray(float* vertices, uint32_t size)
+CVertexArray::~CVertexArray()
 {
-    glCreateBuffers(1, &m_RendererID);
-    glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+    glDeleteVertexArrays(1, &m_RendererID);
 }
 
-VertexArray::~VertexArray() { glDeleteBuffers(1, &m_RendererID); }
-
-void VertexArray::SetData(const void* data, uint32_t size)
+void CVertexArray::Bind() const
 {
-    Bind();
-    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+    glBindVertexArray(m_RendererID);
 }
 
-void VertexArray::AddBuffer(const VertexBuffer& vb,
-    const VertexBufferLayout& layout)
+void CVertexArray::UnBind() const
+{
+    glBindVertexArray(0);
+}
+
+void CVertexArray::AddVertexBuffer(const std::shared_ptr<CVertexBuffer>& VertexBuffer)
 {
     this->Bind();
-    vb.Bind();
+    VertexBuffer->Bind();
 
-    const auto& elements = layout.GetElements();
+    const CVertexBufferLayout& layout = VertexBuffer->GetLayout();
+    const std::vector<VertexBufferElement>& elements = layout.GetElements();
     uint32_t offset = 0;
-
-    for (uint32_t i = 0; i < elements.size(); i++)
+    for (const auto& element : elements)
     {
-        const auto& element = elements[i];
-        glEnableVertexAttribArray(i);
-        glVertexAttribPointer(i, element.count, element.type,
-            element.normalized, layout.GetStride(),
-            (void*)offset);
-
-        offset +=
-            element.count * VertexBufferElement::GetSizeOfType(element.type);
+        glEnableVertexAttribArray(m_VertexBufferIndex);
+        glVertexAttribPointer(m_VertexBufferIndex, element.count, element.type, element.normalized, layout.GetStride(), (void*)offset);
+        offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+        m_VertexBufferIndex++;
     }
+
+    m_VertexBuffers.push_back(VertexBuffer);
 }
 
-void VertexArray::Bind() const { glBindBuffer(GL_ARRAY_BUFFER, m_RendererID); }
+void CVertexArray::SetIndexBuffer(const std::shared_ptr<CIndexBuffer>& IndexBuffer)
+{
+    Bind();
+    IndexBuffer->Bind();
 
-void VertexArray::UnBind() const { glBindBuffer(GL_ARRAY_BUFFER, 0); }
+    m_IndexBuffer = IndexBuffer;
+}
+
 }   // namespace Engine

@@ -6,17 +6,18 @@
 #include "VertexArray.h"
 #include "VertexBufferLayout.h"
 
+#include <filesystem>
+
 namespace Engine
 {
 
 Quad2D::Quad2D(const glm::vec2& center, float width, float height,
-    const std::string& texturePath)
+    const std::filesystem::path& texturePath)
     : m_Center(center),
     m_width(width),
     m_height(height),
-    // clang-format off
     m_vertices{
-        // Positions                                 // Texture coord (Bottom left is 0,0)
+        // Positions  x                 y           // Texture coord (Bottom left is 0,0)
         m_Center.x - m_width, m_Center.y + m_height, 0.0f, 1.0f,  // 0 Top Left
         m_Center.x + m_width, m_Center.y + m_height, 1.0f, 1.0f,  // 1 Top Right
         m_Center.x + m_width, m_Center.y - m_height, 1.0f, 0.0f,  // 2 Bottom Right
@@ -29,19 +30,25 @@ Quad2D::Quad2D(const glm::vec2& center, float width, float height,
         glm::vec3(m_vertices[12], m_vertices[13], 0.0f)  // 3
     },
     m_indices{ 0, 1, 2, 2, 3, 0 }
-{  // clang-format on
-    m_VA.reset(new VertexArray(sizeof(m_vertices)));
-    m_VB.reset(new VertexBuffer(m_vertices, sizeof(m_vertices)));
+{
+    // Create new VA
+    m_VA.reset(new CVertexArray);
 
-    m_IB.reset(new IndexBuffer(m_indices, sizeof(m_indices)));
+    // Create new VB with vertex Data
+    m_VB.reset(new CVertexBuffer(m_vertices, sizeof(m_vertices)));
 
-    m_Layout.reset(new VertexBufferLayout());
-    m_Layout->Push(2, DataType::FLOAT);  // pos
-    m_Layout->Push(2, DataType::FLOAT);  // texture
+    // Create and set the layout of the vertex Attributes
+    CVertexBufferLayout Layout;
+    Layout.Push<EShaderDataType::FLOAT>(2);  // pos
+    Layout.Push<EShaderDataType::FLOAT>(2);  // texture
 
-    m_VA->AddBuffer(*m_VB, *m_Layout);
+    m_VB->SetLayout(Layout);
 
-    m_QuadShader.reset(new Shader("./res/shader/vertex/quad.vertexShader",
+    m_VA->AddVertexBuffer(m_VB);
+
+    m_IB.reset(new CIndexBuffer(m_indices, sizeof(m_indices) / sizeof(m_indices[0])));
+
+    m_QuadShader.reset(new CShader("./res/shader/vertex/quad.vertexShader",
         "./res/shader/fragment/quad.fragmentShader"));
     m_Texture.reset(new Texture(texturePath));
 }

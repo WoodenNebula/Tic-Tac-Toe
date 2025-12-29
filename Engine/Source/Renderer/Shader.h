@@ -10,11 +10,11 @@ namespace Engine
 
 enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
 
-class Shader
+class CShader
 {
 public:
 
-    Shader(const std::filesystem::path& vertexFilePath, const std::filesystem::path& fragmentFilePath);
+    CShader(const std::filesystem::path& vertexFilePath, const std::filesystem::path& fragmentFilePath);
     uint32_t GetProgramID();
 
     void Bind() const;

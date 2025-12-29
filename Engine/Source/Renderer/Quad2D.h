@@ -14,23 +14,6 @@ namespace Engine
 
 class Quad2D
 {
-private:
-    glm::vec2 m_Center;
-    float m_width, m_height;
-
-    float m_vertices[16];
-    uint32_t m_indices[6];
-
-    std::vector<glm::vec3> m_initialPosition;
-
-    std::unique_ptr<Shader> m_QuadShader;
-    std::unique_ptr<VertexArray> m_VA;
-    std::unique_ptr<VertexBuffer> m_VB;
-    std::unique_ptr<IndexBuffer> m_IB;
-    std::unique_ptr<VertexBufferLayout> m_Layout;
-    std::unique_ptr<Texture> m_Texture;
-    glm::vec2 m_WinDimensions;
-
 public:
  /// <summary>
  /// Generates a Quad in 2D space at the specified position with diameter
@@ -39,7 +22,7 @@ public:
  /// <param name="center">Position at screen space(pixel) at which the quad
  /// will have its center</param> <param name="scale"></param>
     Quad2D(const glm::vec2& center, float width, float height,
-        const std::string& texturePath);
+        const std::filesystem::path& texturePath);
 
     ~Quad2D();
 
@@ -57,5 +40,21 @@ public:
         float v3) const;
     void SetUniformMat4f(const std::string& name,
         const glm::mat4& matrix) const;
+private:
+    glm::vec2 m_Center;
+    float m_width, m_height;
+
+    float m_vertices[16];
+    uint32_t m_indices[6];
+
+    std::vector<glm::vec3> m_initialPosition;
+
+    std::shared_ptr<CShader> m_QuadShader;
+    std::shared_ptr<CVertexArray> m_VA;
+    std::shared_ptr<CVertexBuffer> m_VB;
+    std::shared_ptr<CIndexBuffer> m_IB;
+    std::shared_ptr<Texture> m_Texture;
+    glm::vec2 m_WinDimensions;
 };
+
 } // namespace Engine
