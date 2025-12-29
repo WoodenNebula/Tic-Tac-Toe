@@ -17,9 +17,14 @@ TicTacToe& TicTacToe::Get()
 
 TicTacToe::TicTacToe(const Engine::SApplicationProps& appProps) : Engine::Application(appProps)
 {
-    m_LayerStack.PushLayer(new TicTacToeLayer());
-    m_LayerStack.PushLayer(new BoardLayer());
+}
 
+Engine::SGenericError TicTacToe::Init()
+{
+    Engine::SGenericError  err = Application::Init();
+    //PushLayer(new TicTacToeLayer());
+    PushLayer(new BoardLayer());
+    return err;
 }
 
 void TicTacToe::OnEvent(Engine::Events::EventBase& event)
@@ -36,6 +41,7 @@ void TicTacToe::OnEvent(Engine::Events::EventBase& event)
         return false;
         });
 
+    Application::OnEvent(event);
 }
 
 void TicTacToe::MakeMove(int row, int col)

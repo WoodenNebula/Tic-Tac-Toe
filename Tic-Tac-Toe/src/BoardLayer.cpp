@@ -5,13 +5,30 @@
 namespace Game
 {
 
+
 void BoardLayer::OnAttach()
 {
     LOG(TicTacToe, TRACE, "Layer Attached in {}", m_Name);
-    std::filesystem::path vp("res/shader/vertex/basicShader.vertexShader");
-    std::filesystem::path fp("res/shader/fragment/default.fragmentShader");
-
-    m_Shader = std::make_unique<Engine::Shader>(vp, fp);
+    m_Grid = {
+        .H1 = {
+            .Start = {  -m_GridSize,     m_CellSize,    0.0f},
+            .End = {     m_GridSize,     m_CellSize,    0.0f}
+        },
+        .H2 = {
+            .Start = {  -m_GridSize,    -m_CellSize,    0.0f},
+            .End = {     m_GridSize,    -m_CellSize,    0.0f}
+        },
+        .V1 = {
+            .Start = {  -m_CellSize,     m_GridSize,    0.0f},
+            .End = {    -m_CellSize,    -m_GridSize,    0.0f}
+        },
+        .V2 = {
+            .Start = {   m_CellSize,     m_GridSize,    0.0f},
+            .End = {     m_CellSize,    -m_GridSize,    0.0f}
+        },
+        .LineWidth = 5.0f,
+        .Color = {1.0f, 0.5f, 1.0f, 1.0f}
+    };
 }
 
 void BoardLayer::OnDetach()
@@ -51,92 +68,17 @@ void BoardLayer::DrawGrid()
 {
     // Drawing logic for the grid lines
 
-    //const float lineWidth = 0.02f;
-    //const float gridSize = 0.8f;    // Total grid size in NDC (-0.8 to 0.8)
-    //const float cellSize = gridSize / 3.0f;
+    LOG(TicTacToe, TRACE, "Drawing Grid Lines");
 
-    //// Vertical line 1 (left)
-    //float verticalLine1[] = {
-    //    -cellSize - lineWidth / 2, -gridSize / 2, 0.0f,  // Bottom-left
-    //    -cellSize + lineWidth / 2, -gridSize / 2, 0.0f,  // Bottom-right
-    //    -cellSize - lineWidth / 2,  gridSize / 2, 0.0f   // Top-left
-    //    - cellSize + lineWidth / 2,  gridSize / 2, 0.0f,  // Top-right
-    //};
+    Engine::Renderer::StartDraw();
 
-    //// Vertical line 2 (right)
-    //float verticalLine2[] = {
-    //    cellSize - lineWidth / 2, -gridSize / 2, 0.0f,  // Bottom-left
-    //    cellSize + lineWidth / 2, -gridSize / 2, 0.0f,  // Bottom-right
-    //    cellSize + lineWidth / 2,  gridSize / 2, 0.0f,  // Top-right
-    //    cellSize - lineWidth / 2,  gridSize / 2, 0.0f   // Top-left
-    //};
+    Engine::Renderer::DrawLine(m_Grid.H1.Start, m_Grid.H1.End, m_Grid.Color, m_Grid.LineWidth);
+    Engine::Renderer::DrawLine(m_Grid.H2.Start, m_Grid.H2.End, m_Grid.Color, m_Grid.LineWidth);
 
-    //// Horizontal line 1 (top)
-    //float horizontalLine1[] = {
-    //    -gridSize / 2, cellSize - lineWidth / 2, 0.0f,  // Bottom-left
-    //     gridSize / 2, cellSize - lineWidth / 2, 0.0f,  // Bottom-right
-    //     gridSize / 2, cellSize + lineWidth / 2, 0.0f,  // Top-right
-    //    -gridSize / 2, cellSize + lineWidth / 2, 0.0f   // Top-left
-    //};
+    Engine::Renderer::DrawLine(m_Grid.V1.Start, m_Grid.V1.End, m_Grid.Color, m_Grid.LineWidth);
+    Engine::Renderer::DrawLine(m_Grid.V2.Start, m_Grid.V2.End, m_Grid.Color, m_Grid.LineWidth);
 
-    //// Horizontal line 2 (bottom)
-    //float horizontalLine2[] = {
-    //    -gridSize / 2, -cellSize - lineWidth / 2, 0.0f,  // Bottom-left
-    //     gridSize / 2, -cellSize - lineWidth / 2, 0.0f,  // Bottom-right
-    //     gridSize / 2, -cellSize + lineWidth / 2, 0.0f,  // Top-right
-    //    -gridSize / 2, -cellSize + lineWidth / 2, 0.0f   // Top-left
-    //};
-
-    //// Indices for each rectangle (2 triangles)
-    //unsigned int indices[] = {
-    //    0, 1, 2,  // First triangle
-    //    2, 3, 0   // Second triangle
-    //};
-
-    //glm::mat4 mvp = glm::mat4(1.0f);
-    //glm::vec4 lineColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-
-    //m_Shader->Bind();
-    //m_Shader->SetUniformMat4f("u_MVP", mvp);
-    //m_Shader->SetUniform4f("u_Color", lineColor.r, lineColor.g, lineColor.b, lineColor.a);
-
-
-    //// Draw vertical line 1
-    //Engine::VertexBuffer vb1(verticalLine1, sizeof(verticalLine1));
-    //Engine::IndexBuffer ib1(indices, 6);
-    //Engine::VertexArray va1(6);
-
-    //Engine::Renderer::DrawLine(va1, 6);
-    ////glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-
-    ////Engine::Renderer::DrawLine()
-    ////glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    //// Draw vertical line 2
-    //Engine::VertexBuffer vb2(verticalLine2, sizeof(verticalLine2));
-    //Engine::Renderer::DrawLine(va1, 6);
-
-    ////glEnableVertexAttribArray(0);
-    ////glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-    ////glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    //// Draw horizontal line 1
-    //Engine::VertexBuffer vb3(horizontalLine1, sizeof(horizontalLine1));
-    //Engine::Renderer::DrawLine(va1, 6);
-
-    ////glEnableVertexAttribArray(0);
-    ////glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-    ////glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    //// Draw horizontal line 2
-    //Engine::VertexBuffer vb4(horizontalLine2, sizeof(horizontalLine2));
-    //Engine::Renderer::DrawLine(va1, 6);
-
-    ////glEnableVertexAttribArray(0);
-    ////glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
-    ////glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+    Engine::Renderer::Flush();
 }
 
 void BoardLayer::DrawCell(int row, int col, enum ECellState state)

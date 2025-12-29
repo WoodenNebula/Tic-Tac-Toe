@@ -34,6 +34,8 @@ public:
     static TicTacToe& Get();
     TicTacToe(const Engine::SApplicationProps& appProps);
 
+    virtual Engine::SGenericError Init() override;
+
     void MakeMove(int row, int col);
     EGameState GetCurrentGameState();
 

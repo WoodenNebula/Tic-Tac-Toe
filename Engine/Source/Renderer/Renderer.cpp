@@ -1,10 +1,65 @@
-#include "Renderer.h"
+#include "Renderer/Renderer.h"
+#include "Renderer/Texture.h"
 
 #include "Logger/Logger.h"
 #include <iostream>
 
 namespace Engine
 {
+
+struct SLineVertex
+{
+    glm::vec3 Position;
+    glm::vec4 Color;
+};
+
+struct STexVertex
+{
+    glm::vec3 Position;
+    glm::vec4 Color;
+    glm::vec2 TexCoord;
+};
+
+struct SRendererData
+{
+    static const uint32_t MaxQuads = 20000;
+    static const uint32_t MaxVertices = MaxQuads * 4;
+    static const uint32_t MaxIndices = MaxQuads * 6;
+    static const uint32_t MaxTextureSlots = 32;
+
+    //std::shared_ptr<CVertexArray> QuadVertexArray;
+    //std::shared_ptr<CVertexBuffer> QuadVertexBuffer;
+    //std::shared_ptr<CShader> QuadShader;
+    std::shared_ptr<CTexture> WhiteTexture;
+
+    std::shared_ptr<CVertexArray> LineVertexArray;
+    std::shared_ptr<CVertexBuffer> LineVertexBuffer;
+    std::shared_ptr<CShader> LineShader;
+
+    std::shared_ptr<CVertexArray> TexVertexArray;
+    std::shared_ptr<CVertexBuffer> TexVertexBuffer;
+    std::shared_ptr<CShader> TexShader;
+
+
+    uint32_t LineVertexCount = 0;
+    SLineVertex* LineVertexBufferBase = nullptr;
+    SLineVertex* LineVertexBufferPtr = nullptr;
+
+    uint32_t TexIndexCount = 0;
+    STexVertex* TexVertexBufferBase = nullptr;
+    STexVertex* TexVertexBufferPtr = nullptr;
+
+    float LineWidth = 2.0f;
+
+    std::array<std::shared_ptr<CTexture>, MaxTextureSlots> TextureSlots;
+    uint32_t TextureSlotIndex = 1; // 0 = white texture
+
+    //glm::vec4 QuadVertexPositions[4];
+
+    glm::mat4 ViewProjection;
+};
+
+static SRendererData s_Data;
 
 DECLARE_LOG_CATEGORY(Renderer)
 
@@ -32,6 +87,24 @@ void OpenGLMessageCallback(
 
 void Renderer::Init()
 {
+    // Only one VAO per draw type 
+    s_Data.LineVertexArray = std::make_shared<CVertexArray>();
+
+    s_Data.LineVertexBuffer = std::make_shared<CVertexBuffer>(s_Data.MaxVertices * sizeof(SLineVertex));
+
+    CVertexBufferLayout layout;
+    layout.Push<EShaderDataType::FLOAT>(3); // a_Position
+    layout.Push<EShaderDataType::FLOAT>(4); // a_Color
+
+    s_Data.LineVertexBuffer->SetLayout(layout);
+
+    s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+    /// QUESTION: WHAT?
+    s_Data.LineVertexBufferBase = new SLineVertex[s_Data.MaxVertices];
+
+    s_Data.LineShader.reset(new CShader("res/shader/vertex/Line.glsl", "res/shader/fragment/Line.glsl"));
+
+
 #ifdef DEBUG
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -111,11 +184,50 @@ void Renderer::Draw(const CVertexArray& VA, const CIndexBuffer& IBO,
     glDrawElements(GL_TRIANGLES, IBO.GetCount(), GL_UNSIGNED_INT, 0);
 }
 
-void Renderer::DrawLine(const CVertexArray& VA, uint32_t vertexCount)
+void Renderer::DrawLine(const glm::vec3& Start, const glm::vec3& End, const glm::vec4& Color, float Width)
 {
-    VA.Bind();
-    glDrawArrays(GL_LINES, 0, vertexCount);
+    s_Data.LineVertexBufferPtr->Position = Start;
+    s_Data.LineVertexBufferPtr->Color = Color;
+    s_Data.LineVertexBufferPtr++;
+
+    s_Data.LineVertexBufferPtr->Position = End;
+    s_Data.LineVertexBufferPtr->Color = Color;
+    s_Data.LineVertexBufferPtr++;
+
+    s_Data.LineVertexCount += 2;
+
+    s_Data.LineWidth = Width;
+
 }
 
+void Renderer::StartDraw()
+{
+    s_Data.LineVertexCount = 0;
+    s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
+
+    s_Data.TextureSlotIndex = 1;
+}
+
+void Renderer::Flush()
+{
+    if (s_Data.LineVertexCount)
+    {
+        uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
+
+        s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+
+        s_Data.LineShader->Bind();
+
+        glLineWidth(s_Data.LineWidth);
+
+        s_Data.LineVertexArray->Bind();
+        glDrawArrays(GL_LINES, 0, s_Data.LineVertexCount);
+
+        // Reset data
+        s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+        s_Data.LineVertexCount = 0;
+    }
+}
 
 } // namespace Engine

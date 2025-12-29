@@ -73,12 +73,15 @@ uint32_t CShader::CreateShaderProgram(const std::string& vertexShaderSrc,
     {
         int length = 0;
         glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &length);
+        std::string err;
+        err.reserve(length + 1);
 
-        char* infoLog = (char*)malloc(length * sizeof(char));
-        glGetShaderInfoLog(shaderProgram, length, &length, infoLog);
+
+        char* infoLog = (char*)malloc((length + 1) * sizeof(char));
+        glGetShaderInfoLog(shaderProgram, length, &length, err.data());
 
         std::cout << "ERROR::SHADER : LINKING FAILED \n"
-            << infoLog << std::endl;
+            << err << std::endl;
 
         glDeleteShader(shaderProgram);
 

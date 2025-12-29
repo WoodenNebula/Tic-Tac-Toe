@@ -4,11 +4,11 @@
 namespace Engine
 {
 
-class Texture
+class CTexture
 {
 public:
-    Texture(const std::filesystem::path& path);
-    ~Texture();
+    CTexture(const std::filesystem::path& path);
+    ~CTexture();
 
     void Bind(uint32_t slot = 0) const;
 

@@ -8,7 +8,7 @@
 namespace Engine
 {
 
-Texture::Texture(const std::filesystem::path& path)
+CTexture::CTexture(const std::filesystem::path& path)
     : m_RendererID(0),
     m_FilePath(path),
     m_LocalBufer(nullptr),
@@ -34,13 +34,13 @@ Texture::Texture(const std::filesystem::path& path)
     if (m_LocalBufer) stbi_image_free(m_LocalBufer);
 }
 
-Texture::~Texture() { glDeleteTextures(1, &m_RendererID); }
+CTexture::~CTexture() { glDeleteTextures(1, &m_RendererID); }
 
-void Texture::Bind(uint32_t slot) const
+void CTexture::Bind(uint32_t slot) const
 {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, m_RendererID);
 }
 
-void Texture::UnBind() const { glBindTexture(GL_TEXTURE_2D, 0); }
+void CTexture::UnBind() const { glBindTexture(GL_TEXTURE_2D, 0); }
 } // namespace Engine

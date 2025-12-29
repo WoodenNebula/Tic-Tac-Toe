@@ -53,7 +53,7 @@ private:
     std::shared_ptr<CVertexArray> m_VA;
     std::shared_ptr<CVertexBuffer> m_VB;
     std::shared_ptr<CIndexBuffer> m_IB;
-    std::shared_ptr<Texture> m_Texture;
+    std::shared_ptr<CTexture> m_Texture;
     glm::vec2 m_WinDimensions;
 };
 

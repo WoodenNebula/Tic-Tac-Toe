@@ -50,7 +50,7 @@ Quad2D::Quad2D(const glm::vec2& center, float width, float height,
 
     m_QuadShader.reset(new CShader("./res/shader/vertex/quad.vertexShader",
         "./res/shader/fragment/quad.fragmentShader"));
-    m_Texture.reset(new Texture(texturePath));
+    m_Texture.reset(new CTexture(texturePath));
 }
 
 Quad2D::~Quad2D() {}

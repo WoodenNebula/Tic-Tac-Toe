@@ -23,6 +23,8 @@ project "Tic-Tac-Toe"
 
     
     files { "src/**.h", "src/**.cpp" }
+
+    files { "res/**" }
     
     links 
     {

@@ -22,9 +22,14 @@ public:
     Application(const SApplicationProps& inApplicationProps);
     ~Application();
 
-    SGenericError Init();
+    virtual SGenericError Init();
 
     virtual void OnEvent(Events::EventBase& event);
+
+    void PushLayer(Layer* layer);
+    void PushOverlay(Layer* overlay);
+    void PopLayer(Layer* layer);
+    void PopOverlay(Layer* overlay);
 
     void Run();
     void Shutdown();

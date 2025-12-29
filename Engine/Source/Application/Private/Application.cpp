@@ -71,6 +71,28 @@ void Application::OnEvent(Events::EventBase& event)
     }
 }
 
+void Application::PushLayer(Layer* layer)
+{
+    m_LayerStack.PushLayer(layer);
+    layer->OnAttach();
+}
+void Application::PushOverlay(Layer* overlay)
+{
+    m_LayerStack.PushOverlay(overlay);
+    overlay->OnAttach();
+}
+
+void Application::PopLayer(Layer* layer)
+{
+    m_LayerStack.PopLayer(layer);
+    layer->OnDetach();
+}
+
+void Application::PopOverlay(Layer* overlay)
+{
+    m_LayerStack.PopOverlay(overlay);
+    overlay->OnDetach();
+}
 bool Application::OnWindowCloseEvent(Events::WindowCloseEvent& e)
 {
     e.Handled = true;
@@ -84,6 +106,7 @@ bool Application::OnWindowResizeEvent(Events::WindowResizeEvent& e)
     e.Handled = true;
     m_ApplicationProps.WindowProps.Dimension = e.GetDimensions();
 
+    Renderer::SetViewport(0, 0, e.GetDimensions().x, e.GetDimensions().y);
     return true;
 }
 
@@ -106,7 +129,6 @@ void Application::Run()
             layer->OnUpdate(0.0f);
         }
         m_Window->OnUpdate(0.0f);
-        glfwPollEvents();
     }
 }
 

@@ -6,6 +6,8 @@
 #include "Shader.h"
 #include "VertexArray.h"
 
+#include "glm.hpp"
+
 namespace Engine
 {
 
@@ -25,6 +27,8 @@ public:
 
     static void SetClearColor(const glm::vec3& Color);
 
+    static void StartDraw();
+
     /// <summary>
     /// Binds the VA, IBO, uses shaderprogram and finally renders the vertices
     /// as triangles
@@ -35,6 +39,7 @@ public:
     static void Draw(const CVertexArray& VA, const CIndexBuffer& IBO,
         const CShader& shader);
 
-    static void DrawLine(const CVertexArray& VA, uint32_t vertexCount);
+    static void DrawLine(const glm::vec3& Start, const glm::vec3& End, const glm::vec4& Color, float Width);
+    static void Flush();
 };
 } // namespace Engine
