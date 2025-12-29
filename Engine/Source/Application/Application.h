@@ -22,15 +22,22 @@ public:
     Application(const SApplicationProps& inApplicationProps);
     ~Application();
 
-    SGenericError Init();
+    virtual SGenericError Init();
 
-    void OnEvent(Events::EventBase& event);
+    virtual void OnEvent(Events::EventBase& event);
+
+    void PushLayer(Layer* layer);
+    void PushOverlay(Layer* overlay);
+    void PopLayer(Layer* layer);
+    void PopOverlay(Layer* overlay);
 
     void Run();
     void Shutdown();
 
+public:
+    static inline Application* App{};
 protected:
-    bool OnWindowCloseEvent(Events::WindowCloseEvent& e);
+    virtual bool OnWindowCloseEvent(Events::WindowCloseEvent& e);
     bool OnWindowResizeEvent(Events::WindowResizeEvent& e);
     bool OnWindowMovedEvent(Events::WindowMovedEvent& e);
 
@@ -39,6 +46,7 @@ protected:
 
     std::unique_ptr<Window> m_Window;
     LayerStack m_LayerStack;
+
 };
 
 // Entry point to be defined in GAME project

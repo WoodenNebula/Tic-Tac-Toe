@@ -10,7 +10,7 @@
 #include <string>
 #include <glad/glad.h>
 
-#define GLFW_INCLUDE_NONE
+#include "Renderer/Renderer.h"
 #include "GLFW/glfw3.h"
 
 DECLARE_LOG_CATEGORY(GLFW);
@@ -70,6 +70,9 @@ SGenericError Window::Init()
     }
     LOG(Window, TRACE, "Window Created");
 
+    // this creates a valid window context for opengl to render to
+    Renderer::InitGLContext(m_WindowHandle);
+
     glfwSetWindowUserPointer(m_WindowHandle, &m_WindowProps);
 
     // GLFW Callbacks
@@ -84,22 +87,13 @@ SGenericError Window::Init()
     glfwSetWindowSizeCallback(m_WindowHandle, GLFWEventCallbacks::window_size_callback);
     glfwSetWindowPosCallback(m_WindowHandle, GLFWEventCallbacks::window_pos_callback);
 
-    // this creates a valid window context for opengl to render to
-    glfwMakeContextCurrent(m_WindowHandle);
-
-    // glad should only be initialized after a valid context has been created
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        return { -1, "GLAD LoadGlLoader Failed" };
-    }
 
     return {};
 }
 
-void Window::OnUpdate()
+void Window::OnUpdate(float dt)
 {
-    glClearColor(.69f, .69f, .69f, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glfwPollEvents();
     glfwSwapBuffers(m_WindowHandle);
 }
 

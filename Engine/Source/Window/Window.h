@@ -35,11 +35,13 @@ public:
     ~Window();
 
     SGenericError Init();
-    void OnUpdate();
+    void OnUpdate(float dt);
     void Terminate();
 
     void SetWindowEventCallback(const WindowEventCallbackFn& callback);
     void CloseWindow();
+
+    GLFWwindow* GetWindowHandle() const { return m_WindowHandle; }
 private:
     GLFWwindow* m_WindowHandle{ nullptr };
     SWindowProps m_WindowProps;

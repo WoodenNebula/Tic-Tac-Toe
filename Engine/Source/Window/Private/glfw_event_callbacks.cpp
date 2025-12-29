@@ -1,6 +1,5 @@
 #include "Window/glfw_event_callbacks.h"
 
-#define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
 #include "Window/Window.h"

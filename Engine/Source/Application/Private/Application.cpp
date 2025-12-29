@@ -8,11 +8,13 @@
 #include "Events/EventManager.h"
 #include "Events/CoreEvents.h"
 #include "Logger/Logger.h"
+#include "Renderer/Renderer.h"
 
 DECLARE_LOG_CATEGORY(Application)
 
 namespace Engine
 {
+
 Application::Application() : m_IsRunning(true) {}
 
 Application::Application(const SApplicationProps& inApplicationProps) : m_ApplicationProps(inApplicationProps), m_IsRunning(true)
@@ -44,6 +46,7 @@ SGenericError Application::Init()
     m_Window->SetWindowEventCallback(BIND_EVENT_CB(Application::OnEvent));
     LOG(Application, TRACE, "Event callback bound to window events");
 
+    Renderer::Init();
     return {};
 }
 
@@ -68,6 +71,28 @@ void Application::OnEvent(Events::EventBase& event)
     }
 }
 
+void Application::PushLayer(Layer* layer)
+{
+    m_LayerStack.PushLayer(layer);
+    layer->OnAttach();
+}
+void Application::PushOverlay(Layer* overlay)
+{
+    m_LayerStack.PushOverlay(overlay);
+    overlay->OnAttach();
+}
+
+void Application::PopLayer(Layer* layer)
+{
+    m_LayerStack.PopLayer(layer);
+    layer->OnDetach();
+}
+
+void Application::PopOverlay(Layer* overlay)
+{
+    m_LayerStack.PopOverlay(overlay);
+    overlay->OnDetach();
+}
 bool Application::OnWindowCloseEvent(Events::WindowCloseEvent& e)
 {
     e.Handled = true;
@@ -81,6 +106,7 @@ bool Application::OnWindowResizeEvent(Events::WindowResizeEvent& e)
     e.Handled = true;
     m_ApplicationProps.WindowProps.Dimension = e.GetDimensions();
 
+    Renderer::SetViewport(0, 0, e.GetDimensions().x, e.GetDimensions().y);
     return true;
 }
 
@@ -102,7 +128,7 @@ void Application::Run()
         {
             layer->OnUpdate(0.0f);
         }
-        glfwPollEvents();
+        m_Window->OnUpdate(0.0f);
     }
 }
 
