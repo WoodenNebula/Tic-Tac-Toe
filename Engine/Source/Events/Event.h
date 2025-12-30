@@ -10,7 +10,7 @@
 namespace Engine::Events
 {
 
-DECLARE_LOG_CATEGORY(EventManager)
+DECLARE_LOG_CATEGORY_LEVEL(EventManager, WARN)
 
 enum class EventTypes
 {
@@ -80,7 +80,7 @@ public:
                 LOG(EventManager, TRACE, "Dispatched Window Event {}", m_Event.ToString());
                 break;
             case EventCategoryTypes::Mouse:
-                //LOG(EventManager, TRACE, "Dispatched Mouse Event {}", m_Event.ToString());
+                LOG(EventManager, TRACE, "Dispatched Mouse Event {}", m_Event.ToString());
                 break;
             case EventCategoryTypes::Key:
                 LOG(EventManager, TRACE, "Dispatched Key Event {}", m_Event.ToString());
