@@ -77,16 +77,16 @@ public:
             switch (m_Event.GetEventCategory())
             {
             case EventCategoryTypes::Window:
-                LOG(EventManager, INFO, "Dispatched Window Event {}", m_Event.ToString());
+                LOG(EventManager, TRACE, "Dispatched Window Event {}", m_Event.ToString());
                 break;
             case EventCategoryTypes::Mouse:
-                LOG(EventManager, INFO, "Dispatched Mouse Event {}", m_Event.ToString());
+                //LOG(EventManager, TRACE, "Dispatched Mouse Event {}", m_Event.ToString());
                 break;
             case EventCategoryTypes::Key:
-                LOG(EventManager, INFO, "Dispatched Key Event {}", m_Event.ToString());
+                LOG(EventManager, TRACE, "Dispatched Key Event {}", m_Event.ToString());
                 break;
             case EventCategoryTypes::Application:
-                LOG(EventManager, INFO, "Dispatched Application Event {}", m_Event.ToString());
+                LOG(EventManager, TRACE, "Dispatched Application Event {}", m_Event.ToString());
                 break;
             default:
                 LOG(EventManager, WARN, "Dispatched Unknown Event Category {}", m_Event.ToString());

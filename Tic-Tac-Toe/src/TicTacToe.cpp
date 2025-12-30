@@ -44,9 +44,10 @@ void TicTacToe::OnEvent(Engine::Events::EventBase& event)
     Application::OnEvent(event);
 }
 
-void TicTacToe::MakeMove(int row, int col)
+void TicTacToe::MakeMove(const SCellPosition& Position)
 {
-    if (row < 0 || row >= 3 || col < 0 || col >= 3)
+    auto [row, col] = Position;
+    if (!Position.IsValid())
     {
         LOG(TicTacToe, WARN, "Invalid move: ({}, {})", row, col);
         return;
@@ -96,5 +97,20 @@ EGameState TicTacToe::GetCurrentGameState()
     }
     return DRAW;
 }
+
+
+Engine::Point2D<float> TicTacToe::GetNDCFromViewport(const Engine::Point2D<double>& ViewportCoords)
+{
+    auto Viewport = m_ApplicationProps.WindowProps.Dimension;
+    Engine::Point2D<float> ndc;
+    // X: [0, width] -> [-1, 1]
+    ndc.x = (float)((2.0 * ViewportCoords.x) / Viewport.x - 1.0);
+
+    // Y: [0, height] -> [1, -1]  (flip Y)
+    ndc.y = (float)(1.0 - (2.0 * ViewportCoords.y) / Viewport.y);
+
+    return ndc;
+}
+
 
 }

@@ -5,6 +5,8 @@
 namespace Game
 {
 
+struct SCellPosition;
+
 class TicTacToeLayer : public Engine::Layer
 {
 public:
@@ -39,6 +41,8 @@ public:
     virtual void OnDetach() override;
     virtual void OnUpdate(float deltaTime) override;
     virtual void OnEvent(Engine::Events::EventBase& event) override;
+
+    SCellPosition NDCToCellPosition(const Engine::Point2D<float>& NDCPos) const;
 private:
     void DrawBoard();
     void DrawGrid();
@@ -46,7 +50,13 @@ private:
     void DrawX(int row, int col);
     void DrawO(int row, int col);
 
+
+    bool OnMouseMoved(Engine::Events::InputEvents::MouseMovedEvent& event);
+    bool OnMouseButtonPressed(Engine::Events::InputEvents::MouseButtonPressedEvent& event);
+
 private:
+
+    Engine::Point2D<double> m_MousePosition{};
     const float m_GridSize = 0.7f;
     const float m_CellSize = m_GridSize / 3.0f;
     SGrid m_Grid;
