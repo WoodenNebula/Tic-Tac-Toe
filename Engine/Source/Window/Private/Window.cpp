@@ -2,7 +2,6 @@
 
 #include "Window/glfw_event_callbacks.h"
 
-#include "Events/EventManager.h"
 #include "Events/CoreEvents.h"
 
 #include "Logger/Logger.h"

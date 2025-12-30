@@ -15,6 +15,17 @@ TicTacToe& TicTacToe::Get()
     return static_cast<TicTacToe&>(*Engine::Application::App);
 }
 
+void TicTacToe::Reset()
+{
+    auto& app = TicTacToe::Get();
+    app.m_CurrentPlayer = (app.m_CurrentPlayer == X) ? O : X;
+    app.m_Board = {
+        {EMPTY, EMPTY, EMPTY},
+        {EMPTY, EMPTY, EMPTY},
+        {EMPTY, EMPTY, EMPTY}
+    };
+}
+
 TicTacToe::TicTacToe(const Engine::SApplicationProps& appProps) : Engine::Application(appProps)
 {
 }
@@ -22,7 +33,6 @@ TicTacToe::TicTacToe(const Engine::SApplicationProps& appProps) : Engine::Applic
 Engine::SGenericError TicTacToe::Init()
 {
     Engine::SGenericError  err = Application::Init();
-    //PushLayer(new TicTacToeLayer());
     PushLayer(new BoardLayer());
     return err;
 }

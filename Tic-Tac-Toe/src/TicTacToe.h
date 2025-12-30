@@ -39,6 +39,7 @@ class TicTacToe : public Engine::Application
 {
 public:
     static TicTacToe& Get();
+    static void Reset();
     TicTacToe(const Engine::SApplicationProps& appProps);
 
     virtual Engine::SGenericError Init() override;

@@ -9,6 +9,10 @@ namespace Game
 void BoardLayer::OnAttach()
 {
     LOG(TicTacToe, TRACE, "Layer Attached in {}", m_Name);
+
+    m_XTexture = std::make_shared<Engine::CTexture>("./res/textures/X.png");
+    m_OTexture = std::make_shared<Engine::CTexture>("./res/textures/O.png");
+
     m_Grid = {
         .H1 = {
             .Start = {  -m_GridSize,     m_CellSize,    0.0f},
@@ -42,6 +46,18 @@ void BoardLayer::OnUpdate(float deltaTime)
     Engine::Renderer::Clear();
 
     DrawBoard();
+    switch (TicTacToe::Get().GetCurrentGameState())
+    {
+    case ONGOING:
+        break;
+    case DRAW:
+    {
+        Engine::Renderer::SetClearColor({ 0.5f, 0.5f, 0.5f });
+        Engine::Renderer::Clear();
+        DrawBoard();
+        break;
+    }
+    }
 }
 
 void BoardLayer::OnEvent(Engine::Events::EventBase& event)
@@ -117,11 +133,46 @@ void BoardLayer::DrawCell(int row, int col, enum ECellState state)
 
 void BoardLayer::DrawX(int row, int col)
 {
-    // Drawing logic for X
+    auto [x, y, z] = CellPositionToNDC({ row, col });
+    glm::vec3 position{ x, y, z };
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(m_CellSize * 0.8f, m_CellSize * 0.8f, 1.0f));
+    Engine::Renderer::StartDraw();
+    Engine::Renderer::DrawQuad(transform, m_XTexture);
+    Engine::Renderer::Flush();
+
 }
 void BoardLayer::DrawO(int row, int col)
 {
-    // Drawing logic for O
+    auto [x, y, z] = CellPositionToNDC({ row, col });
+    glm::vec3 position{ x, y, z };
+    glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(m_CellSize * 0.8f, m_CellSize * 0.8f, 1.0f));
+
+    Engine::Renderer::StartDraw();
+    Engine::Renderer::DrawQuad(transform, m_OTexture);
+    Engine::Renderer::Flush();
+}
+
+Engine::Point3D<float> BoardLayer::CellPositionToNDC(const SCellPosition& cellPos) const
+{
+    Engine::Point3D<float> NDCPos{ 0.0f, 0.0f , 0.0f };
+    float cellOffset = (2.0f * m_GridSize) / 3.0f;
+
+    /// THIS IS FLIPPED CUZ VECTOR<VECTOR> AHHHH
+    switch (cellPos.Col)
+    {
+    case 0: NDCPos.y = cellOffset; break;
+    case 1: NDCPos.y = 0.0f; break;
+    case 2: NDCPos.y = -cellOffset; break;
+    }
+
+    switch (cellPos.Row)
+    {
+    case 0: NDCPos.x = -cellOffset; break;
+    case 1: NDCPos.x = 0.0f; break;
+    case 2: NDCPos.x = cellOffset; break;
+    }
+
+    return NDCPos;
 }
 
 SCellPosition BoardLayer::NDCToCellPosition(const Engine::Point2D<float>& NDCPos) const
