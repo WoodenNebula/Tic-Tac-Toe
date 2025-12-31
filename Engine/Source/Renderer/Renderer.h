@@ -2,11 +2,15 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Buffer.h"
-#include "Shader.h"
-#include "VertexArray.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/Shader.h"
+#include "Renderer/VertexArray.h"
+#include "Renderer/Texture.h"
 
 #include "glm.hpp"
+#include "gtc/matrix_transform.hpp"
+
+#include <filesystem>
 
 namespace Engine
 {
@@ -30,16 +34,17 @@ public:
     static void StartDraw();
 
     /// <summary>
-    /// Binds the VA, IBO, uses shaderprogram and finally renders the vertices
-    /// as triangles
+    /// Binds the VA, assumes shader already bound and then draws the quads withusing indexCount
     /// </summary>
-    /// <param name="VA">: Vertex Array Object</param>
-    /// <param name="IBO">: Elemnt/Index Buffer Object</param>
-    /// <param name="shader">: Shader Object</param>
-    static void Draw(const CVertexArray& VA, const CIndexBuffer& IBO,
-        const CShader& shader);
+    /// <param name="VA"> Vertex Array Object</param>
+    /// <param name="indexCount?"> if provided: Number of indices to draw from the VertexBuffer, 
+    /// else uses the indexCount from VA.IBO
+    /// </param>
+    static void DrawIndexed(const std::shared_ptr<CVertexArray>& VA, uint32_t indexCount = 0);
 
     static void DrawLine(const glm::vec3& Start, const glm::vec3& End, const glm::vec4& Color, float Width);
+    static void DrawQuad(const glm::mat4& Transform, const std::shared_ptr<CTexture>& Texture, const glm::vec4& TintColor = { 1.0f,1.0f,1.0f,1.0f });
+    static void DrawSprite(const glm::vec3& Position, const glm::vec2& Size, const std::filesystem::path& SpriteSource);
     static void Flush();
 };
 } // namespace Engine

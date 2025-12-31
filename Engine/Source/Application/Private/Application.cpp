@@ -5,7 +5,6 @@
 #include <cstddef>
 #include <iostream>
 
-#include "Events/EventManager.h"
 #include "Events/CoreEvents.h"
 #include "Logger/Logger.h"
 #include "Renderer/Renderer.h"

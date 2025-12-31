@@ -15,6 +15,17 @@ TicTacToe& TicTacToe::Get()
     return static_cast<TicTacToe&>(*Engine::Application::App);
 }
 
+void TicTacToe::Reset()
+{
+    auto& app = TicTacToe::Get();
+    app.m_CurrentPlayer = (app.m_CurrentPlayer == X) ? O : X;
+    app.m_Board = {
+        {EMPTY, EMPTY, EMPTY},
+        {EMPTY, EMPTY, EMPTY},
+        {EMPTY, EMPTY, EMPTY}
+    };
+}
+
 TicTacToe::TicTacToe(const Engine::SApplicationProps& appProps) : Engine::Application(appProps)
 {
 }
@@ -22,7 +33,6 @@ TicTacToe::TicTacToe(const Engine::SApplicationProps& appProps) : Engine::Applic
 Engine::SGenericError TicTacToe::Init()
 {
     Engine::SGenericError  err = Application::Init();
-    //PushLayer(new TicTacToeLayer());
     PushLayer(new BoardLayer());
     return err;
 }
@@ -44,9 +54,10 @@ void TicTacToe::OnEvent(Engine::Events::EventBase& event)
     Application::OnEvent(event);
 }
 
-void TicTacToe::MakeMove(int row, int col)
+void TicTacToe::MakeMove(const SCellPosition& Position)
 {
-    if (row < 0 || row >= 3 || col < 0 || col >= 3)
+    auto [row, col] = Position;
+    if (!Position.IsValid())
     {
         LOG(TicTacToe, WARN, "Invalid move: ({}, {})", row, col);
         return;
@@ -96,5 +107,20 @@ EGameState TicTacToe::GetCurrentGameState()
     }
     return DRAW;
 }
+
+
+Engine::Point2D<float> TicTacToe::GetNDCFromViewport(const Engine::Point2D<double>& ViewportCoords)
+{
+    auto Viewport = m_ApplicationProps.WindowProps.Dimension;
+    Engine::Point2D<float> ndc;
+    // X: [0, width] -> [-1, 1]
+    ndc.x = (float)((2.0 * ViewportCoords.x) / Viewport.x - 1.0);
+
+    // Y: [0, height] -> [1, -1]  (flip Y)
+    ndc.y = (float)(1.0 - (2.0 * ViewportCoords.y) / Viewport.y);
+
+    return ndc;
+}
+
 
 }

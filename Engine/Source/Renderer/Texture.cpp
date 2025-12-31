@@ -3,43 +3,65 @@
 #include "glad/glad.h"
 #include "stb_image.h"
 
+#include "Logger/Logger.h"
 #include <filesystem>
 
 namespace Engine
 {
+DECLARE_LOG_CATEGORY(Texture)
+
+CTexture::CTexture()
+{
+    glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
+    glTextureStorage2D(m_RendererID, 1, GL_RGBA8, m_Width, m_Height);
+
+    glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
 
 CTexture::CTexture(const std::filesystem::path& path)
-    : m_RendererID(0),
-    m_FilePath(path),
-    m_LocalBufer(nullptr),
-    m_Width(0),
-    m_Height(0),
-    m_BPP(0)
+    : m_FilePath(path)
 {
     stbi_set_flip_vertically_on_load(1);
-    m_LocalBufer = stbi_load(path.string().c_str(), &m_Width, &m_Height, &m_BPP, 4);
+    auto data = stbi_load(path.string().c_str(), &m_Width, &m_Height, &m_BPP, 4);
+    if (data)
+    {
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 
-    glGenTextures(1, &m_RendererID);
-    glBindTexture(GL_TEXTURE_2D, m_RendererID);
+        glTextureStorage2D(m_RendererID, 1, GL_RGBA8, m_Width, m_Height);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA,
-        GL_UNSIGNED_BYTE, m_LocalBufer);
-    glBindTexture(GL_TEXTURE_2D, 0);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-    if (m_LocalBufer) stbi_image_free(m_LocalBufer);
+        glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+        LOG(Texture, ERROR, "Failed to load texture from path: {} -> {}", path.string(), stbi_failure_reason());
+    }
 }
 
 CTexture::~CTexture() { glDeleteTextures(1, &m_RendererID); }
 
+void CTexture::SetData(void* data, uint32_t size)
+{
+    uint32_t bpp = 4; // RGBA
+
+    glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+}
+
+
 void CTexture::Bind(uint32_t slot) const
 {
-    glActiveTexture(GL_TEXTURE0 + slot);
-    glBindTexture(GL_TEXTURE_2D, m_RendererID);
+    glBindTextureUnit(slot, m_RendererID);
 }
 
 void CTexture::UnBind() const { glBindTexture(GL_TEXTURE_2D, 0); }
