@@ -14,8 +14,13 @@ public:
 
     virtual ~TicTacToeLayer() = default;
 
+    virtual void OnAttach() override;
+
     virtual void OnUpdate(float deltaTime) override;
     virtual void OnEvent(Engine::Events::EventBase& event) override;
+protected:
+    std::shared_ptr<Engine::CTexture> m_XTexture;
+    std::shared_ptr<Engine::CTexture> m_OTexture;
 };
 
 

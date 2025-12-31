@@ -42,7 +42,7 @@ void BoardLayer::OnDetach()
 
 void BoardLayer::OnUpdate(float deltaTime)
 {
-    Engine::Renderer::SetClearColor({ 0.2f, 0.2f, 0.2f });
+    Engine::Renderer::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
     Engine::Renderer::Clear();
 
     DrawBoard();
@@ -52,7 +52,7 @@ void BoardLayer::OnUpdate(float deltaTime)
         break;
     case DRAW:
     {
-        Engine::Renderer::SetClearColor({ 0.5f, 0.5f, 0.5f });
+        Engine::Renderer::SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
         Engine::Renderer::Clear();
         DrawBoard();
         break;
@@ -86,6 +86,17 @@ bool BoardLayer::OnMouseButtonPressed(Engine::Events::InputEvents::MouseButtonPr
     if (cellPos.IsValid())
     {
         TicTacToe::Get().MakeMove(cellPos);
+
+        EGameState gameState = TicTacToe::Get().GetCurrentGameState();
+
+        if (gameState != EGameState::ONGOING)
+        {
+            // Defer overlay push until after event handling completes
+            TicTacToe::Get().SubmitToMainThread([gameState]() {
+                TicTacToe::Get().PushOverlay(new TicTacToeLayer());
+                LOG(TicTacToe, INFO, "Game ended with state: {}", (int)gameState);
+                });
+        }
     }
     return true;
 }

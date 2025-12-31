@@ -216,9 +216,9 @@ void Renderer::Clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::SetClearColor(const glm::vec3& Color)
+void Renderer::SetClearColor(const glm::vec4& Color)
 {
-    glClearColor(Color.r, Color.g, Color.b, 1.0f);
+    glClearColor(Color.r, Color.g, Color.b, Color.a);
 }
 
 void Renderer::DrawIndexed(const std::shared_ptr<CVertexArray>& VA, uint32_t indexCount)
