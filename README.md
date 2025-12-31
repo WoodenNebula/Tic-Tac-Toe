@@ -2,6 +2,8 @@
 
 A simple graphics Tic-Tac-Toe game created in C++.
 
+<img src = "res/Tic-Tac-Toe.gif">
+
 ---
 
 # Dependencies/Pre-requisites
