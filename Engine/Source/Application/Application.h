@@ -6,6 +6,8 @@
 #include "Events/CoreEvents.h"
 
 #include <memory>
+#include <functional>
+#include <queue>
 
 namespace Engine
 {
@@ -34,6 +36,8 @@ public:
     void Run();
     void Shutdown();
 
+    void SubmitToMainThread(const std::function<void()>& func);
+
 public:
     static inline Application* App{};
 protected:
@@ -41,12 +45,15 @@ protected:
     bool OnWindowResizeEvent(Events::WindowResizeEvent& e);
     bool OnWindowMovedEvent(Events::WindowMovedEvent& e);
 
+    void ProcessPendingOperations();
+
     SApplicationProps m_ApplicationProps;
     bool m_IsRunning;
 
     std::unique_ptr<Window> m_Window;
     LayerStack m_LayerStack;
 
+    std::queue<std::function<void()>> m_PendingOperations;
 };
 
 // Entry point to be defined in GAME project

@@ -68,6 +68,9 @@ void Application::OnEvent(Events::EventBase& event)
         auto layer = *(--itr);
         layer->OnEvent(event);
     }
+
+    // Process any pending operations after event handling is complete
+    ProcessPendingOperations();
 }
 
 void Application::PushLayer(Layer* layer)
@@ -118,6 +121,21 @@ bool Application::OnWindowMovedEvent(Events::WindowMovedEvent& e)
 }
 
 
+void Application::SubmitToMainThread(const std::function<void()>& func)
+{
+    m_PendingOperations.push(func);
+}
+
+void Application::ProcessPendingOperations()
+{
+    while (!m_PendingOperations.empty())
+    {
+        auto& operation = m_PendingOperations.front();
+        operation();
+        m_PendingOperations.pop();
+    }
+}
+
 void Application::Run()
 {
     /// Engine Loop first?
@@ -128,6 +146,9 @@ void Application::Run()
             layer->OnUpdate(0.0f);
         }
         m_Window->OnUpdate(0.0f);
+
+        // Process any pending operations at the end of each frame
+        ProcessPendingOperations();
     }
 }
 

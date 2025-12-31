@@ -108,7 +108,6 @@ EGameState TicTacToe::GetCurrentGameState()
     return DRAW;
 }
 
-
 Engine::Point2D<float> TicTacToe::GetNDCFromViewport(const Engine::Point2D<double>& ViewportCoords)
 {
     auto Viewport = m_ApplicationProps.WindowProps.Dimension;

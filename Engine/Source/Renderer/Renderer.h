@@ -29,7 +29,7 @@ public:
 
     static void Clear();
 
-    static void SetClearColor(const glm::vec3& Color);
+    static void SetClearColor(const glm::vec4& Color);
 
     static void StartDraw();
 
