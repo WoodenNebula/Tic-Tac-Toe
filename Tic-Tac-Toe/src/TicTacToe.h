@@ -6,26 +6,12 @@
 #include <string>
 #include <vector>
 
+#include "TicTacToeTypes.h"
 #include "TicTacToeLayers.h"
 
 DECLARE_LOG_CATEGORY_LEVEL(TicTacToe, INFO)
 namespace Game
 {
-
-enum ECellState
-{
-    EMPTY,
-    X,
-    O
-};
-
-enum EGameState
-{
-    ONGOING,
-    DRAW,
-    X_WINS,
-    O_WINS
-};
 
 struct SCellPosition
 {
