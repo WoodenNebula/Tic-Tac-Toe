@@ -2,6 +2,10 @@ workspace "Tic-Tac-Toe"
     configurations { "Debug", "Release" }
     architecture "x64"
 
+        
+    defines {
+        'PROJECT_ROOT=\"' .. os.getcwd() .. '\"'
+    }
 
     filter "configurations:Debug"
         defines { "DEBUG", "_DEBUG" }
@@ -15,7 +19,7 @@ workspace "Tic-Tac-Toe"
 
     filter "system:windows"
         startproject "Tic-Tac-Toe"
-        defines { "WINDOWS" }
+        defines { "WINDOWS=1", "LINUX=0" }
         systemversion "latest"
 
         filter "action:vs2026"
@@ -24,7 +28,7 @@ workspace "Tic-Tac-Toe"
     filter{}
 
     filter "system:linux"
-        defines { "LINUX" }
+        defines { "LINUX=1", "WINDOWS=0" }
     filter{}
 
 
