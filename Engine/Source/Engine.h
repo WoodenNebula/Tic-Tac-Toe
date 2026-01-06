@@ -5,6 +5,7 @@
 #include "Window/Window.h"
 #include "Application/Application.h"
 #include "Core/Layer.h"
+#include "Core/AssetManager.h"
 
 #include "Events/Event.h"
 #include "Events/CoreEvents.h"
@@ -15,3 +16,4 @@
 #include "Error/Error.h"
 
 #include <glm.hpp>
+#include "gtc/matrix_transform.hpp"

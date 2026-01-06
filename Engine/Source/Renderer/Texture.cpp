@@ -1,5 +1,6 @@
 #include "Texture.h"
 
+#include "Core/AssetManager.h"
 #include "glad/glad.h"
 #include "stb_image.h"
 
@@ -26,7 +27,12 @@ CTexture::CTexture(const std::filesystem::path& path)
     : m_FilePath(path)
 {
     stbi_set_flip_vertically_on_load(1);
-    auto data = stbi_load(path.string().c_str(), &m_Width, &m_Height, &m_BPP, 4);
+    FPath filePath = CAssetManager::FindFile(path);
+    if (filePath.empty())
+    {
+        LOG(Texture, ERROR, "Failed to load texture from path: {} -> {}", path.string(), stbi_failure_reason());
+    }
+    auto data = stbi_load(filePath.string().c_str(), &m_Width, &m_Height, &m_BPP, 4);
     if (data)
     {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
@@ -45,7 +51,7 @@ CTexture::CTexture(const std::filesystem::path& path)
     }
     else
     {
-        LOG(Texture, ERROR, "Failed to load texture from path: {} -> {}", path.string(), stbi_failure_reason());
+        LOG(Texture, ERROR, "Failed to load texture from path: {} -> {}", filePath.string(), stbi_failure_reason());
     }
 }
 

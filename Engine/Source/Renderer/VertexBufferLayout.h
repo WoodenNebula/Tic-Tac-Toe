@@ -43,31 +43,7 @@ public:
     /// one attrib, this function has to be called each time with the count of
     /// elements in each attrib separately</param>
     template <typename T>
-    void Push(uint32_t count)
-    {
-        ASSERT(false);
-    }
-
-    template<>
-    void Push<float>(uint32_t count)
-    {
-        m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });
-        m_Stride += count * VertexBufferElement::GetSizeOfType(GL_FLOAT);
-    }
-
-    template<>
-    void Push<uint32_t>(uint32_t count)
-    {
-        m_Elements.push_back({ GL_UNSIGNED_INT, count, GL_FALSE });
-        m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_INT);
-    }
-
-    template<>
-    void Push<uint8_t>(uint32_t count)
-    {
-        m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
-        m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
-    }
+    void Push(uint32_t count);
 
     inline const std::vector<VertexBufferElement>& GetElements() const
     {
@@ -80,4 +56,5 @@ private:
     // Stride is the total size of all attributes in a single vertex i.e. Pos + Color + TexCoord + ...
     uint32_t m_Stride;
 };
+
 } // namespace Engine

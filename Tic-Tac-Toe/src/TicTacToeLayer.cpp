@@ -1,4 +1,5 @@
 #include <Engine.h>
+#include "TicTacToeTypes.h"
 #include "TicTacToeLayers.h"
 
 namespace Game

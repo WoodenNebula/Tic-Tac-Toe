@@ -1,6 +1,7 @@
 #pragma once
 #include <Engine.h>
 #include "TicTacToe.h"
+#include "TicTacToeTypes.h"
 
 namespace Game
 {
