@@ -29,6 +29,8 @@ project "Tic-Tac-Toe"
     links 
     {
         "Engine",
+        "glad",
+        "glfw"
     }
 
     filter "system:windows"
