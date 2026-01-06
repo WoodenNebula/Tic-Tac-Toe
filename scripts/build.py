@@ -47,7 +47,7 @@ def build_project():
         print("Build manually using visual studio")
     else:
         # Linux build with make
-        run_cmd("bear -- make", cwd=project_dir)
+        run_cmd("bear -- make")
 
     print("==== BUILD FINISHED ====\n")
 
