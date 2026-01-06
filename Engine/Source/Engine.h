@@ -5,6 +5,7 @@
 #include "Window/Window.h"
 #include "Application/Application.h"
 #include "Core/Layer.h"
+#include "Core/AssetManager.h"
 
 #include "Events/Event.h"
 #include "Events/CoreEvents.h"
