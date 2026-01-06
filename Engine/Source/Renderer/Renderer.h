@@ -2,13 +2,10 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Renderer/Buffer.h"
-#include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 #include "Renderer/Texture.h"
 
 #include "glm.hpp"
-#include "gtc/matrix_transform.hpp"
 
 #include <filesystem>
 

@@ -1,10 +1,14 @@
 #include "Renderer/Renderer.h"
+#include "Renderer/Shader.h"
 #include "Renderer/Texture.h"
 
 #include "Logger/Logger.h"
 
+#include "glm.hpp"
 #include "gtc/matrix_transform.hpp"
-#include <iostream>
+
+#include "glad/glad.h"
+#include <GLFW/glfw3.h>
 
 namespace Engine
 {
@@ -25,10 +29,10 @@ struct SLineVertex
 
 struct SRendererData
 {
-    static const uint32_t MaxQuads = 20000;
-    static const uint32_t MaxVertices = MaxQuads * 4;
-    static const uint32_t MaxIndices = MaxQuads * 6;
-    static const uint32_t MaxTextureSlots = 32;
+    static inline constexpr uint32_t MaxQuads = 20000;
+    static inline constexpr uint32_t MaxVertices = MaxQuads * 4;
+    static inline constexpr uint32_t MaxIndices = MaxQuads * 6;
+    static inline constexpr uint32_t MaxTextureSlots = 32;
 
     std::shared_ptr<CVertexArray> QuadVertexArray;
     std::shared_ptr<CVertexBuffer> QuadVertexBuffer;
