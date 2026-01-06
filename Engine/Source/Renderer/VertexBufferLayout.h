@@ -43,10 +43,7 @@ public:
     /// one attrib, this function has to be called each time with the count of
     /// elements in each attrib separately</param>
     template <typename T>
-    void Push(uint32_t count)
-    {
-        ASSERT(false);
-    }
+    void Push(uint32_t count);
 
     inline const std::vector<VertexBufferElement>& GetElements() const
     {
