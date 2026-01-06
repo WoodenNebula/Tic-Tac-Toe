@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+from os.path import isdir
 import sys
 import subprocess
 from pathlib import Path
@@ -59,18 +60,14 @@ def run_project():
     else:
         exe_name = f"{PROJECT_NAME}.out"
 
-    exe_path = None
-    for root, _, files in os.walk("."):
-        if exe_name in files:
-            exe_path = os.path.join(root, exe_name)
-            break
+    exe_path = f"build/bin/{PROJECT_NAME}/{exe_name}"
 
-    if not exe_path:
-        print(f"Executable {exe_name} not found")
+    if not exe_path or not os.path.exists(exe_path):
+        print(f"Executable {exe_path} not found")
         print("Project Not Compiled")
         print("==== ====")
         return
-
+    print (f"Running executable at {exe_path}")
     run_cmd(exe_path)
     print("========\n")
 
@@ -84,8 +81,10 @@ def main():
         build_project()
     elif sys.argv[1] == "-c":
         config_project()
+    elif sys.argv[1] == "-r":
+        run_project()
     else:
-        print("Usage: build.py [-b | -c]")
+        print("Usage: build.py [-b | -c | -r]")
 
 if __name__ == "__main__":
     main()
