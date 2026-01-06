@@ -1,6 +1,9 @@
 #include "Shader.h"
 
+#include "Core/AssetManager.h"
 #include "Core/CustomAssert.h"
+#include <cerrno>
+#include <filesystem>
 #include <memory.h>
 
 #include <fstream>
@@ -9,9 +12,12 @@
 #include <string>
 
 #include "glad/glad.h"
+#include "Logger/Logger.h"
 
 namespace Engine
 {
+DECLARE_LOG_CATEGORY(Shader)
+
 CShader::CShader(const std::filesystem::path& vertexFilePath, const std::filesystem::path& fragmentFilePath)
     : m_VertexFilePath(vertexFilePath),
     m_FragmentFilePath(fragmentFilePath),
@@ -31,15 +37,21 @@ uint32_t CShader::GetProgramID() { return m_ProgramID; }
 
 std::string CShader::ParseShader(const std::filesystem::path& filePath)
 {
-    std::fstream shaderFile(filePath);
+    FPath ShaderFile = CAssetManager::FindFile(filePath);
+    if (ShaderFile.empty())
+    {
+        LOG(Shader, ERROR, "Shader File = {} doesn't exist", ShaderFile.string());
+        ASSERT(false);
+    }
+
+    std::fstream shaderFile(ShaderFile.string());
     std::string line;
     std::stringstream ss;
 
     // Ensure that shader file is open
-    if (!shaderFile.is_open())
+    if (!shaderFile)
     {
-        std::cout << "ERROR::SHADER::FILE::READ -> Couldn't open shader file!\n"
-            << filePath << std::endl;
+        LOG(Shader, ERROR, "File open failed: {} for file {}", strerror(errno), ShaderFile.string() );
         exit(EXIT_FAILURE);
     }
 
