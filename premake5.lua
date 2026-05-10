@@ -2,7 +2,7 @@ workspace "Tic-Tac-Toe"
     configurations { "Debug", "Release" }
     architecture "x64"
 
-        
+
     defines {
         'PROJECT_ROOT=\"' .. os.getcwd() .. '\"'
     }
@@ -32,7 +32,7 @@ workspace "Tic-Tac-Toe"
     filter{}
 
 
-    outputdir = "%{cfg.architecture}-%{cfg.system}-%{cfg.buildcfg}"
+    outputdir = "%{cfg.buildcfg}/%{cfg.system}-%{cfg.architecture}"
 
     include "Engine/Engine.lua"
     include "Tic-Tac-Toe/Tic-Tac-Toe.lua"
