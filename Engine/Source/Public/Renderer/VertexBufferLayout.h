@@ -1,10 +1,10 @@
 #pragma once
 
-#include <vector>
-
-
 #include "Core/CustomAssert.h"
+
 #include "glad/glad.h"
+
+#include <vector>
 
 namespace Engine
 {
@@ -27,7 +27,7 @@ struct VertexBufferElement
         case GL_UNSIGNED_BYTE:
             return 1;
         }
-        ASSERT(false);
+        ASSERT(false, "VertexBuffer -> Unknown type");
         return 0;
     }
 };

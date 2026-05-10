@@ -1,18 +1,18 @@
-#include "Shader.h"
+#include "Renderer/Shader.h"
 
-#include "Core/AssetManager.h"
+#include "AssetManager/AssetManager.h"
 #include "Core/CustomAssert.h"
+#include "Logger/Logger.h"
+
+#include "glad/glad.h"
+
 #include <cerrno>
 #include <filesystem>
 #include <memory.h>
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-
-#include "glad/glad.h"
-#include "Logger/Logger.h"
 
 namespace Engine
 {
@@ -41,7 +41,7 @@ std::string CShader::ParseShader(const std::filesystem::path& filePath)
     if (ShaderFile.empty())
     {
         LOG(Shader, ERROR, "Shader File = {} doesn't exist", ShaderFile.string());
-        ASSERT(false);
+        ASSERT(false, "Shader File = {} doesn't exist", ShaderFile.string());
     }
 
     std::fstream shaderFile(ShaderFile.string());
@@ -185,9 +185,7 @@ uint32_t CShader::GetUniformLocation(const std::string& name) const
     int location = glGetUniformLocation(m_ProgramID, name.c_str());
     if (location == -1)
     {
-        std::cout << "SHADER::UNIFORM -> Uniform " << name << " Doesn't Exist"
-            << std::endl;
-        ASSERT(false);
+        ASSERT(false, "SHADER::UNIFORM -> Uniform {} Doesn't Exist", name);
     }
 
     m_UniformLocationCache[name] = location;

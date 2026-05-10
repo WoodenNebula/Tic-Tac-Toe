@@ -3,7 +3,7 @@
 template <typename T>
 void Engine::CVertexBufferLayout::Push(uint32_t count)
 {
-    ASSERT(false);
+    ASSERT(false, "VertexBufferLayout.Push() called without type!");
 }
 template<>
 void  Engine::CVertexBufferLayout::Push<float>(uint32_t count)

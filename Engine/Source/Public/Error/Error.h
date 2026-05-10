@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <sstream>
+#include <string>
 #include <string_view>
 #include <format>
 
@@ -10,10 +11,18 @@ namespace Engine
 struct SGenericError
 {
     int ErrorCode{ 0 };
-    std::string_view ErrorMessage{ "NONE" };
+    std::string ErrorMessage{ "NONE" };
 
     SGenericError() = default;
-    SGenericError(int inErrorCode, const std::string_view& inErrorMessage) : ErrorCode(inErrorCode), ErrorMessage(inErrorMessage) {}
+
+    SGenericError(int inErrorCode, std::string_view inErrorMessage) : ErrorCode(inErrorCode), ErrorMessage(inErrorMessage) {}
+
+    template<typename... Args>
+    SGenericError(int inErrorCode, std::format_string<Args...> fmt, Args&& ...args)
+        : ErrorCode(inErrorCode),
+        ErrorMessage(std::format(fmt, std::forward<Args>(args)...))
+    {
+    }
 
     inline operator bool() const
     {
@@ -34,8 +43,8 @@ struct SGenericError
         return os;
     }
 };
-
 }
+
 template<>
 struct std::formatter<Engine::SGenericError> : std::formatter<std::string>
 {

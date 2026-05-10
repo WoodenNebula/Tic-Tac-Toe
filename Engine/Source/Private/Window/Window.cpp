@@ -87,6 +87,22 @@ SGenericError Window::Init()
     glfwSetWindowPosCallback(m_WindowHandle, GLFWEventCallbacks::window_pos_callback);
 
 
+    if (!m_WindowProps.WindowIconPath.empty())
+    {
+        CImage windowIcon(m_WindowProps.WindowIconPath, true);
+        if (!windowIcon.IsLoaded())
+        {
+            SGenericError err = windowIcon.Load();
+            if (err) { return err; }
+        }
+
+        GLFWimage img{ .width = (int)windowIcon.Dimensions.x, .height = (int)windowIcon.Dimensions.y, .pixels = windowIcon.Data };
+        glfwSetWindowIcon(m_WindowHandle, 1, &img);
+    }
+    else
+    {
+        LOG(Window, WARN, "Missing Window Icon Path, proceeding with normal icon.");
+    }
     return {};
 }
 

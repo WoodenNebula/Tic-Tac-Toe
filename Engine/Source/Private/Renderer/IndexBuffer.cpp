@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#include "Buffer.h"
+#include "Renderer/Buffer.h"
 #include "glad/glad.h"
 
 namespace Engine
