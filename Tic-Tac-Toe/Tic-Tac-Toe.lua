@@ -33,6 +33,7 @@ project "Tic-Tac-Toe"
     }
 
     filter "system:windows"
+        -- kind "WindowedApp"
         systemversion "latest"
         targetname("Tic-Tac-Toe")
     filter {}
