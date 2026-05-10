@@ -94,7 +94,7 @@ bool BoardLayer::OnMouseButtonPressed(Engine::Events::InputEvents::MouseButtonPr
         {
             // Defer overlay push until after event handling completes
             TicTacToe::Get().SubmitToMainThread([gameState]() {
-                TicTacToe::Get().PushOverlay(new TicTacToeLayer());
+                TicTacToe::Get().PushOverlay(new TicTacToeOverlayLayer());
                 LOG(TicTacToe, INFO, "Game ended with state: {}", (int)gameState);
                 });
         }

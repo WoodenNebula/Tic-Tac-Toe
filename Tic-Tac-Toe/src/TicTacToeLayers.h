@@ -11,7 +11,7 @@ struct SCellPosition;
 class TicTacToeLayer : public Engine::Layer
 {
 public:
-    TicTacToeLayer() : Layer("TicTacToeLayer") {}
+    TicTacToeLayer(std::string_view Name = "TicTacToeLayer") : Layer(Name) {}
 
     virtual ~TicTacToeLayer() = default;
 
@@ -22,6 +22,19 @@ public:
 protected:
     std::shared_ptr<Engine::CTexture> m_XTexture;
     std::shared_ptr<Engine::CTexture> m_OTexture;
+};
+
+class TicTacToeOverlayLayer : public TicTacToeLayer
+{
+public:
+    TicTacToeOverlayLayer(std::string_view Name = "OverlayLayer") : TicTacToeLayer(Name)
+    {
+
+    }
+
+    virtual void OnAttach() override;
+
+    virtual void OnUpdate(float deltaTime) override;
 };
 
 
