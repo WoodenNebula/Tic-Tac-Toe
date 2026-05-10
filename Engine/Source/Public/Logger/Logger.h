@@ -7,7 +7,17 @@
 
 #include <iostream>
 #include <format>
-#include <string_view>
+#include <sstream>
+#include <source_location>
+
+constexpr const char* COLOR_RESET = "\033[0m";
+constexpr const char* COLOR_WHITE = "\033[97m";
+constexpr const char* COLOR_RED = "\033[91m";
+constexpr const char* COLOR_GREEN = "\033[32m";
+constexpr const char* COLOR_GREEN_LIGHT = "\033[92m";
+constexpr const char* COLOR_YELLOW = "\033[93m";
+constexpr const char* COLOR_GRAY = "\033[90m";
+constexpr const char* COLOR_CYAN = "\033[96m";
 
 namespace Engine
 {
@@ -43,38 +53,49 @@ struct LogCategory
     }
 };
 
-inline static void LogWrite(const LogCategory& category, ELogLevel level, std::string_view msg)
+inline static void LogWrite(const LogCategory& category, ELogLevel level, std::string_view msg, const std::source_location& location = std::source_location::current())
 {
     if (level < ENGINE_LOG_LEVEL)
         return;
     if (level < category.LogLevel)
         return;
 
-    std::string logLevelStr;
+    std::stringstream logHeader;
 
     switch (level)
     {
-    case ELogLevel::Trace: logLevelStr = "TRACE"; break;
-    case ELogLevel::Info: logLevelStr = "INFO"; break;
-    case ELogLevel::Warn: logLevelStr = "WARNING"; break;
-    case ELogLevel::Error: logLevelStr = "ERROR"; break;
-    case ELogLevel::Fatal: logLevelStr = "FATAL"; break;
+    case ELogLevel::Trace:  logHeader << COLOR_GRAY << "[TRACE] - "; break;
+    case ELogLevel::Info:   logHeader << COLOR_WHITE << "[INFO] - "; break;
+    case ELogLevel::Warn:   logHeader << COLOR_YELLOW << "[WARNING] - "; break;
+
+    case ELogLevel::Error:
+        logHeader << location.file_name() << "\n"
+            << "\t" << "[" << location.line() << "] " << location.function_name() << "\n"
+            << COLOR_RED
+            << "\t[ERROR] - ";
+        break;
+
+    case ELogLevel::Fatal:
+        logHeader << location.file_name() << "\n"
+            << "\t" << "[" << location.line() << "] " << location.function_name() << "\n"
+            << COLOR_RED
+            << "\t[FATAL] - ";
+        break;
+
     default: break;
     }
 
     if (level == ELogLevel::Fatal)
     {
-        std::cerr
-            << "[" << logLevelStr << "] - "
+        std::cerr << logHeader.str()
             << "[" << category.Name << "] "
-            << msg << '\n';
+            << msg << COLOR_RESET << "\n";
     }
     else
     {
-        std::cout
-            << "[" << logLevelStr << "] - "
+        std::cout << logHeader.str()
             << "[" << category.Name << "] "
-            << msg << '\n';
+            << msg << COLOR_RESET << "\n";
     }
 }
 

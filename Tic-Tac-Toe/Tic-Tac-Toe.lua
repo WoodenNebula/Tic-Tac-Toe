@@ -3,17 +3,16 @@ project "Tic-Tac-Toe"
     cppdialect "C++20"
     kind "ConsoleApp"
 
-
-    targetdir("%{wks.location}/build/bin/" .. "%{wks.outputdir}" .. "/%{prj.name}")
-    objdir("%{wks.location}/build/obj/" .. "%{wks.outputdir}" .. "/%{prj.name}")
+    targetdir("%{wks.location}/build/bin/" .. outputdir .. "/%{prj.name}")
+    objdir("%{wks.location}/build/obj/" .. outputdir .. "/%{prj.name}")
 
     defines { "GLFW_INCLUDE_NONE" }
-    
+
     dependson { "Engine" }
 
     includedirs {
         "src",
-        "../Engine/Source",
+        "../Engine/Source/Public",
         "../Engine/dependencies/glad/include",
         "../Engine/dependencies/GLFW/include",
         "../Engine/dependencies/glm",
@@ -21,12 +20,12 @@ project "Tic-Tac-Toe"
 
     }
 
-    
+
     files { "src/**.h", "src/**.cpp" }
 
     files { "res/**" }
-    
-    links 
+
+    links
     {
         "Engine",
         "glad",
@@ -34,10 +33,11 @@ project "Tic-Tac-Toe"
     }
 
     filter "system:windows"
+        -- kind "WindowedApp"
         systemversion "latest"
-        targetname("Tic-Tac-Toe.exe")
+        targetname("Tic-Tac-Toe")
     filter {}
-    
+
     filter "system:linux"
         targetname("Tic-Tac-Toe.out")
     filter {}

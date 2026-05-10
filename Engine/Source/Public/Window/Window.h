@@ -1,5 +1,7 @@
 #pragma once
 
+#include "AssetManager/Image.h"
+
 #include "Core/Util/Utils.h"
 #include "Error/Error.h"
 
@@ -22,6 +24,8 @@ struct SWindowProps
     Point2D<uint32_t> Dimension;
     Point2D<int32_t> Position;
     std::string_view Title;
+
+    FPath WindowIconPath;
 
     WindowEventCallbackFn EventCallback;
 };

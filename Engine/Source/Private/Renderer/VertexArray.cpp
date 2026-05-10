@@ -1,7 +1,8 @@
-#include "VertexArray.h"
+#include "Renderer/VertexArray.h"
 
-#include "Buffer.h"
-#include "VertexBufferLayout.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/VertexBufferLayout.h"
+
 #include "glad/glad.h"
 
 namespace Engine
