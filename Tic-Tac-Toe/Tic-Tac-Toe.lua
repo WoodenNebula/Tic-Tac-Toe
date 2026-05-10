@@ -3,8 +3,6 @@ project "Tic-Tac-Toe"
     cppdialect "C++20"
     kind "ConsoleApp"
 
-    print("wks.outputdir: " .. outputdir)
-
     targetdir("%{wks.location}/build/bin/" .. outputdir .. "/%{prj.name}")
     objdir("%{wks.location}/build/obj/" .. outputdir .. "/%{prj.name}")
 
@@ -14,7 +12,7 @@ project "Tic-Tac-Toe"
 
     includedirs {
         "src",
-        "../Engine/Source",
+        "../Engine/Source/Public",
         "../Engine/dependencies/glad/include",
         "../Engine/dependencies/GLFW/include",
         "../Engine/dependencies/glm",
@@ -36,7 +34,7 @@ project "Tic-Tac-Toe"
 
     filter "system:windows"
         systemversion "latest"
-        targetname("Tic-Tac-Toe.exe")
+        targetname("Tic-Tac-Toe")
     filter {}
 
     filter "system:linux"

@@ -15,7 +15,7 @@ project "Engine"
     defines { "GLFW_INCLUDE_NONE" }
 
     includedirs {
-        "Source",
+        "Source/Public",
         "dependencies/glad/include",
         "dependencies/GLFW/include",
         "dependencies/stb_image",
