@@ -51,7 +51,7 @@ std::string CShader::ParseShader(const std::filesystem::path& filePath)
     // Ensure that shader file is open
     if (!shaderFile)
     {
-        LOG(Shader, ERROR, "File open failed: {} for file {}", strerror(errno), ShaderFile.string() );
+        LOG(Shader, ERROR, "File open failed: {} for file {}", strerror(errno), ShaderFile.string());
         exit(EXIT_FAILURE);
     }
 

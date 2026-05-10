@@ -66,6 +66,13 @@ void TicTacToeLayer::OnEvent(Engine::Events::EventBase& event)
     LOG(TicTacToe, TRACE, "Event {} Received in {}", event, m_Name);
 
     Engine::Events::EventDispatcher dispatcher(event);
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::MouseButtonReleasedEvent>([this](Engine::Events::InputEvents::MouseButtonReleasedEvent& e) -> bool {
+        return true;
+        });
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::MouseButtonPressedEvent>([this](Engine::Events::InputEvents::MouseButtonPressedEvent& e) -> bool {
+        return true;
+        });
+
     dispatcher.DispatchEvent<Engine::Events::InputEvents::KeyPressedEvent>([this](Engine::Events::InputEvents::KeyPressedEvent& e) -> bool {
         if (e.GetKey() == Engine::Events::Key::R)
         {
@@ -87,17 +94,17 @@ void TicTacToeOverlayLayer::OnAttach()
     {
     case DRAW:
     {
-        Engine::Renderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.2f });
+        Engine::Renderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
         break;
     }
     case X_WINS:
     {
-        Engine::Renderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 0.2f });
+        Engine::Renderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 1.0f });
         break;
     }
     case O_WINS:
     {
-        Engine::Renderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 0.2f });
+        Engine::Renderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 1.0f });
         break;
     }
     }
@@ -111,8 +118,8 @@ void TicTacToeOverlayLayer::OnUpdate(float deltaTime)
     {
     case DRAW:
     {
-        Engine::Renderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.2f });
-        //Engine::Renderer::Clear();
+        Engine::Renderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+        Engine::Renderer::Clear();
 
         Engine::Renderer::StartDraw();
         Engine::Renderer::DrawLine({ -0.5f, -0.5f, 0.0f }, { 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 10.0f);
@@ -124,8 +131,8 @@ void TicTacToeOverlayLayer::OnUpdate(float deltaTime)
         glm::vec3 position{ 0.0f, 0.0f, 0.0f };
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.3f * 0.8f, 0.3f * 0.8f, 1.0f));
 
-        Engine::Renderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 0.2f });
-        //Engine::Renderer::Clear();
+        Engine::Renderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 1.0f });
+        Engine::Renderer::Clear();
         Engine::Renderer::StartDraw();
         Engine::Renderer::DrawQuad(transform, m_XTexture);
         Engine::Renderer::Flush();
@@ -135,8 +142,8 @@ void TicTacToeOverlayLayer::OnUpdate(float deltaTime)
     {
         glm::vec3 position{ 0.0f, 0.0f, 0.0f };
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.3f * 0.8f, 0.3f * 0.8f, 1.0f));
-        Engine::Renderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 0.2f });
-        //Engine::Renderer::Clear();
+        Engine::Renderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 1.0f });
+        Engine::Renderer::Clear();
         Engine::Renderer::StartDraw();
         Engine::Renderer::DrawQuad(transform, m_OTexture);
         Engine::Renderer::Flush();
