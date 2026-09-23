@@ -8,7 +8,7 @@
 namespace Engine
 {
 
-enum class ShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
+enum class EShaderType { NONE = -1, VERTEX = 0, FRAGMENT = 1 };
 
 class CShader
 {
@@ -34,7 +34,7 @@ private:
     std::string ParseShader(const std::filesystem::path& filePath);
     uint32_t CreateShaderProgram(const std::string& vertexShaderSrc,
         const std::string& fragmentShaderSrc);
-    uint32_t CompileShader(ShaderType type, const std::string& shaderSrc);
+    uint32_t CompileShader(EShaderType type, const std::string& shaderSrc);
 
 private:
     uint32_t m_ProgramID;

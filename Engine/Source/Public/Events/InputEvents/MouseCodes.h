@@ -2,7 +2,7 @@
 
 namespace Engine::Events
 {
-enum class Mouse
+enum class EMouse
 {
     // From glfw3.h
     Button0 = 0,

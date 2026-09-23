@@ -8,7 +8,7 @@ DECLARE_LOG_CATEGORY(ASSERT);
     {                                                                      \
         if (!(x))                                                          \
         {                                                                  \
-            LOG(ASSERT, ERROR,                                             \
+            LOG(LogASSERT, Error,                                             \
                 "[{}-{}] ASSERTION failed: {}", __FILE__, __LINE__, fmt,   \
                 #x __VA_OPT__(,) __VA_ARGS__);                             \
         }                                                                  \

@@ -19,12 +19,12 @@ namespace Engine
 
 static void glfw_error_callback(int error_code, const char* description)
 {
-    LOG(GLFW, ERROR, "{}: {}", error_code, description);
+    LOG(LogGLFW, Error, "{}: {}", error_code, description);
 }
 
-Window::Window() {}
+CWindow::CWindow() {}
 
-Window::Window(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
+CWindow::CWindow(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
 {
     /// TODO: Engine Init
     /// Engine::Core::Init()
@@ -33,7 +33,7 @@ Window::Window(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
     {
         const char* errorDesc = "";
         int errorCode = glfwGetError(&errorDesc);
-        LOG(GLFW, FATAL, "Initialization failed -> {}, {}", errorCode, errorDesc);
+        LOG(LogGLFW, Fatal, "Initialization failed -> {}, {}", errorCode, errorDesc);
         abort();
     }
 
@@ -45,18 +45,18 @@ Window::Window(const SWindowProps& inWindowProps) : m_WindowProps(inWindowProps)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     /// !Engine::Core::Init()
 
-    LOG(Window, TRACE, "Engine Core Init");
+    LOG(LogWindow, Trace, "Engine Core Init");
 }
 
-Window::~Window()
+CWindow::~CWindow()
 {
     Terminate();
-    LOG(Window, TRACE, "Window Destroyed");
+    LOG(LogWindow, Trace, "Window Destroyed");
 }
 
-SGenericError Window::Init()
+SGenericError CWindow::Init()
 {
-    LOG(Window, TRACE, "Window Init Called");
+    LOG(LogWindow, Trace, "Window Init Called");
 
     m_WindowHandle = glfwCreateWindow(m_WindowProps.Dimension.x, m_WindowProps.Dimension.y, m_WindowProps.Title.data(), NULL, NULL);
 
@@ -67,24 +67,24 @@ SGenericError Window::Init()
 
         return { error_code, error_desc };
     }
-    LOG(Window, TRACE, "Window Created");
+    LOG(LogWindow, Trace, "Window Created");
 
     // this creates a valid window context for opengl to render to
-    Renderer::InitGLContext(m_WindowHandle);
+    CRenderer::InitGLContext(m_WindowHandle);
 
     glfwSetWindowUserPointer(m_WindowHandle, &m_WindowProps);
 
     // GLFW Callbacks
-    glfwSetKeyCallback(m_WindowHandle, GLFWEventCallbacks::key_callback);
+    glfwSetKeyCallback(m_WindowHandle, CGLFWEventCallbacks::key_callback);
 
-    glfwSetMouseButtonCallback(m_WindowHandle, GLFWEventCallbacks::mouse_button_callback);
-    glfwSetScrollCallback(m_WindowHandle, GLFWEventCallbacks::mouse_scroll_callback);
-    glfwSetCursorPosCallback(m_WindowHandle, GLFWEventCallbacks::mouse_move_callback);
+    glfwSetMouseButtonCallback(m_WindowHandle, CGLFWEventCallbacks::mouse_button_callback);
+    glfwSetScrollCallback(m_WindowHandle, CGLFWEventCallbacks::mouse_scroll_callback);
+    glfwSetCursorPosCallback(m_WindowHandle, CGLFWEventCallbacks::mouse_move_callback);
 
-    glfwSetWindowCloseCallback(m_WindowHandle, GLFWEventCallbacks::window_close_callback);
-    glfwSetWindowFocusCallback(m_WindowHandle, GLFWEventCallbacks::window_focus_callback);
-    glfwSetWindowSizeCallback(m_WindowHandle, GLFWEventCallbacks::window_size_callback);
-    glfwSetWindowPosCallback(m_WindowHandle, GLFWEventCallbacks::window_pos_callback);
+    glfwSetWindowCloseCallback(m_WindowHandle, CGLFWEventCallbacks::window_close_callback);
+    glfwSetWindowFocusCallback(m_WindowHandle, CGLFWEventCallbacks::window_focus_callback);
+    glfwSetWindowSizeCallback(m_WindowHandle, CGLFWEventCallbacks::window_size_callback);
+    glfwSetWindowPosCallback(m_WindowHandle, CGLFWEventCallbacks::window_pos_callback);
 
 
     if (!m_WindowProps.WindowIconPath.empty())
@@ -101,41 +101,41 @@ SGenericError Window::Init()
     }
     else
     {
-        LOG(Window, WARN, "Missing Window Icon Path, proceeding with normal icon.");
+        LOG(LogWindow, Warning, "Missing Window Icon Path, proceeding with normal icon.");
     }
     return {};
 }
 
-void Window::OnUpdate(float dt)
+void CWindow::OnUpdate(float dt)
 {
     glfwPollEvents();
     glfwSwapBuffers(m_WindowHandle);
 }
 
-void Window::CloseWindow()
+void CWindow::CloseWindow()
 {
     if (m_WindowHandle)
     {
         glfwSetWindowShouldClose(m_WindowHandle, GLFW_TRUE);
-        LOG(Window, TRACE, "Window Close Requested");
+        LOG(LogWindow, Trace, "Window Close Requested");
     }
 }
 
-void Window::Terminate()
+void CWindow::Terminate()
 {
     if (m_WindowHandle)
     {
-        LOG(Window, TRACE, "Terminating Window");
+        LOG(LogWindow, Trace, "Terminating Window");
         glfwDestroyWindow(m_WindowHandle);
         m_WindowHandle = nullptr;
     }
 }
 
 
-void Window::SetWindowEventCallback(const WindowEventCallbackFn& callback)
+void CWindow::SetWindowEventCallback(const WindowEventCallbackFn& callback)
 {
     m_WindowProps.EventCallback = callback;
-    LOG(Window, TRACE, "Window Event Callback Set");
+    LOG(LogWindow, Trace, "Window Event Callback Set");
 }
 
 }; // namespace Engine

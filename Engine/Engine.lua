@@ -39,7 +39,8 @@ project "Engine"
         links {
             "opengl32",
             "glad",
-            "GLFW"
+            "GLFW",
+            "Ws2_32",
         }
     filter {}
 

@@ -14,26 +14,26 @@ DECLARE_LOG_CATEGORY(Application)
 namespace Engine
 {
 
-Application::Application() : m_IsRunning(true) {}
+CApplication::CApplication() : m_IsRunning(true) {}
 
-Application::Application(const SApplicationProps& inApplicationProps) : m_ApplicationProps(inApplicationProps), m_IsRunning(true)
+CApplication::CApplication(const SApplicationProps& inApplicationProps) : m_ApplicationProps(inApplicationProps), m_IsRunning(true)
 {
     // Application specific pre init code here
 }
 
-Application::~Application()
+CApplication::~CApplication()
 {
     // TODO: DEINIT APPLICATION AND THEN CORE
     if (m_IsRunning)
     {
         Shutdown();
     }
-    LOG(Application, TRACE, "Application Shutdown Complete");
+    LOG(LogApplication, Trace, "Application Shutdown Complete");
 }
 
-SGenericError Application::Init()
+SGenericError CApplication::Init()
 {
-    m_Window = std::make_unique<Window>(m_ApplicationProps.WindowProps);
+    m_Window = std::make_unique<CWindow>(m_ApplicationProps.WindowProps);
     SGenericError Err = m_Window->Init();
     std::cout << "Window Init\n";
 
@@ -42,20 +42,20 @@ SGenericError Application::Init()
         return Err;
     }
 
-    m_Window->SetWindowEventCallback(BIND_EVENT_CB(Application::OnEvent));
-    LOG(Application, TRACE, "Event callback bound to window events");
+    m_Window->SetWindowEventCallback(BIND_EVENT_CB(CApplication::OnEvent));
+    LOG(LogApplication, Trace, "Event callback bound to window events");
 
-    Renderer::Init();
+    CRenderer::Init();
     return {};
 }
 
 
-void Application::OnEvent(Events::EventBase& event)
+void CApplication::OnEvent(Events::CEventBase& event)
 {
-    Events::EventDispatcher dispatcher(event);
-    dispatcher.DispatchEvent<Events::WindowCloseEvent>(BIND_EVENT_CB(Application::OnWindowCloseEvent));
-    dispatcher.DispatchEvent<Events::WindowMovedEvent>(BIND_EVENT_CB(Application::OnWindowMovedEvent));
-    dispatcher.DispatchEvent<Events::WindowResizeEvent>(BIND_EVENT_CB(Application::OnWindowResizeEvent));
+    Events::CEventDispatcher dispatcher(event);
+    dispatcher.DispatchEvent<Events::CWindowCloseEvent>(BIND_EVENT_CB(CApplication::OnWindowCloseEvent));
+    dispatcher.DispatchEvent<Events::WindowMovedEvent>(BIND_EVENT_CB(CApplication::OnWindowMovedEvent));
+    dispatcher.DispatchEvent<Events::WindowResizeEvent>(BIND_EVENT_CB(CApplication::OnWindowResizeEvent));
 
 
     // Reverse iterate through layer stack
@@ -73,29 +73,29 @@ void Application::OnEvent(Events::EventBase& event)
     ProcessPendingOperations();
 }
 
-void Application::PushLayer(Layer* layer)
+void CApplication::PushLayer(CLayer* layer)
 {
     m_LayerStack.PushLayer(layer);
     layer->OnAttach();
 }
-void Application::PushOverlay(Layer* overlay)
+void CApplication::PushOverlay(CLayer* overlay)
 {
     m_LayerStack.PushOverlay(overlay);
     overlay->OnAttach();
 }
 
-void Application::PopLayer(Layer* layer)
+void CApplication::PopLayer(CLayer* layer)
 {
     m_LayerStack.PopLayer(layer);
     layer->OnDetach();
 }
 
-void Application::PopOverlay(Layer* overlay)
+void CApplication::PopOverlay(CLayer* overlay)
 {
     m_LayerStack.PopOverlay(overlay);
     overlay->OnDetach();
 }
-bool Application::OnWindowCloseEvent(Events::WindowCloseEvent& e)
+bool CApplication::OnWindowCloseEvent(Events::CWindowCloseEvent& e)
 {
     e.Handled = true;
     m_IsRunning = false;
@@ -103,16 +103,16 @@ bool Application::OnWindowCloseEvent(Events::WindowCloseEvent& e)
     return true;
 }
 
-bool Application::OnWindowResizeEvent(Events::WindowResizeEvent& e)
+bool CApplication::OnWindowResizeEvent(Events::WindowResizeEvent& e)
 {
     e.Handled = true;
     m_ApplicationProps.WindowProps.Dimension = e.GetDimensions();
 
-    Renderer::SetViewport(0, 0, e.GetDimensions().x, e.GetDimensions().y);
+    CRenderer::SetViewport(0, 0, e.GetDimensions().x, e.GetDimensions().y);
     return true;
 }
 
-bool Application::OnWindowMovedEvent(Events::WindowMovedEvent& e)
+bool CApplication::OnWindowMovedEvent(Events::WindowMovedEvent& e)
 {
     e.Handled = true;
     m_ApplicationProps.WindowProps.Position = e.GetPosition();
@@ -121,12 +121,12 @@ bool Application::OnWindowMovedEvent(Events::WindowMovedEvent& e)
 }
 
 
-void Application::SubmitToMainThread(const std::function<void()>& func)
+void CApplication::SubmitToMainThread(const std::function<void()>& func)
 {
     m_PendingOperations.push(func);
 }
 
-void Application::ProcessPendingOperations()
+void CApplication::ProcessPendingOperations()
 {
     while (!m_PendingOperations.empty())
     {
@@ -136,7 +136,7 @@ void Application::ProcessPendingOperations()
     }
 }
 
-void Application::Run()
+void CApplication::Run()
 {
     /// Engine Loop first?
     while (m_IsRunning)
@@ -152,7 +152,7 @@ void Application::Run()
     }
 }
 
-void Application::Shutdown()
+void CApplication::Shutdown()
 {
     m_Window->Terminate();
 

@@ -12,7 +12,7 @@
 namespace Engine
 {
 
-class Renderer
+class CRenderer
 {
 public:
 

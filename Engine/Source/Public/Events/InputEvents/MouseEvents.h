@@ -14,25 +14,25 @@
 namespace Engine::Events::InputEvents
 {
 
-class MouseEvent : public EventBase
+class CMouseEvent : public CEventBase
 {
 public:
-    virtual EventTypes GetEventType() const override { return m_EventType; }
-    virtual EventCategoryTypes GetEventCategory() const override { return m_EventCategory; }
+    virtual EEventTypes GetEventType() const override { return m_EventType; }
+    virtual EEventCategoryTypes GetEventCategory() const override { return m_EventCategory; }
 protected:
-    MouseEvent(EventTypes eventType) : EventBase(eventType, EventCategoryTypes::Mouse) {}
-    virtual ~MouseEvent() = default;
+    CMouseEvent(EEventTypes eventType) : CEventBase(eventType, EEventCategoryTypes::Mouse) {}
+    virtual ~CMouseEvent() = default;
 };
 
-class MouseButtonPressedEvent : public MouseEvent
+class CMouseButtonPressedEvent : public CMouseEvent
 {
 public:
-    MouseButtonPressedEvent(Mouse Button) : MouseEvent(GetStaticEventType()), m_Button(Button)
+    CMouseButtonPressedEvent(EMouse Button) : CMouseEvent(GetStaticEventType()), m_Button(Button)
     {
-        m_EventType = EventTypes::MouseButtonPressed;
+        m_EventType = EEventTypes::MouseButtonPressed;
     }
 
-    static EventTypes GetStaticEventType() { return EventTypes::MouseButtonPressed; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::MouseButtonPressed; }
 
     virtual std::string ToString() const override
     {
@@ -41,23 +41,23 @@ public:
         msg.append((magic_enum::enum_name(m_Button)));
         return msg;
 #else
-        return "MouseButtonPressedEvent: " + std::to_string(static_cast<std::underlying_type_t<Mouse>>(m_Button));
+        return "MouseButtonPressedEvent: " + std::to_string(static_cast<std::underlying_type_t<EMouse>>(m_Button));
 #endif
     }
 
-    Mouse GetButton() const { return m_Button; }
+    EMouse GetButton() const { return m_Button; }
 private:
-    Mouse m_Button;
+    EMouse m_Button;
 };
 
-class MouseButtonReleasedEvent : public MouseEvent
+class CMouseButtonReleasedEvent : public CMouseEvent
 {
 public:
-    MouseButtonReleasedEvent(Mouse Button) : MouseEvent(GetStaticEventType()), m_Button(Button)
+    CMouseButtonReleasedEvent(EMouse Button) : CMouseEvent(GetStaticEventType()), m_Button(Button)
     {
     }
 
-    static EventTypes GetStaticEventType() { return EventTypes::MouseButtonReleased; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::MouseButtonReleased; }
 
     virtual std::string ToString() const override
     {
@@ -66,23 +66,23 @@ public:
         msg.append((magic_enum::enum_name(m_Button)));
         return msg;
 #else
-        return "MouseButtonReleasedEvent: " + std::to_string(static_cast<std::underlying_type_t<Mouse>>(m_Button));
+        return "MouseButtonReleasedEvent: " + std::to_string(static_cast<std::underlying_type_t<EMouse>>(m_Button));
 #endif
     }
 
-    Mouse GetButton() const { return m_Button; }
+    EMouse GetButton() const { return m_Button; }
 private:
-    Mouse m_Button;
+    EMouse m_Button;
 };
 
-class MouseMovedEvent : public MouseEvent
+class CMouseMovedEvent : public CMouseEvent
 {
 public:
     using Position = Point2D<double>;
 
-    MouseMovedEvent(double xPos, double yPos) : MouseEvent(GetStaticEventType()), m_Pos{ xPos, yPos } {}
+    CMouseMovedEvent(double xPos, double yPos) : CMouseEvent(GetStaticEventType()), m_Pos{ xPos, yPos } {}
 
-    static EventTypes GetStaticEventType() { return EventTypes::MouseMoved; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::MouseMoved; }
 
     virtual std::string ToString() const override
     {
@@ -94,14 +94,14 @@ private:
     Position m_Pos;
 };
 
-class MouseScrolledEvent : public MouseEvent
+class CMouseScrolledEvent : public CMouseEvent
 {
 public:
     using Position = Point2D<double>;
 
-    MouseScrolledEvent(double xOffset, double yOffset) : MouseEvent(GetStaticEventType()), m_Offset{ xOffset, yOffset } {}
+    CMouseScrolledEvent(double xOffset, double yOffset) : CMouseEvent(GetStaticEventType()), m_Offset{ xOffset, yOffset } {}
 
-    static EventTypes GetStaticEventType() { return EventTypes::MouseScrolled; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::MouseScrolled; }
 
     virtual std::string ToString() const override
     {

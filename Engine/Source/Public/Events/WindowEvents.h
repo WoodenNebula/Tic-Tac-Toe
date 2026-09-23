@@ -7,22 +7,22 @@
 namespace Engine::Events
 {
 
-class WindowEvent : public EventBase
+class CWindowEvent : public CEventBase
 {
 public:
-    virtual EventTypes GetEventType() const override { return m_EventType; }
-    virtual EventCategoryTypes GetEventCategory() const override { return m_EventCategory; }
+    virtual EEventTypes GetEventType() const override { return m_EventType; }
+    virtual EEventCategoryTypes GetEventCategory() const override { return m_EventCategory; }
 protected:
-    WindowEvent(EventTypes eventType) : EventBase(eventType, EventCategoryTypes::Window) {}
-    virtual ~WindowEvent() = default;
+    CWindowEvent(EEventTypes eventType) : CEventBase(eventType, EEventCategoryTypes::Window) {}
+    virtual ~CWindowEvent() = default;
 };
 
-class WindowCloseEvent : public WindowEvent
+class CWindowCloseEvent : public CWindowEvent
 {
 public:
-    WindowCloseEvent() : WindowEvent(GetStaticEventType()) {}
+    CWindowCloseEvent() : CWindowEvent(GetStaticEventType()) {}
 
-    static EventTypes GetStaticEventType() { return EventTypes::WindowClose; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::WindowClose; }
 
     std::string ToString() const override
     {
@@ -30,12 +30,12 @@ public:
     }
 };
 
-class WindowGainFocusEvent : public WindowEvent
+class CWindowGainFocusEvent : public CWindowEvent
 {
 public:
-    WindowGainFocusEvent() : WindowEvent(GetStaticEventType()) {}
+    CWindowGainFocusEvent() : CWindowEvent(GetStaticEventType()) {}
 
-    static EventTypes GetStaticEventType() { return EventTypes::WindowGainFocus; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::WindowGainFocus; }
 
     std::string ToString() const override
     {
@@ -43,12 +43,12 @@ public:
     }
 };
 
-class WindowLostFocus : public WindowEvent
+class CWindowLostFocus : public CWindowEvent
 {
 public:
-    WindowLostFocus() : WindowEvent(GetStaticEventType()) {}
+    CWindowLostFocus() : CWindowEvent(GetStaticEventType()) {}
 
-    static EventTypes GetStaticEventType() { return EventTypes::WindowLostFocus; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::WindowLostFocus; }
 
     std::string ToString() const override
     {
@@ -56,12 +56,12 @@ public:
     }
 };
 
-class WindowResizeEvent : public WindowEvent
+class WindowResizeEvent : public CWindowEvent
 {
 public:
-    WindowResizeEvent(uint32_t width, uint32_t height) : WindowEvent(GetStaticEventType()), m_Dimensions{ width, height } {}
+    WindowResizeEvent(uint32_t width, uint32_t height) : CWindowEvent(GetStaticEventType()), m_Dimensions{ width, height } {}
 
-    static EventTypes GetStaticEventType() { return EventTypes::WindowResize; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::WindowResize; }
 
     Point2D<uint32_t> GetDimensions() const { return m_Dimensions; }
 
@@ -73,12 +73,12 @@ private:
     Point2D<uint32_t> m_Dimensions;
 };
 
-class WindowMovedEvent : public WindowEvent
+class WindowMovedEvent : public CWindowEvent
 {
 public:
-    WindowMovedEvent(int width, int height) : WindowEvent(GetStaticEventType()), m_Position{ static_cast<int32_t>(width), static_cast<int32_t>(height) } {}
+    WindowMovedEvent(int width, int height) : CWindowEvent(GetStaticEventType()), m_Position{ static_cast<int32_t>(width), static_cast<int32_t>(height) } {}
 
-    static EventTypes GetStaticEventType() { return EventTypes::WindowMoved; }
+    static EEventTypes GetStaticEventType() { return EEventTypes::WindowMoved; }
 
     Point2D<int32_t> GetPosition() const { return m_Position; }
 

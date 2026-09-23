@@ -17,7 +17,7 @@ struct GLFWwindow;
 namespace Engine
 {
 
-using WindowEventCallbackFn = std::function<void(Events::EventBase&)>;
+using WindowEventCallbackFn = std::function<void(Events::CEventBase&)>;
 
 struct SWindowProps
 {
@@ -30,13 +30,13 @@ struct SWindowProps
     WindowEventCallbackFn EventCallback;
 };
 
-class Window
+class CWindow
 {
 public:
 
-    Window();
-    Window(const SWindowProps& inWindowProps);
-    ~Window();
+    CWindow();
+    CWindow(const SWindowProps& inWindowProps);
+    ~CWindow();
 
     SGenericError Init();
     void OnUpdate(float dt);

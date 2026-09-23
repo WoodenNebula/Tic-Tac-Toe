@@ -6,17 +6,17 @@
 
 namespace Engine
 {
-class LayerStack
+class CLayerStack
 {
 public:
-    LayerStack() = default;
-    ~LayerStack();
+    CLayerStack() = default;
+    ~CLayerStack();
 
-    void PushLayer(Layer* layer);
-    void PopLayer(Layer* layer);
+    void PushLayer(CLayer* layer);
+    void PopLayer(CLayer* layer);
 
-    void PushOverlay(Layer* overlay);
-    void PopOverlay(Layer* overlay);
+    void PushOverlay(CLayer* overlay);
+    void PopOverlay(CLayer* overlay);
 
 
     auto begin() { return m_Layers.begin(); }
@@ -25,9 +25,9 @@ public:
     auto begin() const { return m_Layers.begin(); }
     auto end() const { return m_Layers.end(); }
 
-    void Trace() const;
+    void TraceLayerStack() const;
 protected:
-    std::vector<Layer*> m_Layers;
-    std::vector<Layer*>::iterator m_LayerEnd{ m_Layers.begin() };
+    std::vector<CLayer*> m_Layers;
+    std::vector<CLayer*>::iterator m_LayerEnd{ m_Layers.begin() };
 };
 }

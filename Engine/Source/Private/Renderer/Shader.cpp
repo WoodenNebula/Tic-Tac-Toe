@@ -40,7 +40,7 @@ std::string CShader::ParseShader(const std::filesystem::path& filePath)
     FPath ShaderFile = CAssetManager::FindFile(filePath);
     if (ShaderFile.empty())
     {
-        LOG(Shader, ERROR, "Shader File = {} doesn't exist", ShaderFile.string());
+        LOG(LogShader, Error, "Shader File = {} doesn't exist", ShaderFile.string());
         ASSERT(false, "Shader File = {} doesn't exist", ShaderFile.string());
     }
 
@@ -51,7 +51,7 @@ std::string CShader::ParseShader(const std::filesystem::path& filePath)
     // Ensure that shader file is open
     if (!shaderFile)
     {
-        LOG(Shader, ERROR, "File open failed: {} for file {}", strerror(errno), ShaderFile.string());
+        LOG(LogShader, Error, "File open failed: {} for file {}", strerror(errno), ShaderFile.string());
         exit(EXIT_FAILURE);
     }
 
@@ -68,8 +68,8 @@ uint32_t CShader::CreateShaderProgram(const std::string& vertexShaderSrc,
     const std::string& fragmentShaderSrc)
 {
     uint32_t vertexShader, fragmentShader;
-    vertexShader = CompileShader(ShaderType::VERTEX, vertexShaderSrc);
-    fragmentShader = CompileShader(ShaderType::FRAGMENT, fragmentShaderSrc);
+    vertexShader = CompileShader(EShaderType::VERTEX, vertexShaderSrc);
+    fragmentShader = CompileShader(EShaderType::FRAGMENT, fragmentShaderSrc);
 
     uint32_t shaderProgram = glCreateProgram();
 
@@ -92,7 +92,7 @@ uint32_t CShader::CreateShaderProgram(const std::string& vertexShaderSrc,
         char* infoLog = (char*)malloc((length + 1) * sizeof(char));
         glGetShaderInfoLog(shaderProgram, length, &length, err.data());
 
-        std::cout << "ERROR::SHADER : LINKING FAILED \n"
+        std::cout << "Error::SHADER : LINKING FAILED \n"
             << err << std::endl;
 
         glDeleteShader(shaderProgram);
@@ -108,22 +108,22 @@ uint32_t CShader::CreateShaderProgram(const std::string& vertexShaderSrc,
     return shaderProgram;
 }
 
-uint32_t CShader::CompileShader(ShaderType type, const std::string& shaderSrc)
+uint32_t CShader::CompileShader(EShaderType type, const std::string& shaderSrc)
 {
 /// Compilation Process
     uint32_t shaderID = 0;
     const char* src = shaderSrc.c_str();
-    if (type == ShaderType::VERTEX)
+    if (type == EShaderType::VERTEX)
     {
         shaderID = glCreateShader(GL_VERTEX_SHADER);
     }
-    else if (type == ShaderType::FRAGMENT)
+    else if (type == EShaderType::FRAGMENT)
     {
         shaderID = glCreateShader(GL_FRAGMENT_SHADER);
     }
     else
     {
-        std::cout << "ERROR::SHADER::BadShaderType" << std::endl;
+        std::cout << "Error::SHADER::BadShaderType" << std::endl;
         exit(EXIT_FAILURE);
     }
     glShaderSource(shaderID, 1, &src, nullptr);
@@ -140,8 +140,8 @@ uint32_t CShader::CompileShader(ShaderType type, const std::string& shaderSrc)
         char* infoLog = (char*)malloc(length * sizeof(char));
         glGetShaderInfoLog(shaderID, length, &length, infoLog);
 
-        std::cout << "ERROR::SHADER::"
-            << (type == ShaderType::VERTEX ? "VERTEX" : "FRAGMENT")
+        std::cout << "Error::SHADER::"
+            << (type == EShaderType::VERTEX ? "VERTEX" : "FRAGMENT")
             << "::COMPILATION_FAILED\n"
             << infoLog << std::endl;
 

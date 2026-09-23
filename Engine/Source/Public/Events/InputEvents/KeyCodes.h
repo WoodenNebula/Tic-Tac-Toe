@@ -5,7 +5,7 @@
 
 namespace Engine::Events
 {
-enum class Key
+enum class EKey
 {
     // From glfw3.h
     Space = 32,
@@ -143,7 +143,7 @@ enum class Key
 
 #ifdef DEBUG
 template<>
-struct magic_enum::customize::enum_range<Engine::Events::Key>
+struct magic_enum::customize::enum_range<Engine::Events::EKey>
 {
     static constexpr int min = 0;
     static constexpr int max = 348;

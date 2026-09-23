@@ -3,7 +3,7 @@
 
 #include "TicTacToe.h"
 
-Engine::Application* Engine::CreateApplication(int argc, char* argv[])
+Engine::CApplication* Engine::CreateApplication(int argc, char* argv[])
 {
     Engine::SWindowProps windowProps = {
         .Dimension = {800, 600},
@@ -12,6 +12,6 @@ Engine::Application* Engine::CreateApplication(int argc, char* argv[])
         .WindowIconPath = "./res/textures/Tic-Tac-Toe.png"
     };
     Engine::SApplicationProps appProps = { windowProps };
-    Engine::Application::App = new Game::TicTacToe(appProps);
-    return Engine::Application::App;
+    Engine::CApplication::App = new Game::CTicTacToe(appProps);
+    return Engine::CApplication::App;
 }

@@ -10,7 +10,7 @@ namespace Engine
 {
 
 
-struct VertexBufferElement
+struct SVertexBufferElement
 {
     uint32_t type;
     uint32_t count;
@@ -45,14 +45,14 @@ public:
     template <typename T>
     void Push(uint32_t count);
 
-    inline const std::vector<VertexBufferElement>& GetElements() const
+    inline const std::vector<SVertexBufferElement>& GetElements() const
     {
         return m_Elements;
     }
 
     inline uint32_t GetStride() const { return m_Stride; }
 private:
-    std::vector<VertexBufferElement> m_Elements;
+    std::vector<SVertexBufferElement> m_Elements;
     // Stride is the total size of all attributes in a single vertex i.e. Pos + Color + TexCoord + ...
     uint32_t m_Stride;
 };

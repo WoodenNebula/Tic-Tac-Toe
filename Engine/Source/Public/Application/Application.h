@@ -17,21 +17,21 @@ struct SApplicationProps
     // Other Application specific props here
 };
 
-class Application
+class CApplication
 {
 public:
-    Application();
-    Application(const SApplicationProps& inApplicationProps);
-    ~Application();
+    CApplication();
+    CApplication(const SApplicationProps& inApplicationProps);
+    ~CApplication();
 
     virtual SGenericError Init();
 
-    virtual void OnEvent(Events::EventBase& event);
+    virtual void OnEvent(Events::CEventBase& event);
 
-    void PushLayer(Layer* layer);
-    void PushOverlay(Layer* overlay);
-    void PopLayer(Layer* layer);
-    void PopOverlay(Layer* overlay);
+    void PushLayer(CLayer* layer);
+    void PushOverlay(CLayer* overlay);
+    void PopLayer(CLayer* layer);
+    void PopOverlay(CLayer* overlay);
 
     void Run();
     void Shutdown();
@@ -39,9 +39,9 @@ public:
     void SubmitToMainThread(const std::function<void()>& func);
 
 public:
-    static inline Application* App{};
+    static inline CApplication* App{};
 protected:
-    virtual bool OnWindowCloseEvent(Events::WindowCloseEvent& e);
+    virtual bool OnWindowCloseEvent(Events::CWindowCloseEvent& e);
     bool OnWindowResizeEvent(Events::WindowResizeEvent& e);
     bool OnWindowMovedEvent(Events::WindowMovedEvent& e);
 
@@ -50,12 +50,12 @@ protected:
     SApplicationProps m_ApplicationProps;
     bool m_IsRunning;
 
-    std::unique_ptr<Window> m_Window;
-    LayerStack m_LayerStack;
+    std::unique_ptr<CWindow> m_Window;
+    CLayerStack m_LayerStack;
 
     std::queue<std::function<void()>> m_PendingOperations;
 };
 
 // Entry point to be defined in GAME project
-Application* CreateApplication(int argc, char* argv[]);
+CApplication* CreateApplication(int argc, char* argv[]);
 }; // !namespace Engine

@@ -9,7 +9,7 @@
 #include "TicTacToeTypes.h"
 #include "TicTacToeLayers.h"
 
-DECLARE_LOG_CATEGORY_LEVEL(TicTacToe, INFO)
+DECLARE_LOG_CATEGORY_LEVEL(TicTacToe, Info)
 namespace Game
 {
 
@@ -21,19 +21,19 @@ struct SCellPosition
 };
 
 
-class TicTacToe : public Engine::Application
+class CTicTacToe : public Engine::CApplication
 {
 public:
-    static TicTacToe& Get();
+    static CTicTacToe& Get();
     static void Reset();
-    TicTacToe(const Engine::SApplicationProps& appProps);
+    CTicTacToe(const Engine::SApplicationProps& appProps);
 
     virtual Engine::SGenericError Init() override;
 
     void MakeMove(const SCellPosition& Position);
     EGameState GetCurrentGameState();
 
-    void OnEvent(Engine::Events::EventBase& event) override;
+    void OnEvent(Engine::Events::CEventBase& event) override;
 
     inline ECellState GetCurrentPlayer() const { return m_CurrentPlayer; }
     const inline std::vector<std::vector<ECellState>>& GetBoard() const { return m_Board; }

@@ -17,7 +17,7 @@ CImage::CImage(const FPath& RelImagePath, bool ShouldLoadImmediately)
 {
     if (RelImagePath.empty())
     {
-        LOG(Image, ERROR, "CImage loading failed: empty path");
+        LOG(LogImage, Error, "CImage loading failed: empty path");
         ImagePath = "";
     }
     else
@@ -30,7 +30,7 @@ CImage::CImage(const FPath& RelImagePath, bool ShouldLoadImmediately)
         SGenericError Err = Load();
         if (Err)
         {
-            LOG(Image, ERROR, "Image loading failed: {}", Err);
+            LOG(LogImage, Error, "Image loading failed: {}", Err);
         }
     }
 }
@@ -46,14 +46,14 @@ SGenericError CImage::Load()
 
     if (Data)
     {
-        LOG(Image, WARN, "Overriding Existing Image!");
+        LOG(LogImage, Warning, "Overriding Existing Image!");
         Free();
     }
 
     FPath FullPath = CAssetManager::FindFile(ImagePath);
     if (FullPath.empty())
     {
-        return { -1, "File Not Found: " + ImagePath.string() };
+        return { -1, "File Not Found: " + ImagePath.string() + ", Project Root is: " + PROJECT_ROOT };
     }
 
     return LoadImage_stbi(FullPath);

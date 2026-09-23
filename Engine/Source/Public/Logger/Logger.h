@@ -26,34 +26,29 @@ enum ELogLevel
     Trace = 0,
     Info,
     Warn,
+    Success,
     Error,
     Fatal
 };
 
-#define TRACE Engine::ELogLevel::Trace
-#define INFO Engine::ELogLevel::Info
-#define WARN Engine::ELogLevel::Warn
-#define ERROR Engine::ELogLevel::Error
-#define FATAL Engine::ELogLevel::Fatal
-
 #ifdef DEBUG
-#define ENGINE_LOG_LEVEL TRACE
+#define ENGINE_LOG_LEVEL ELogLevel::Trace
 #else
-#define ENGINE_LOG_LEVEL INFO
+#define ENGINE_LOG_LEVEL ELogLevel::Info
 #endif
 
-struct LogCategory
+struct SLogCategory
 {
     std::string_view Name;
     ELogLevel LogLevel;
 
-    LogCategory(const std::string_view name, ELogLevel level = ENGINE_LOG_LEVEL)
+    SLogCategory(const std::string_view name, ELogLevel level = ENGINE_LOG_LEVEL)
         : Name(name), LogLevel(level)
     {
     }
 };
 
-inline static void LogWrite(const LogCategory& category, ELogLevel level, std::string_view msg, const std::source_location& location = std::source_location::current())
+inline static void LogWrite(const SLogCategory& category, ELogLevel level, std::string_view msg, const std::source_location& location = std::source_location::current())
 {
     if (level < ENGINE_LOG_LEVEL)
         return;
@@ -64,21 +59,21 @@ inline static void LogWrite(const LogCategory& category, ELogLevel level, std::s
 
     switch (level)
     {
-    case ELogLevel::Trace:  logHeader << COLOR_GRAY << "[TRACE] - "; break;
-    case ELogLevel::Info:   logHeader << COLOR_WHITE << "[INFO] - "; break;
-    case ELogLevel::Warn:   logHeader << COLOR_YELLOW << "[WARNING] - "; break;
-
+    case ELogLevel::Trace:      logHeader << COLOR_GRAY << "[TRACE] - ";        break;
+    case ELogLevel::Info:       logHeader << COLOR_WHITE << "[INFO] - ";        break;
+    case ELogLevel::Warn:       logHeader << COLOR_YELLOW << "[WARNING] - ";    break;
+    case ELogLevel::Success:    logHeader << COLOR_GREEN << "[SUCCESS] - ";     break;
     case ELogLevel::Error:
-        logHeader << location.file_name() << "\n"
+        logHeader << COLOR_RED
+            << location.file_name() << "\n"
             << "\t" << "[" << location.line() << "] " << location.function_name() << "\n"
-            << COLOR_RED
             << "\t[ERROR] - ";
         break;
 
     case ELogLevel::Fatal:
-        logHeader << location.file_name() << "\n"
+        logHeader << COLOR_RED
+            << location.file_name() << "\n"
             << "\t" << "[" << location.line() << "] " << location.function_name() << "\n"
-            << COLOR_RED
             << "\t[FATAL] - ";
         break;
 
@@ -100,18 +95,27 @@ inline static void LogWrite(const LogCategory& category, ELogLevel level, std::s
 }
 
 #define DECLARE_LOG_CATEGORY(CategoryName) \
-inline Engine::LogCategory Log##CategoryName{#CategoryName};
+inline Engine::SLogCategory Log##CategoryName{#CategoryName};
 
 #define DECLARE_LOG_CATEGORY_LEVEL(CategoryName, Level) \
-inline Engine::LogCategory Log##CategoryName{#CategoryName, Level };
+inline Engine::SLogCategory Log##CategoryName{#CategoryName, Level };
 
 #define LOG(Category, Level, Fmt, ...) \
     do { \
         Engine::LogWrite( \
-            Log##Category, \
+            Category, \
             Level, \
             std::format(Fmt __VA_OPT__(,) __VA_ARGS__) \
         ); \
     } while (0)
 }; // namespace Engine
+
+
+inline constexpr Engine::ELogLevel Trace = Engine::ELogLevel::Trace;
+inline constexpr Engine::ELogLevel Success = Engine::ELogLevel::Success;
+inline constexpr Engine::ELogLevel Info = Engine::ELogLevel::Info;
+inline constexpr Engine::ELogLevel Warning = Engine::ELogLevel::Warn;
+inline constexpr Engine::ELogLevel Error = Engine::ELogLevel::Error;
+inline constexpr Engine::ELogLevel Fatal = Engine::ELogLevel::Fatal;
+
 DECLARE_LOG_CATEGORY(Any);

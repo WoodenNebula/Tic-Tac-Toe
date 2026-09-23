@@ -7,9 +7,9 @@ namespace Game
 {
 
 
-void BoardLayer::OnAttach()
+void CBoardLayer::OnAttach()
 {
-    LOG(TicTacToe, TRACE, "Layer Attached in {}", m_Name);
+    LOG(LogTicTacToe, Trace, "Layer Attached in {}", m_Name);
 
     m_XTexture = std::make_shared<Engine::CTexture>("./res/textures/X.png");
     m_OTexture = std::make_shared<Engine::CTexture>("./res/textures/O.png");
@@ -36,75 +36,75 @@ void BoardLayer::OnAttach()
     };
 }
 
-void BoardLayer::OnDetach()
+void CBoardLayer::OnDetach()
 {
-    LOG(TicTacToe, TRACE, "Layer DeAttached in {}", m_Name);
+    LOG(LogTicTacToe, Trace, "Layer DeAttached in {}", m_Name);
 }
 
-void BoardLayer::OnUpdate(float deltaTime)
+void CBoardLayer::OnUpdate(float deltaTime)
 {
-    Engine::Renderer::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
-    Engine::Renderer::Clear();
+    Engine::CRenderer::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+    Engine::CRenderer::Clear();
 
     DrawBoard();
-    switch (TicTacToe::Get().GetCurrentGameState())
+    switch (CTicTacToe::Get().GetCurrentGameState())
     {
     case ONGOING:
         break;
     case DRAW:
     {
-        Engine::Renderer::SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
-        Engine::Renderer::Clear();
+        Engine::CRenderer::SetClearColor({ 0.5f, 0.5f, 0.5f, 1.0f });
+        Engine::CRenderer::Clear();
         DrawBoard();
         break;
     }
     }
 }
 
-void BoardLayer::OnEvent(Engine::Events::EventBase& event)
+void CBoardLayer::OnEvent(Engine::Events::CEventBase& event)
 {
     // Event handling logic for the Tic-Tac-Toe layer
-    LOG(TicTacToe, TRACE, "Event {} Received in {}", event, m_Name);
+    LOG(LogTicTacToe, Trace, "Event {} Received in {}", event, m_Name);
 
-    Engine::Events::EventDispatcher dispatcher(event);
-    dispatcher.DispatchEvent<Engine::Events::InputEvents::MouseMovedEvent>(BIND_EVENT_CB(BoardLayer::OnMouseMoved));
-    dispatcher.DispatchEvent<Engine::Events::InputEvents::MouseButtonPressedEvent>(BIND_EVENT_CB(BoardLayer::OnMouseButtonPressed));
+    Engine::Events::CEventDispatcher dispatcher(event);
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::CMouseMovedEvent>(BIND_EVENT_CB(CBoardLayer::OnMouseMoved));
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::CMouseButtonPressedEvent>(BIND_EVENT_CB(CBoardLayer::OnMouseButtonPressed));
 }
 
-bool BoardLayer::OnMouseMoved(Engine::Events::InputEvents::MouseMovedEvent& event)
+bool CBoardLayer::OnMouseMoved(Engine::Events::InputEvents::CMouseMovedEvent& event)
 {
     m_MousePosition = event.GetPos();
     return true;
 }
 
 
-bool BoardLayer::OnMouseButtonPressed(Engine::Events::InputEvents::MouseButtonPressedEvent& event)
+bool CBoardLayer::OnMouseButtonPressed(Engine::Events::InputEvents::CMouseButtonPressedEvent& event)
 {
-    auto pos = TicTacToe::Get().GetNDCFromViewport(m_MousePosition);
+    auto pos = CTicTacToe::Get().GetNDCFromViewport(m_MousePosition);
     SCellPosition cellPos = NDCToCellPosition(pos);
-    LOG(TicTacToe, INFO, "Mouse Button Pressed at Position: {} -> cell {}, {}", pos.ToString(), cellPos.Row, cellPos.Col);
+    LOG(LogTicTacToe, Info, "Mouse Button Pressed at Position: {} -> cell {}, {}", pos.ToString(), cellPos.Row, cellPos.Col);
 
     if (cellPos.IsValid())
     {
-        TicTacToe::Get().MakeMove(cellPos);
+        CTicTacToe::Get().MakeMove(cellPos);
 
-        EGameState gameState = TicTacToe::Get().GetCurrentGameState();
+        EGameState gameState = CTicTacToe::Get().GetCurrentGameState();
 
         if (gameState != EGameState::ONGOING)
         {
             // Defer overlay push until after event handling completes
-            TicTacToe::Get().SubmitToMainThread([gameState]() {
-                TicTacToe::Get().PushOverlay(new TicTacToeOverlayLayer());
-                LOG(TicTacToe, INFO, "Game ended with state: {}", (int)gameState);
+            CTicTacToe::Get().SubmitToMainThread([gameState]() {
+                CTicTacToe::Get().PushOverlay(new CTicTacToeOverlayLayer());
+                LOG(LogTicTacToe, Info, "Game ended with state: {}", (int)gameState);
                 });
         }
     }
     return true;
 }
 
-void BoardLayer::DrawBoard()
+void CBoardLayer::DrawBoard()
 {
-    auto board = TicTacToe::Get().GetBoard();
+    auto board = CTicTacToe::Get().GetBoard();
 
     DrawGrid();
     for (const auto& row : board)
@@ -116,24 +116,24 @@ void BoardLayer::DrawBoard()
     }
 }
 
-void BoardLayer::DrawGrid()
+void CBoardLayer::DrawGrid()
 {
     // Drawing logic for the grid lines
 
-    LOG(TicTacToe, TRACE, "Drawing Grid Lines");
+    LOG(LogTicTacToe, Trace, "Drawing Grid Lines");
 
-    Engine::Renderer::StartDraw();
+    Engine::CRenderer::StartDraw();
 
-    Engine::Renderer::DrawLine(m_Grid.H1.Start, m_Grid.H1.End, m_Grid.Color, m_Grid.LineWidth);
-    Engine::Renderer::DrawLine(m_Grid.H2.Start, m_Grid.H2.End, m_Grid.Color, m_Grid.LineWidth);
+    Engine::CRenderer::DrawLine(m_Grid.H1.Start, m_Grid.H1.End, m_Grid.Color, m_Grid.LineWidth);
+    Engine::CRenderer::DrawLine(m_Grid.H2.Start, m_Grid.H2.End, m_Grid.Color, m_Grid.LineWidth);
 
-    Engine::Renderer::DrawLine(m_Grid.V1.Start, m_Grid.V1.End, m_Grid.Color, m_Grid.LineWidth);
-    Engine::Renderer::DrawLine(m_Grid.V2.Start, m_Grid.V2.End, m_Grid.Color, m_Grid.LineWidth);
+    Engine::CRenderer::DrawLine(m_Grid.V1.Start, m_Grid.V1.End, m_Grid.Color, m_Grid.LineWidth);
+    Engine::CRenderer::DrawLine(m_Grid.V2.Start, m_Grid.V2.End, m_Grid.Color, m_Grid.LineWidth);
 
-    Engine::Renderer::Flush();
+    Engine::CRenderer::Flush();
 }
 
-void BoardLayer::DrawCell(int row, int col, enum ECellState state)
+void CBoardLayer::DrawCell(int row, int col, enum ECellState state)
 {
     switch (state)
     {
@@ -143,28 +143,28 @@ void BoardLayer::DrawCell(int row, int col, enum ECellState state)
     }
 }
 
-void BoardLayer::DrawX(int row, int col)
+void CBoardLayer::DrawX(int row, int col)
 {
     auto [x, y, z] = CellPositionToNDC({ row, col });
     glm::vec3 position{ x, y, z };
     glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(m_CellSize * 0.8f, m_CellSize * 0.8f, 1.0f));
-    Engine::Renderer::StartDraw();
-    Engine::Renderer::DrawQuad(transform, m_XTexture);
-    Engine::Renderer::Flush();
+    Engine::CRenderer::StartDraw();
+    Engine::CRenderer::DrawQuad(transform, m_XTexture);
+    Engine::CRenderer::Flush();
 
 }
-void BoardLayer::DrawO(int row, int col)
+void CBoardLayer::DrawO(int row, int col)
 {
     auto [x, y, z] = CellPositionToNDC({ row, col });
     glm::vec3 position{ x, y, z };
     glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(m_CellSize * 0.8f, m_CellSize * 0.8f, 1.0f));
 
-    Engine::Renderer::StartDraw();
-    Engine::Renderer::DrawQuad(transform, m_OTexture);
-    Engine::Renderer::Flush();
+    Engine::CRenderer::StartDraw();
+    Engine::CRenderer::DrawQuad(transform, m_OTexture);
+    Engine::CRenderer::Flush();
 }
 
-Engine::Point3D<float> BoardLayer::CellPositionToNDC(const SCellPosition& cellPos) const
+Engine::Point3D<float> CBoardLayer::CellPositionToNDC(const SCellPosition& cellPos) const
 {
     Engine::Point3D<float> NDCPos{ 0.0f, 0.0f , 0.0f };
     float cellOffset = (2.0f * m_GridSize) / 3.0f;
@@ -187,7 +187,7 @@ Engine::Point3D<float> BoardLayer::CellPositionToNDC(const SCellPosition& cellPo
     return NDCPos;
 }
 
-SCellPosition BoardLayer::NDCToCellPosition(const Engine::Point2D<float>& NDCPos) const
+SCellPosition CBoardLayer::NDCToCellPosition(const Engine::Point2D<float>& NDCPos) const
 {
     SCellPosition cellPos{ -1, -1 };
     float halfGridSize = m_GridSize / 2.0f;
@@ -196,12 +196,12 @@ SCellPosition BoardLayer::NDCToCellPosition(const Engine::Point2D<float>& NDCPos
 
     if (!xInGrid)
     {
-        LOG(TicTacToe, WARN, "X Position {} out of grid bounds Grid, Cell = ({}, {})", NDCPos.x, m_GridSize, m_CellSize);
+        LOG(LogTicTacToe, Warning, "X Position {} out of grid bounds Grid, Cell = ({}, {})", NDCPos.x, m_GridSize, m_CellSize);
         return cellPos;
     }
     if (!yInGrid)
     {
-        LOG(TicTacToe, WARN, "Y Position {} out of grid bounds Grid, Cell = ({}, {})", NDCPos.y, m_GridSize, m_CellSize);
+        LOG(LogTicTacToe, Warning, "Y Position {} out of grid bounds Grid, Cell = ({}, {})", NDCPos.y, m_GridSize, m_CellSize);
         return cellPos;
     }
 

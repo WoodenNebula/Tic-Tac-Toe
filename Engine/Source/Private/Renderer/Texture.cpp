@@ -30,7 +30,7 @@ CTexture::CTexture(const FPath& path)
     SGenericError err = img.Load();
     if (err)
     {
-        LOG(Texture, ERROR, "Failed to load texture: ", err);
+        LOG(LogTexture, Error, "Failed to load texture: ", err);
     }
     m_Width = img.Dimensions.x;
     m_Height = img.Dimensions.y;

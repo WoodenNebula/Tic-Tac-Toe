@@ -33,13 +33,13 @@ void CVertexArray::AddVertexBuffer(const std::shared_ptr<CVertexBuffer>& VertexB
     VertexBuffer->Bind();
 
     const CVertexBufferLayout& layout = VertexBuffer->GetLayout();
-    const std::vector<VertexBufferElement>& elements = layout.GetElements();
+    const std::vector<SVertexBufferElement>& elements = layout.GetElements();
     uint32_t offset = 0;
     for (const auto& element : elements)
     {
         glEnableVertexAttribArray(m_VertexBufferIndex);
         glVertexAttribPointer(m_VertexBufferIndex, element.count, element.type, element.normalized, layout.GetStride(), (void*)offset);
-        offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+        offset += element.count * SVertexBufferElement::GetSizeOfType(element.type);
         m_VertexBufferIndex++;
     }
 

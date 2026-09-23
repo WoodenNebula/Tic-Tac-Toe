@@ -5,7 +5,7 @@
 namespace Engine
 {
 
-class GLFWEventCallbacks
+class CGLFWEventCallbacks
 {
 public:
     static void key_callback(GLFWwindow* windowHandle, int key, int scancode, int action, int mods);

@@ -5,16 +5,16 @@
 
 namespace Engine
 {
-class Layer
+class CLayer
 {
 public:
-    Layer(std::string_view Name = "Layer") : m_Name(Name) {}
-    virtual ~Layer() = default;
+    CLayer(std::string_view Name = "Layer") : m_Name(Name) {}
+    virtual ~CLayer() = default;
 
     virtual void OnAttach() {}
     virtual void OnDetach() {}
     virtual void OnUpdate(float deltaTime) {}
-    virtual void OnEvent(Events::EventBase& event) {}
+    virtual void OnEvent(Events::CEventBase& event) {}
 
     std::string_view GetName() const { return m_Name; }
 protected:

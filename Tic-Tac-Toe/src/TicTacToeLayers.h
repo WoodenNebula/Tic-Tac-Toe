@@ -8,26 +8,26 @@ namespace Game
 
 struct SCellPosition;
 
-class TicTacToeLayer : public Engine::Layer
+class CTicTacToeLayer : public Engine::CLayer
 {
 public:
-    TicTacToeLayer(std::string_view Name = "TicTacToeLayer") : Layer(Name) {}
+    CTicTacToeLayer(std::string_view Name = "TicTacToeLayer") : CLayer(Name) {}
 
-    virtual ~TicTacToeLayer() = default;
+    virtual ~CTicTacToeLayer() = default;
 
     virtual void OnAttach() override;
 
     virtual void OnUpdate(float deltaTime) override;
-    virtual void OnEvent(Engine::Events::EventBase& event) override;
+    virtual void OnEvent(Engine::Events::CEventBase& event) override;
 protected:
     std::shared_ptr<Engine::CTexture> m_XTexture;
     std::shared_ptr<Engine::CTexture> m_OTexture;
 };
 
-class TicTacToeOverlayLayer : public TicTacToeLayer
+class CTicTacToeOverlayLayer : public CTicTacToeLayer
 {
 public:
-    TicTacToeOverlayLayer(std::string_view Name = "OverlayLayer") : TicTacToeLayer(Name)
+    CTicTacToeOverlayLayer(std::string_view Name = "OverlayLayer") : CTicTacToeLayer(Name)
     {
 
     }
@@ -38,7 +38,7 @@ public:
 };
 
 
-class BoardLayer : public Engine::Layer
+class CBoardLayer : public Engine::CLayer
 {
     struct SGrid
     {
@@ -53,13 +53,13 @@ class BoardLayer : public Engine::Layer
     };
 
 public:
-    BoardLayer() : Layer("BoardLayer") {}
-    virtual ~BoardLayer() = default;
+    CBoardLayer() : CLayer("BoardLayer") {}
+    virtual ~CBoardLayer() = default;
 
     virtual void OnAttach() override;
     virtual void OnDetach() override;
     virtual void OnUpdate(float deltaTime) override;
-    virtual void OnEvent(Engine::Events::EventBase& event) override;
+    virtual void OnEvent(Engine::Events::CEventBase& event) override;
 
     Engine::Point3D<float> CellPositionToNDC(const SCellPosition& cellPos) const;
     SCellPosition NDCToCellPosition(const Engine::Point2D<float>& NDCPos) const;
@@ -71,8 +71,8 @@ private:
     void DrawO(int row, int col);
 
 
-    bool OnMouseMoved(Engine::Events::InputEvents::MouseMovedEvent& event);
-    bool OnMouseButtonPressed(Engine::Events::InputEvents::MouseButtonPressedEvent& event);
+    bool OnMouseMoved(Engine::Events::InputEvents::CMouseMovedEvent& event);
+    bool OnMouseButtonPressed(Engine::Events::InputEvents::CMouseButtonPressedEvent& event);
 
 private:
     std::shared_ptr<Engine::CTexture> m_XTexture;

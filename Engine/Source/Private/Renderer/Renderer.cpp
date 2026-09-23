@@ -16,7 +16,7 @@
 namespace Engine
 {
 
-struct QuadVertex
+struct SQuadVertex
 {
     glm::vec3 Position;
     glm::vec4 Color;
@@ -48,8 +48,8 @@ struct SRendererData
 
 
     uint32_t QuadIndexCount = 0;
-    QuadVertex* QuadVertexBufferBase = nullptr;
-    QuadVertex* QuadVertexBufferPtr = nullptr;
+    SQuadVertex* QuadVertexBufferBase = nullptr;
+    SQuadVertex* QuadVertexBufferPtr = nullptr;
 
     uint32_t LineVertexCount = 0;
     SLineVertex* LineVertexBufferBase = nullptr;
@@ -80,15 +80,15 @@ void OpenGLMessageCallback(
 {
     switch (severity)
     {
-    case GL_DEBUG_SEVERITY_HIGH:         LOG(Renderer, ERROR, "{}", message); return;
-    case GL_DEBUG_SEVERITY_MEDIUM:       LOG(Renderer, WARN, "{}", message); return;
-    case GL_DEBUG_SEVERITY_LOW:          LOG(Renderer, INFO, "{}", message); return;
-    case GL_DEBUG_SEVERITY_NOTIFICATION: LOG(Renderer, TRACE, "{}", message); return;
-    default:                             LOG(Renderer, ERROR, "Unknown severity level!"); return;
+    case GL_DEBUG_SEVERITY_HIGH:         LOG(LogRenderer, Error, "{}", message); return;
+    case GL_DEBUG_SEVERITY_MEDIUM:       LOG(LogRenderer, Warning, "{}", message); return;
+    case GL_DEBUG_SEVERITY_LOW:          LOG(LogRenderer, Info, "{}", message); return;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: LOG(LogRenderer, Trace, "{}", message); return;
+    default:                             LOG(LogRenderer, Error, "Unknown severity level!"); return;
     }
 }
 
-void Renderer::Init()
+void CRenderer::Init()
 {
     // fwd declare quadIB here to be used in both quad and tex setup
     /// Quad Setup
@@ -96,7 +96,7 @@ void Renderer::Init()
     // Only one VAO per primitive type 
         s_Data.QuadVertexArray = std::make_shared<CVertexArray>();
 
-        s_Data.QuadVertexBuffer = std::make_shared<CVertexBuffer>(s_Data.MaxVertices * sizeof(QuadVertex));
+        s_Data.QuadVertexBuffer = std::make_shared<CVertexBuffer>(s_Data.MaxVertices * sizeof(SQuadVertex));
 
         CVertexBufferLayout layout;
         layout.Push<float>(3); // a_Position
@@ -108,7 +108,7 @@ void Renderer::Init()
         s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
         // allocate memory for all the Vertex Buffer we might use in a single draw call
-        s_Data.QuadVertexBufferBase = new QuadVertex[s_Data.MaxVertices];
+        s_Data.QuadVertexBufferBase = new SQuadVertex[s_Data.MaxVertices];
 
         uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
 
@@ -182,24 +182,24 @@ void Renderer::Init()
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LINE_SMOOTH);
-    LOG(Renderer, TRACE, "Renderer Initialized");
+    LOG(LogRenderer, Trace, "Renderer Initialized");
 }
 
-void Renderer::InitGLContext(GLFWwindow* window)
+void CRenderer::InitGLContext(GLFWwindow* window)
 {
     glfwMakeContextCurrent(window);
-    LOG(Renderer, TRACE, "GLFW CONTEXT INIT START");
+    LOG(LogRenderer, Trace, "GLFW CONTEXT INIT START");
 
     // glad should only be initialized after a valid context has been created
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        LOG(Renderer, FATAL, "GLAD LoadGlLoader Failed");
+        LOG(LogRenderer, Fatal, "GLAD LoadGlLoader Failed");
     }
-    LOG(Renderer, TRACE, "GLFW CONTEXT Initialized");
+    LOG(LogRenderer, Trace, "GLFW CONTEXT Initialized");
 }
 
 
-void Renderer::LineMode(bool drawInLineMode = false)
+void CRenderer::LineMode(bool drawInLineMode = false)
 {
     if (drawInLineMode)
     {
@@ -211,24 +211,24 @@ void Renderer::LineMode(bool drawInLineMode = false)
     }
 }
 
-void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+void CRenderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
     glViewport(x, y, width, height);
 }
 
 
-void Renderer::Clear()
+void CRenderer::Clear()
 {
 /* Clean and assign new color to back buffer*/
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::SetClearColor(const glm::vec4& Color)
+void CRenderer::SetClearColor(const glm::vec4& Color)
 {
     glClearColor(Color.r, Color.g, Color.b, Color.a);
 }
 
-void Renderer::DrawIndexed(const std::shared_ptr<CVertexArray>& VA, uint32_t indexCount)
+void CRenderer::DrawIndexed(const std::shared_ptr<CVertexArray>& VA, uint32_t indexCount)
 {
     VA->Bind();
     uint32_t count = indexCount ? indexCount : VA->GetIndexBuffer()->GetCount();
@@ -236,7 +236,7 @@ void Renderer::DrawIndexed(const std::shared_ptr<CVertexArray>& VA, uint32_t ind
     glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
 }
 
-void Renderer::DrawLine(const glm::vec3& Start, const glm::vec3& End, const glm::vec4& Color, float Width)
+void CRenderer::DrawLine(const glm::vec3& Start, const glm::vec3& End, const glm::vec4& Color, float Width)
 {
     s_Data.LineVertexBufferPtr->Position = Start;
     s_Data.LineVertexBufferPtr->Color = Color;
@@ -252,14 +252,14 @@ void Renderer::DrawLine(const glm::vec3& Start, const glm::vec3& End, const glm:
 
 }
 
-void Renderer::DrawSprite(const glm::vec3& Position, const glm::vec2& Size, const std::filesystem::path& SpriteSource)
+void CRenderer::DrawSprite(const glm::vec3& Position, const glm::vec2& Size, const std::filesystem::path& SpriteSource)
 {
     glm::mat4 Transform = glm::translate(glm::mat4(1.0f), Position) * glm::scale(glm::mat4(1.0f), { Size.x, Size.y, 1.0f });
 
     DrawQuad(Transform, std::make_shared<CTexture>(SpriteSource));
 }
 
-void Renderer::DrawQuad(const glm::mat4& Transform, const std::shared_ptr<CTexture>& Texture, const glm::vec4& TintColor)
+void CRenderer::DrawQuad(const glm::mat4& Transform, const std::shared_ptr<CTexture>& Texture, const glm::vec4& TintColor)
 {
     constexpr size_t quadVertexCount = 4;
     constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
@@ -302,7 +302,7 @@ void Renderer::DrawQuad(const glm::mat4& Transform, const std::shared_ptr<CTextu
     s_Data.QuadIndexCount += 6;
 }
 
-void Renderer::StartDraw()
+void CRenderer::StartDraw()
 {
     s_Data.LineVertexCount = 0;
     s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
@@ -313,7 +313,7 @@ void Renderer::StartDraw()
     s_Data.TextureSlotIndex = 1;
 }
 
-void Renderer::Flush()
+void CRenderer::Flush()
 {
     // Lines
     if (s_Data.LineVertexCount)
@@ -343,7 +343,7 @@ void Renderer::Flush()
             s_Data.TextureSlots[i]->Bind(i);
 
         s_Data.QuadShader->Bind();
-        Renderer::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
+        CRenderer::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 
         // Reset data
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;

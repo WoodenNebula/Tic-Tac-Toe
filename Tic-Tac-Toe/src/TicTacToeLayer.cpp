@@ -4,22 +4,22 @@
 
 namespace Game
 {
-void TicTacToeLayer::OnAttach()
+void CTicTacToeLayer::OnAttach()
 {
-    LOG(TicTacToe, TRACE, "Layer Attached in {}", m_Name);
+    LOG(LogTicTacToe, Trace, "Layer Attached in {}", m_Name);
 
     m_XTexture = std::make_shared<Engine::CTexture>("./res/textures/X.png");
     m_OTexture = std::make_shared<Engine::CTexture>("./res/textures/O.png");
 }
 
 
-void TicTacToeLayer::OnUpdate(float deltaTime)
+void CTicTacToeLayer::OnUpdate(float deltaTime)
 {
-    switch (TicTacToe::Get().GetCurrentGameState())
+    switch (CTicTacToe::Get().GetCurrentGameState())
     {
     case ONGOING:
-        TicTacToe::Get().SubmitToMainThread([this]() {
-            TicTacToe::Get().PopOverlay(this);
+        CTicTacToe::Get().SubmitToMainThread([this]() {
+            CTicTacToe::Get().PopOverlay(this);
             });
         break;
     //case DRAW:
@@ -58,27 +58,27 @@ void TicTacToeLayer::OnUpdate(float deltaTime)
     }
 
     // Update logic for the Tic-Tac-Toe layer
-    //LOG(TicTacToe, TRACE, "Layer Updated in {} with deltaTime {}", m_Name, deltaTime);
+    //LOG(LogTicTacToe, TRACE, "Layer Updated in {} with deltaTime {}", m_Name, deltaTime);
 }
-void TicTacToeLayer::OnEvent(Engine::Events::EventBase& event)
+void CTicTacToeLayer::OnEvent(Engine::Events::CEventBase& event)
 {
     // Event handling logic for the Tic-Tac-Toe layer
-    LOG(TicTacToe, TRACE, "Event {} Received in {}", event, m_Name);
+    LOG(LogTicTacToe, Trace, "Event {} Received in {}", event, m_Name);
 
-    Engine::Events::EventDispatcher dispatcher(event);
-    dispatcher.DispatchEvent<Engine::Events::InputEvents::MouseButtonReleasedEvent>([this](Engine::Events::InputEvents::MouseButtonReleasedEvent& e) -> bool {
+    Engine::Events::CEventDispatcher dispatcher(event);
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::CMouseButtonReleasedEvent>([this](Engine::Events::InputEvents::CMouseButtonReleasedEvent& e) -> bool {
         return true;
         });
-    dispatcher.DispatchEvent<Engine::Events::InputEvents::MouseButtonPressedEvent>([this](Engine::Events::InputEvents::MouseButtonPressedEvent& e) -> bool {
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::CMouseButtonPressedEvent>([this](Engine::Events::InputEvents::CMouseButtonPressedEvent& e) -> bool {
         return true;
         });
 
-    dispatcher.DispatchEvent<Engine::Events::InputEvents::KeyPressedEvent>([this](Engine::Events::InputEvents::KeyPressedEvent& e) -> bool {
-        if (e.GetKey() == Engine::Events::Key::R)
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::CKeyPressedEvent>([this](Engine::Events::InputEvents::CKeyPressedEvent& e) -> bool {
+        if (e.GetKey() == Engine::Events::EKey::R)
         {
-            TicTacToe::Get().SubmitToMainThread([this]() {
-                TicTacToe::Get().Reset();
-                TicTacToe::Get().PopOverlay(this);
+            CTicTacToe::Get().SubmitToMainThread([this]() {
+                CTicTacToe::Get().Reset();
+                CTicTacToe::Get().PopOverlay(this);
                 });
             return true;
         }
@@ -87,43 +87,43 @@ void TicTacToeLayer::OnEvent(Engine::Events::EventBase& event)
 
 }
 
-void TicTacToeOverlayLayer::OnAttach()
+void CTicTacToeOverlayLayer::OnAttach()
 {
-    TicTacToeLayer::OnAttach();
-    switch (TicTacToe::Get().GetCurrentGameState())
+    CTicTacToeLayer::OnAttach();
+    switch (CTicTacToe::Get().GetCurrentGameState())
     {
     case DRAW:
     {
-        Engine::Renderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+        Engine::CRenderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
         break;
     }
     case X_WINS:
     {
-        Engine::Renderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 1.0f });
+        Engine::CRenderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 1.0f });
         break;
     }
     case O_WINS:
     {
-        Engine::Renderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 1.0f });
+        Engine::CRenderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 1.0f });
         break;
     }
     }
-    Engine::Renderer::Clear();
+    Engine::CRenderer::Clear();
 }
 
 
-void TicTacToeOverlayLayer::OnUpdate(float deltaTime)
+void CTicTacToeOverlayLayer::OnUpdate(float deltaTime)
 {
-    switch (TicTacToe::Get().GetCurrentGameState())
+    switch (CTicTacToe::Get().GetCurrentGameState())
     {
     case DRAW:
     {
-        Engine::Renderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-        Engine::Renderer::Clear();
+        Engine::CRenderer::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+        Engine::CRenderer::Clear();
 
-        Engine::Renderer::StartDraw();
-        Engine::Renderer::DrawLine({ -0.5f, -0.5f, 0.0f }, { 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 10.0f);
-        Engine::Renderer::Flush();
+        Engine::CRenderer::StartDraw();
+        Engine::CRenderer::DrawLine({ -0.5f, -0.5f, 0.0f }, { 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f }, 10.0f);
+        Engine::CRenderer::Flush();
         break;
     }
     case X_WINS:
@@ -131,22 +131,22 @@ void TicTacToeOverlayLayer::OnUpdate(float deltaTime)
         glm::vec3 position{ 0.0f, 0.0f, 0.0f };
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.3f * 0.8f, 0.3f * 0.8f, 1.0f));
 
-        Engine::Renderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 1.0f });
-        Engine::Renderer::Clear();
-        Engine::Renderer::StartDraw();
-        Engine::Renderer::DrawQuad(transform, m_XTexture);
-        Engine::Renderer::Flush();
+        Engine::CRenderer::SetClearColor({ 0.2f, 0.0f, 0.0f, 1.0f });
+        Engine::CRenderer::Clear();
+        Engine::CRenderer::StartDraw();
+        Engine::CRenderer::DrawQuad(transform, m_XTexture);
+        Engine::CRenderer::Flush();
         break;
     }
     case O_WINS:
     {
         glm::vec3 position{ 0.0f, 0.0f, 0.0f };
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.3f * 0.8f, 0.3f * 0.8f, 1.0f));
-        Engine::Renderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 1.0f });
-        Engine::Renderer::Clear();
-        Engine::Renderer::StartDraw();
-        Engine::Renderer::DrawQuad(transform, m_OTexture);
-        Engine::Renderer::Flush();
+        Engine::CRenderer::SetClearColor({ 0.0f, 0.0f, 0.2f, 1.0f });
+        Engine::CRenderer::Clear();
+        Engine::CRenderer::StartDraw();
+        Engine::CRenderer::DrawQuad(transform, m_OTexture);
+        Engine::CRenderer::Flush();
         break;
     }
     }

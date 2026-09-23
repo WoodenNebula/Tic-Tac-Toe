@@ -8,16 +8,16 @@
 
 namespace Game
 {
-DECLARE_LOG_CATEGORY_LEVEL(TicTacToe, INFO)
+DECLARE_LOG_CATEGORY_LEVEL(TicTacToe, Info)
 
-TicTacToe& TicTacToe::Get()
+CTicTacToe& CTicTacToe::Get()
 {
-    return static_cast<TicTacToe&>(*Engine::Application::App);
+    return static_cast<CTicTacToe&>(*Engine::CApplication::App);
 }
 
-void TicTacToe::Reset()
+void CTicTacToe::Reset()
 {
-    auto& app = TicTacToe::Get();
+    auto& app = CTicTacToe::Get();
     app.m_CurrentPlayer = (app.m_CurrentPlayer == X) ? O : X;
     app.m_Board = {
         {EMPTY, EMPTY, EMPTY},
@@ -26,52 +26,52 @@ void TicTacToe::Reset()
     };
 }
 
-TicTacToe::TicTacToe(const Engine::SApplicationProps& appProps) : Engine::Application(appProps)
+CTicTacToe::CTicTacToe(const Engine::SApplicationProps& appProps) : Engine::CApplication(appProps)
 {
 }
 
-Engine::SGenericError TicTacToe::Init()
+Engine::SGenericError CTicTacToe::Init()
 {
-    Engine::SGenericError  err = Application::Init();
-    PushLayer(new BoardLayer());
+    Engine::SGenericError  err = CApplication::Init();
+    PushLayer(new CBoardLayer());
     return err;
 }
 
-void TicTacToe::OnEvent(Engine::Events::EventBase& event)
+void CTicTacToe::OnEvent(Engine::Events::CEventBase& event)
 {
-    LOG(TicTacToe, TRACE, "Event {} Received in TicTacToe Application", event);
-    Engine::Events::EventDispatcher dispatcher(event);
-    dispatcher.DispatchEvent<Engine::Events::InputEvents::KeyPressedEvent>([this](Engine::Events::InputEvents::KeyPressedEvent& e) -> bool {
-        if (e.GetKey() == Engine::Events::Key::Escape)
+    LOG(LogTicTacToe, Trace, "Event {} Received in TicTacToe Application", event);
+    Engine::Events::CEventDispatcher dispatcher(event);
+    dispatcher.DispatchEvent<Engine::Events::InputEvents::CKeyPressedEvent>([this](Engine::Events::InputEvents::CKeyPressedEvent& e) -> bool {
+        if (e.GetKey() == Engine::Events::EKey::Escape)
         {
-            Engine::Events::WindowCloseEvent windowCloseEvent;
+            Engine::Events::CWindowCloseEvent windowCloseEvent;
             OnWindowCloseEvent(windowCloseEvent);
             return true;
         }
         return false;
         });
 
-    Application::OnEvent(event);
+    CApplication::OnEvent(event);
 }
 
-void TicTacToe::MakeMove(const SCellPosition& Position)
+void CTicTacToe::MakeMove(const SCellPosition& Position)
 {
     auto [row, col] = Position;
     if (!Position.IsValid())
     {
-        LOG(TicTacToe, WARN, "Invalid move: ({}, {})", row, col);
+        LOG(LogTicTacToe, Warning, "Invalid move: ({}, {})", row, col);
         return;
     }
     if (m_Board[row][col] != EMPTY)
     {
-        LOG(TicTacToe, WARN, "Cell already occupied: ({}, {}) = {}", row, col, (int)m_Board[row][col]);
+        LOG(LogTicTacToe, Warning, "Cell already occupied: ({}, {}) = {}", row, col, (int)m_Board[row][col]);
         return;
     }
     m_Board[row][col] = m_CurrentPlayer;
     m_CurrentPlayer = (m_CurrentPlayer == X) ? O : X;
 }
 
-EGameState TicTacToe::GetCurrentGameState()
+EGameState CTicTacToe::GetCurrentGameState()
 {
     // Check rows and columns
     for (int i = 0; i < 3; ++i)
@@ -108,7 +108,7 @@ EGameState TicTacToe::GetCurrentGameState()
     return DRAW;
 }
 
-Engine::Point2D<float> TicTacToe::GetNDCFromViewport(const Engine::Point2D<double>& ViewportCoords)
+Engine::Point2D<float> CTicTacToe::GetNDCFromViewport(const Engine::Point2D<double>& ViewportCoords)
 {
     auto Viewport = m_ApplicationProps.WindowProps.Dimension;
     Engine::Point2D<float> ndc;

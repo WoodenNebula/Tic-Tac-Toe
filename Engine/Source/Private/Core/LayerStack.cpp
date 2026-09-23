@@ -7,53 +7,53 @@ DECLARE_LOG_CATEGORY(LayerStack)
 
 namespace Engine
 {
-LayerStack::~LayerStack()
+CLayerStack::~CLayerStack()
 {
-    for (Layer* layer : m_Layers)
+    for (CLayer* layer : m_Layers)
     {
         delete layer;
     }
 }
 
-void LayerStack::PushLayer(Layer* layer)
+void CLayerStack::PushLayer(CLayer* layer)
 {
     m_LayerEnd = m_Layers.emplace(m_LayerEnd, layer);
-    LOG(LayerStack, TRACE, "Pushed Layer {}", layer->GetName());
+    LOG(LogLayerStack, Trace, "Pushed Layer {}", layer->GetName());
 }
 
-void LayerStack::PopLayer(Layer* layer)
+void CLayerStack::PopLayer(CLayer* layer)
 {
     auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
     if (it != m_Layers.end())
     {
         m_Layers.erase(it);
         m_LayerEnd--;
-        LOG(LayerStack, TRACE, "Popped Layer {}", layer->GetName());
+        LOG(LogLayerStack, Trace, "Popped Layer {}", layer->GetName());
     }
 }
 
-void LayerStack::PopOverlay(Layer* layer)
+void CLayerStack::PopOverlay(CLayer* layer)
 {
     auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
     if (it != m_Layers.end())
     {
         m_Layers.erase(it);
-        LOG(LayerStack, TRACE, "Popped Overlay {}", layer->GetName());
+        LOG(LogLayerStack, Trace, "Popped Overlay {}", layer->GetName());
     }
 }
 
-void LayerStack::PushOverlay(Layer* layer)
+void CLayerStack::PushOverlay(CLayer* layer)
 {
     m_Layers.emplace_back(layer);
-    LOG(LayerStack, TRACE, "Pushed Overlay {}", layer->GetName());
+    LOG(LogLayerStack, Trace, "Pushed Overlay {}", layer->GetName());
 }
 
-void LayerStack::Trace() const
+void CLayerStack::TraceLayerStack() const
 {
-    LOG(LayerStack, TRACE, "Layer Stack:");
-    for (const Layer* layer : m_Layers)
+    LOG(LogLayerStack, Trace, "Layer Stack:");
+    for (const CLayer* layer : m_Layers)
     {
-        LOG(LayerStack, TRACE, " - {}", layer->GetName());
+        LOG(LogLayerStack, Trace, " - {}", layer->GetName());
     }
 }
 };

@@ -10,9 +10,9 @@
 namespace Engine::Events
 {
 
-DECLARE_LOG_CATEGORY_LEVEL(EventManager, WARN)
+DECLARE_LOG_CATEGORY_LEVEL(EventManager, Warning)
 
-enum class EventTypes
+enum class EEventTypes
 {
     None = 0,
     WindowClose, WindowResize, WindowGainFocus, WindowLostFocus, WindowMoved,
@@ -21,7 +21,7 @@ enum class EventTypes
     ApplicationTick, ApplicationUpdate, ApplicationRender
 };
 
-enum class EventCategoryTypes
+enum class EEventCategoryTypes
 {
     None = 0,
     Window,
@@ -30,32 +30,32 @@ enum class EventCategoryTypes
     Application
 };
 
-class EventBase
+class CEventBase
 {
 public:
-    virtual ~EventBase() = default;
+    virtual ~CEventBase() = default;
 
-    virtual EventTypes GetEventType() const = 0;
-    virtual EventCategoryTypes GetEventCategory() const = 0;
+    virtual EEventTypes GetEventType() const = 0;
+    virtual EEventCategoryTypes GetEventCategory() const = 0;
     virtual std::string ToString() const = 0;
 
 public:
     bool Handled{ false };
 
 protected:
-    EventBase() {}
-    EventBase(EventTypes eventType, EventCategoryTypes CategoryType) :
+    CEventBase() {}
+    CEventBase(EEventTypes eventType, EEventCategoryTypes CategoryType) :
         m_EventType(eventType), m_EventCategory(CategoryType)
     {
     }
 protected:
-    EventTypes m_EventType{ EventTypes::None };
-    EventCategoryTypes m_EventCategory{ EventCategoryTypes::None };
+    EEventTypes m_EventType{ EEventTypes::None };
+    EEventCategoryTypes m_EventCategory{ EEventCategoryTypes::None };
 };
 
 template <typename T>
-concept EventType = std::is_base_of<EventBase, T>::value&& requires {
-    {  T::GetStaticEventType() } -> std::same_as<EventTypes>;
+concept EventType = std::is_base_of<CEventBase, T>::value&& requires {
+    {  T::GetStaticEventType() } -> std::same_as<EEventTypes>;
 };
 
 template<EventType T>
@@ -63,11 +63,11 @@ using EventCallbackFn = std::function<bool(T&)>;
 
 #define BIND_EVENT_CB(X) (std::bind(&X, this, std::placeholders::_1))
 
-class EventDispatcher
+class CEventDispatcher
 {
 
 public:
-    EventDispatcher(EventBase& e) : m_Event(e) {}
+    CEventDispatcher(CEventBase& e) : m_Event(e) {}
 
     template<EventType T>
     bool DispatchEvent(EventCallbackFn<T> cb)
@@ -76,20 +76,20 @@ public:
         {
             switch (m_Event.GetEventCategory())
             {
-            case EventCategoryTypes::Window:
-                LOG(EventManager, TRACE, "Dispatched Window Event {}", m_Event.ToString());
+            case EEventCategoryTypes::Window:
+                LOG(LogEventManager, Trace, "Dispatched Window Event {}", m_Event.ToString());
                 break;
-            case EventCategoryTypes::Mouse:
-                LOG(EventManager, TRACE, "Dispatched Mouse Event {}", m_Event.ToString());
+            case EEventCategoryTypes::Mouse:
+                LOG(LogEventManager, Trace, "Dispatched Mouse Event {}", m_Event.ToString());
                 break;
-            case EventCategoryTypes::Key:
-                LOG(EventManager, TRACE, "Dispatched Key Event {}", m_Event.ToString());
+            case EEventCategoryTypes::Key:
+                LOG(LogEventManager, Trace, "Dispatched Key Event {}", m_Event.ToString());
                 break;
-            case EventCategoryTypes::Application:
-                LOG(EventManager, TRACE, "Dispatched Application Event {}", m_Event.ToString());
+            case EEventCategoryTypes::Application:
+                LOG(LogEventManager, Trace, "Dispatched Application Event {}", m_Event.ToString());
                 break;
             default:
-                LOG(EventManager, WARN, "Dispatched Unknown Event Category {}", m_Event.ToString());
+                LOG(LogEventManager, Warning, "Dispatched Unknown Event Category {}", m_Event.ToString());
                 break;
             }
 
@@ -100,15 +100,15 @@ public:
         return false;
     }
 protected:
-    EventBase& m_Event;
+    CEventBase& m_Event;
 };
 
 }; // namespace Engine::Events
 
 template<>
-struct std::formatter<Engine::Events::EventBase> : std::formatter<std::string>
+struct std::formatter<Engine::Events::CEventBase> : std::formatter<std::string>
 {
-    auto format(const Engine::Events::EventBase& event, auto& ctx) const
+    auto format(const Engine::Events::CEventBase& event, auto& ctx) const
     {
         return std::formatter<std::string>::format(std::format("{{ {} }}", event.ToString()), ctx);
     }
