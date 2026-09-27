@@ -56,10 +56,10 @@ public:
     }
 };
 
-class WindowResizeEvent : public CWindowEvent
+class CWindowResizeEvent : public CWindowEvent
 {
 public:
-    WindowResizeEvent(uint32_t width, uint32_t height) : CWindowEvent(GetStaticEventType()), m_Dimensions{ width, height } {}
+    CWindowResizeEvent(uint32_t width, uint32_t height) : CWindowEvent(GetStaticEventType()), m_Dimensions{ width, height } {}
 
     static EEventTypes GetStaticEventType() { return EEventTypes::WindowResize; }
 
@@ -73,10 +73,10 @@ private:
     Point2D<uint32_t> m_Dimensions;
 };
 
-class WindowMovedEvent : public CWindowEvent
+class CWindowMovedEvent : public CWindowEvent
 {
 public:
-    WindowMovedEvent(int width, int height) : CWindowEvent(GetStaticEventType()), m_Position{ static_cast<int32_t>(width), static_cast<int32_t>(height) } {}
+    CWindowMovedEvent(int width, int height) : CWindowEvent(GetStaticEventType()), m_Position{ static_cast<int32_t>(width), static_cast<int32_t>(height) } {}
 
     static EEventTypes GetStaticEventType() { return EEventTypes::WindowMoved; }
 

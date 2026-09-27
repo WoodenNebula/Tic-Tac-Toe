@@ -131,6 +131,15 @@ void CWindow::Terminate()
     }
 }
 
+void CWindow::SetWindowTitle(const std::string& Title)
+{
+    if (m_WindowHandle)
+    {
+        m_WindowProps.Title = Title;
+        glfwSetWindowTitle(m_WindowHandle, m_WindowProps.Title.data());
+    }
+}
+
 
 void CWindow::SetWindowEventCallback(const WindowEventCallbackFn& callback)
 {

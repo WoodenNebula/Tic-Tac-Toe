@@ -29,12 +29,26 @@ class CTicTacToeOverlayLayer : public CTicTacToeLayer
 public:
     CTicTacToeOverlayLayer(std::string_view Name = "OverlayLayer") : CTicTacToeLayer(Name)
     {
-
     }
 
     virtual void OnAttach() override;
 
     virtual void OnUpdate(float deltaTime) override;
+};
+
+class CWaitingForNetwork_OverlayLayer : public Engine::CLayer
+{
+public:
+    CWaitingForNetwork_OverlayLayer() : CLayer("WaitingForNetwork") {}
+    virtual ~CWaitingForNetwork_OverlayLayer() = default;
+
+    virtual void OnAttach() override;
+
+    virtual void OnUpdate(float deltaTime) override;
+    virtual void OnEvent(Engine::Events::CEventBase& event) override;
+
+protected:
+    std::shared_ptr<Engine::CTexture> m_WaitingTexture;
 };
 
 
@@ -46,7 +60,7 @@ class CBoardLayer : public Engine::CLayer
         {
             glm::vec3 Start;
             glm::vec3 End;
-        } H1, H2, V1, V2;
+        } H1{}, H2{}, V1{}, V2{};
 
         float LineWidth{ 2.0f };
         glm::vec4 Color{ 1.0f,1.0f,1.0f,1.0f };
@@ -61,8 +75,8 @@ public:
     virtual void OnUpdate(float deltaTime) override;
     virtual void OnEvent(Engine::Events::CEventBase& event) override;
 
-    Engine::Point3D<float> CellPositionToNDC(const SCellPosition& cellPos) const;
-    SCellPosition NDCToCellPosition(const Engine::Point2D<float>& NDCPos) const;
+    Point3D<float> CellPositionToNDC(const SCellPosition& cellPos) const;
+    SCellPosition NDCToCellPosition(const Point2D<float>& NDCPos) const;
 private:
     void DrawBoard();
     void DrawGrid();
@@ -77,7 +91,7 @@ private:
 private:
     std::shared_ptr<Engine::CTexture> m_XTexture;
     std::shared_ptr<Engine::CTexture> m_OTexture;
-    Engine::Point2D<double> m_MousePosition{};
+    Point2D<double> m_MousePosition{};
     const float m_GridSize = 0.7f;
     const float m_CellSize = m_GridSize / 3.0f;
     SGrid m_Grid;

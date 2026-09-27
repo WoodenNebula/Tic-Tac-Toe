@@ -23,7 +23,7 @@ struct SWindowProps
 {
     Point2D<uint32_t> Dimension;
     Point2D<int32_t> Position;
-    std::string_view Title;
+    std::string Title;
 
     FPath WindowIconPath;
 
@@ -41,6 +41,8 @@ public:
     SGenericError Init();
     void OnUpdate(float dt);
     void Terminate();
+
+    void SetWindowTitle(const std::string& Title);
 
     void SetWindowEventCallback(const WindowEventCallbackFn& callback);
     void CloseWindow();

@@ -111,7 +111,7 @@ void CBoardLayer::DrawBoard()
     {
         for (const auto& cell : row)
         {
-            DrawCell(&cell - &row[0], &row - &board[0], cell);
+            DrawCell(static_cast<int>(&cell - &row[0]), static_cast<int>(&row - &board[0]), cell);
         }
     }
 }
@@ -164,9 +164,9 @@ void CBoardLayer::DrawO(int row, int col)
     Engine::CRenderer::Flush();
 }
 
-Engine::Point3D<float> CBoardLayer::CellPositionToNDC(const SCellPosition& cellPos) const
+Point3D<float> CBoardLayer::CellPositionToNDC(const SCellPosition& cellPos) const
 {
-    Engine::Point3D<float> NDCPos{ 0.0f, 0.0f , 0.0f };
+    Point3D<float> NDCPos{ 0.0f, 0.0f , 0.0f };
     float cellOffset = (2.0f * m_GridSize) / 3.0f;
 
     /// THIS IS FLIPPED CUZ VECTOR<VECTOR> AHHHH
@@ -187,7 +187,7 @@ Engine::Point3D<float> CBoardLayer::CellPositionToNDC(const SCellPosition& cellP
     return NDCPos;
 }
 
-SCellPosition CBoardLayer::NDCToCellPosition(const Engine::Point2D<float>& NDCPos) const
+SCellPosition CBoardLayer::NDCToCellPosition(const Point2D<float>& NDCPos) const
 {
     SCellPosition cellPos{ -1, -1 };
     float halfGridSize = m_GridSize / 2.0f;

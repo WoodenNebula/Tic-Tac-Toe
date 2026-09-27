@@ -21,12 +21,13 @@ struct SCellPosition
 };
 
 
-class CTicTacToe : public Engine::CApplication
+class CTicTacToe : public Engine::CNetworkedApplication
 {
 public:
     static CTicTacToe& Get();
     static void Reset();
-    CTicTacToe(const Engine::SApplicationProps& appProps);
+    CTicTacToe(const Engine::SApplicationProps& appProps, Engine::Networking::ENetworkRole initNetRole);
+    ~CTicTacToe() {}
 
     virtual Engine::SGenericError Init() override;
 
@@ -38,7 +39,7 @@ public:
     inline ECellState GetCurrentPlayer() const { return m_CurrentPlayer; }
     const inline std::vector<std::vector<ECellState>>& GetBoard() const { return m_Board; }
 
-    Engine::Point2D<float> GetNDCFromViewport(const Engine::Point2D<double>& ViewportCoords);
+    Point2D<float> GetNDCFromViewport(const Point2D<double>& ViewportCoords);
 
 private:
     ECellState m_CurrentPlayer{ X };

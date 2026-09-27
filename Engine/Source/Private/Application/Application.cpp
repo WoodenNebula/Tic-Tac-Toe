@@ -35,12 +35,12 @@ SGenericError CApplication::Init()
 {
     m_Window = std::make_unique<CWindow>(m_ApplicationProps.WindowProps);
     SGenericError Err = m_Window->Init();
-    std::cout << "Window Init\n";
 
     if (Err)
     {
         return Err;
     }
+    LOG(LogWindow, Success, "Window Init");
 
     m_Window->SetWindowEventCallback(BIND_EVENT_CB(CApplication::OnEvent));
     LOG(LogApplication, Trace, "Event callback bound to window events");
@@ -54,8 +54,8 @@ void CApplication::OnEvent(Events::CEventBase& event)
 {
     Events::CEventDispatcher dispatcher(event);
     dispatcher.DispatchEvent<Events::CWindowCloseEvent>(BIND_EVENT_CB(CApplication::OnWindowCloseEvent));
-    dispatcher.DispatchEvent<Events::WindowMovedEvent>(BIND_EVENT_CB(CApplication::OnWindowMovedEvent));
-    dispatcher.DispatchEvent<Events::WindowResizeEvent>(BIND_EVENT_CB(CApplication::OnWindowResizeEvent));
+    dispatcher.DispatchEvent<Events::CWindowMovedEvent>(BIND_EVENT_CB(CApplication::OnWindowMovedEvent));
+    dispatcher.DispatchEvent<Events::CWindowResizeEvent>(BIND_EVENT_CB(CApplication::OnWindowResizeEvent));
 
 
     // Reverse iterate through layer stack
@@ -95,6 +95,14 @@ void CApplication::PopOverlay(CLayer* overlay)
     m_LayerStack.PopOverlay(overlay);
     overlay->OnDetach();
 }
+
+void CApplication::UpdateApplicationTitle(const std::string& newTitle)
+{
+    this->m_ApplicationProps.WindowProps.Title = newTitle;
+    auto deferedFunc = [&]() {    this->m_Window->SetWindowTitle(this->m_ApplicationProps.WindowProps.Title); };
+    SubmitToMainThread(deferedFunc);
+}
+
 bool CApplication::OnWindowCloseEvent(Events::CWindowCloseEvent& e)
 {
     e.Handled = true;
@@ -103,7 +111,7 @@ bool CApplication::OnWindowCloseEvent(Events::CWindowCloseEvent& e)
     return true;
 }
 
-bool CApplication::OnWindowResizeEvent(Events::WindowResizeEvent& e)
+bool CApplication::OnWindowResizeEvent(Events::CWindowResizeEvent& e)
 {
     e.Handled = true;
     m_ApplicationProps.WindowProps.Dimension = e.GetDimensions();
@@ -112,7 +120,7 @@ bool CApplication::OnWindowResizeEvent(Events::WindowResizeEvent& e)
     return true;
 }
 
-bool CApplication::OnWindowMovedEvent(Events::WindowMovedEvent& e)
+bool CApplication::OnWindowMovedEvent(Events::CWindowMovedEvent& e)
 {
     e.Handled = true;
     m_ApplicationProps.WindowProps.Position = e.GetPosition();
@@ -136,17 +144,21 @@ void CApplication::ProcessPendingOperations()
     }
 }
 
+void CApplication::Update()
+{
+    for (auto layer : m_LayerStack)
+    {
+        layer->OnUpdate(0.0f);
+    }
+    m_Window->OnUpdate(0.0f);
+}
+
 void CApplication::Run()
 {
     /// Engine Loop first?
     while (m_IsRunning)
     {
-        for (auto layer : m_LayerStack)
-        {
-            layer->OnUpdate(0.0f);
-        }
-        m_Window->OnUpdate(0.0f);
-
+        Update();
         // Process any pending operations at the end of each frame
         ProcessPendingOperations();
     }

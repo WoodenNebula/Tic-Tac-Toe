@@ -26,14 +26,32 @@ void CTicTacToe::Reset()
     };
 }
 
-CTicTacToe::CTicTacToe(const Engine::SApplicationProps& appProps) : Engine::CApplication(appProps)
+CTicTacToe::CTicTacToe(const Engine::SApplicationProps& appProps, Engine::Networking::ENetworkRole initNetRole)
+    : Engine::CNetworkedApplication(appProps, initNetRole)
 {
 }
 
 Engine::SGenericError CTicTacToe::Init()
 {
-    Engine::SGenericError  err = CApplication::Init();
-    PushLayer(new CBoardLayer());
+    using namespace Engine::Networking;
+    Engine::SGenericError err = CNetworkedApplication::Init();
+    if (!err)
+    {
+        ENetworkRole netRole = CNetworkSubsystem::Get().GetCurrentNetworkRole();
+        ENetworkConnectionStatus netStatus = CNetworkSubsystem::Get().GetConnectionStatus();
+
+        // start game if network setup is done
+        if (netRole != ENetworkRole::None)
+        {
+            if (netStatus == ENetworkConnectionStatus::WaitingForConnection)
+                PushLayer(new CWaitingForNetwork_OverlayLayer());
+            else
+                PushLayer(new CBoardLayer());
+        }
+        // We are in offline mode
+        else
+            PushLayer(new CBoardLayer());
+    }
     return err;
 }
 
@@ -108,18 +126,17 @@ EGameState CTicTacToe::GetCurrentGameState()
     return DRAW;
 }
 
-Engine::Point2D<float> CTicTacToe::GetNDCFromViewport(const Engine::Point2D<double>& ViewportCoords)
+Point2D<float> CTicTacToe::GetNDCFromViewport(const Point2D<double>& ViewportCoords)
 {
-    auto Viewport = m_ApplicationProps.WindowProps.Dimension;
-    Engine::Point2D<float> ndc;
-    // X: [0, width] -> [-1, 1]
-    ndc.x = (float)((2.0 * ViewportCoords.x) / Viewport.x - 1.0);
+    Point2D<uint32_t> ViewportSize = GetWindowDimensions();
+    Point2D<float> ndc;
+     // X: [0, width] -> [-1, 1]
+    ndc.x = (float)((2.0 * ViewportCoords.x) / ViewportSize.x - 1.0);
 
     // Y: [0, height] -> [1, -1]  (flip Y)
-    ndc.y = (float)(1.0 - (2.0 * ViewportCoords.y) / Viewport.y);
+    ndc.y = (float)(1.0 - (2.0 * ViewportCoords.y) / ViewportSize.y);
 
     return ndc;
 }
 
-
-}
+}   // namespace Game

@@ -4,6 +4,7 @@
 
 #include "Window/Window.h"
 #include "Application/Application.h"
+#include "Application/NetworkedApplication.h"
 #include "Core/Layer.h"
 #include "AssetManager/AssetManager.h"
 

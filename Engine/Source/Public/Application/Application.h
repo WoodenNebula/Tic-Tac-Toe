@@ -5,36 +5,51 @@
 #include "Core/LayerStack.h"
 #include "Events/CoreEvents.h"
 
+#include "Core/SubsystemBase.h"
+
 #include <memory>
 #include <functional>
 #include <queue>
+
 
 namespace Engine
 {
 struct SApplicationProps
 {
     SWindowProps WindowProps;
+    std::string Username;
     // Other Application specific props here
 };
 
-class CApplication
+class CApplication : public ISubsystem
 {
 public:
     CApplication();
     CApplication(const SApplicationProps& inApplicationProps);
-    ~CApplication();
+    virtual ~CApplication();
 
-    virtual SGenericError Init();
+    //////////////////////////////////
+    ///* Subsystem base interface *///
+    //////////////////////////////////
+    virtual SGenericError Init() override;
+    virtual void Update() override;
+    virtual void Shutdown() override;
 
-    virtual void OnEvent(Events::CEventBase& event);
+    virtual void OnEvent(Events::CEventBase& event) override;
+
+    virtual void Run();
 
     void PushLayer(CLayer* layer);
     void PushOverlay(CLayer* overlay);
     void PopLayer(CLayer* layer);
     void PopOverlay(CLayer* overlay);
 
-    void Run();
-    void Shutdown();
+    void UpdateApplicationTitle(const std::string& newTitle);
+
+    inline Point2D<uint32_t> GetWindowDimensions() const
+    {
+        return m_ApplicationProps.WindowProps.Dimension;
+    }
 
     void SubmitToMainThread(const std::function<void()>& func);
 
@@ -42,11 +57,12 @@ public:
     static inline CApplication* App{};
 protected:
     virtual bool OnWindowCloseEvent(Events::CWindowCloseEvent& e);
-    bool OnWindowResizeEvent(Events::WindowResizeEvent& e);
-    bool OnWindowMovedEvent(Events::WindowMovedEvent& e);
+    bool OnWindowResizeEvent(Events::CWindowResizeEvent& e);
+    bool OnWindowMovedEvent(Events::CWindowMovedEvent& e);
 
     void ProcessPendingOperations();
 
+protected:
     SApplicationProps m_ApplicationProps;
     bool m_IsRunning;
 

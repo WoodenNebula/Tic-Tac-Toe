@@ -119,3 +119,9 @@ inline constexpr Engine::ELogLevel Error = Engine::ELogLevel::Error;
 inline constexpr Engine::ELogLevel Fatal = Engine::ELogLevel::Fatal;
 
 DECLARE_LOG_CATEGORY(Any);
+
+template <typename... Args>
+void Print(std::format_string<Args...> fmt, Args&&... args)
+{
+    std::cout << std::format(fmt, std::forward<Args>(args)...) << std::endl;
+}

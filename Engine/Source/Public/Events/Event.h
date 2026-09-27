@@ -18,7 +18,8 @@ enum class EEventTypes
     WindowClose, WindowResize, WindowGainFocus, WindowLostFocus, WindowMoved,
     MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled, MouseEntered,
     KeyPressed, KeyReleased, KeyHeld,
-    ApplicationTick, ApplicationUpdate, ApplicationRender
+    ApplicationTick, ApplicationUpdate, ApplicationRender,
+    NetworkHosted, NetworkClientConnected, NetworkClientDisconnected, NetworkPacketReceived, NetworkPacketSent
 };
 
 enum class EEventCategoryTypes
@@ -27,7 +28,8 @@ enum class EEventCategoryTypes
     Window,
     Mouse,
     Key,
-    Application
+    Application,
+    Network
 };
 
 class CEventBase
@@ -87,6 +89,9 @@ public:
                 break;
             case EEventCategoryTypes::Application:
                 LOG(LogEventManager, Trace, "Dispatched Application Event {}", m_Event.ToString());
+                break;
+            case EEventCategoryTypes::Network:
+                LOG(LogEventManager, Trace, "Dispatched Netowkr Event {}", m_Event.ToString());
                 break;
             default:
                 LOG(LogEventManager, Warning, "Dispatched Unknown Event Category {}", m_Event.ToString());

@@ -82,7 +82,7 @@ void CGLFWEventCallbacks::window_pos_callback(GLFWwindow* windowHandle, int xpos
     SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
     window.Position = { (int32_t)xpos, (int32_t)ypos };
 
-    Events::WindowMovedEvent movedEvent(xpos, ypos);
+    Events::CWindowMovedEvent movedEvent(xpos, ypos);
     window.EventCallback(movedEvent);
 }
 
@@ -91,7 +91,7 @@ void CGLFWEventCallbacks::window_size_callback(GLFWwindow* windowHandle, int wid
     SWindowProps& window = *static_cast<SWindowProps*>(glfwGetWindowUserPointer(windowHandle));
     window.Dimension = { (uint32_t)width, (uint32_t)height };
 
-    Events::WindowResizeEvent resizeEvent(width, height);
+    Events::CWindowResizeEvent resizeEvent(width, height);
     window.EventCallback(resizeEvent);
 }
 

@@ -3,8 +3,6 @@
 #include <concepts>
 #include <string>
 
-namespace Engine
-{
 template <class T>
 concept NumericType = std::is_arithmetic_v<T>;
 
@@ -32,5 +30,3 @@ struct Point3D
         return "(" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")";
     }
 };
-
-}; // namespace Engine
