@@ -40,16 +40,32 @@ void CWaitingForNetwork_OverlayLayer::OnEvent(Engine::Events::CEventBase& event)
         if (e.GetConnectionSocket())
         {
             LOG(LogTicTacToe, Success, "Client Connected!");
+            if (CTicTacToe::Get().IsHost())
+            {
+                CTicTacToe::Get().SubmitToMainThread([this]() {
+                    // push first to prevent the layer stack being empty
+                    /// TODO: HAVE AN EMPTY LAYER ALWAYS
+                    CTicTacToe::Get().PushLayer(new CBoardLayer());
+                    CTicTacToe::Get().PopOverlay(this);
+                    });
+                return true;
+            }
+            return false;
+        }
+        return false;
+        });
 
+    dispatcher.DispatchEvent<Engine::Networking::Events::CNetworkPacketReceivedEvent>([this](Engine::Networking::Events::CNetworkPacketReceivedEvent& e) -> bool {
+        if (!CTicTacToe::Get().IsHost())
+        {
             CTicTacToe::Get().SubmitToMainThread([this]() {
                 // push first to prevent the layer stack being empty
                 /// TODO: HAVE AN EMPTY LAYER ALWAYS
                 CTicTacToe::Get().PushLayer(new CBoardLayer());
                 CTicTacToe::Get().PopOverlay(this);
                 });
-            return true;
         }
-        return false;
+        return true;
         });
 }
 

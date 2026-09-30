@@ -69,7 +69,9 @@ void CTicTacToe::OnEvent(Engine::Events::CEventBase& event)
         return false;
         });
 
-    CApplication::OnEvent(event);
+    dispatcher.DispatchEvent<CNetPayloadReceivedEvent>(BIND_EVENT_CB(CTicTacToe::Net_OnGameStateReceived));
+
+    Engine::CNetworkedApplication::OnEvent(event);
 }
 
 void CTicTacToe::MakeMove(const SCellPosition& Position)
@@ -137,6 +139,72 @@ Point2D<float> CTicTacToe::GetNDCFromViewport(const Point2D<double>& ViewportCoo
     ndc.y = (float)(1.0 - (2.0 * ViewportCoords.y) / ViewportSize.y);
 
     return ndc;
+}
+
+bool CTicTacToe::Net_OnGameStateReceived(CNetPayloadReceivedEvent& event)
+{
+    auto [currentPlayer, receivedBoardState] = Net_UnpackGameState(event.GetPayload());
+
+    LOG(LogTicTacToe, Success, "Game state received over net");
+    return true;
+}
+
+bool CTicTacToe::Net_ReplicateGameState() const
+{
+    auto payload = Net_PackGameState();
+    auto& NetSys = Engine::Networking::CNetworkSubsystem::Get();
+
+    NetSys.SendPayload(payload);
+
+    LOG(LogTicTacToe, Info, "Game state sent over net");
+    return true;
+}
+
+SNetPayload CTicTacToe::Net_PackGameState() const
+{
+    std::string strPayload = "";
+
+    strPayload += ToString(m_CurrentPlayer);
+
+    for (const auto& row : m_Board)
+    {
+        for (const auto& cell : row)
+        {
+            strPayload += ToString(cell);
+        }
+    }
+
+    LOG(LogTicTacToe, Success, "Packed payload: {}", strPayload);
+
+    SNetPayload payload{ strPayload };
+
+    return payload;
+}
+
+
+std::tuple <ECellState, BoardState> CTicTacToe::Net_UnpackGameState(const SNetPayload& NetPayload) const
+{
+    std::string strPayload = NetPayload.BufferAsString();
+    if (strPayload.size() < 1 + 3 * 3)
+    {
+        LOG(LogTicTacToe, Error, "MALFORMED PAYLOAD RECEIVED: {}", strPayload);
+        return { m_CurrentPlayer, m_Board };
+    }
+
+    ECellState newCurrPlayer = FromString(strPayload.at(0));
+    BoardState newBoard;
+
+    for (size_t i = 0; i <= 2; i++)
+    {
+        newBoard[i] = {
+            FromString(strPayload.at(i * 3 + 0)),
+            FromString(strPayload.at(i * 3 + 1)),
+            FromString(strPayload.at(i * 3 + 2)),
+        };
+    }
+    LOG(LogTicTacToe, Success, "Unpacked payload: {} -> {}, {}", strPayload, ToString(newCurrPlayer), ToString(newBoard));
+
+    return { newCurrPlayer, newBoard };
 }
 
 }   // namespace Game

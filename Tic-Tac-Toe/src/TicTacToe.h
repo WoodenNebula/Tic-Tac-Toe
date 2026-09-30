@@ -23,6 +23,7 @@ struct SCellPosition
 
 class CTicTacToe : public Engine::CNetworkedApplication
 {
+
 public:
     static CTicTacToe& Get();
     static void Reset();
@@ -31,19 +32,27 @@ public:
 
     virtual Engine::SGenericError Init() override;
 
+    virtual void OnEvent(Engine::Events::CEventBase& event) override;
+
     void MakeMove(const SCellPosition& Position);
     EGameState GetCurrentGameState();
-
-    void OnEvent(Engine::Events::CEventBase& event) override;
 
     inline ECellState GetCurrentPlayer() const { return m_CurrentPlayer; }
     const inline std::vector<std::vector<ECellState>>& GetBoard() const { return m_Board; }
 
     Point2D<float> GetNDCFromViewport(const Point2D<double>& ViewportCoords);
 
+    bool Net_OnGameStateReceived(CNetPayloadReceivedEvent& event);
+    bool Net_ReplicateGameState() const;
+
+    SNetPayload Net_PackGameState() const;
+    std::tuple < ECellState, BoardState> Net_UnpackGameState(const SNetPayload& NetPayload) const;
+
+    inline bool IsHost() const { return m_RequestedNetworkRole == Engine::Networking::ENetworkRole::Host; }
+
 private:
     ECellState m_CurrentPlayer{ X };
-    std::vector<std::vector<ECellState>> m_Board{
+    BoardState m_Board{
         {EMPTY, EMPTY, EMPTY},
         {EMPTY, EMPTY, EMPTY},
         {EMPTY, EMPTY, EMPTY}

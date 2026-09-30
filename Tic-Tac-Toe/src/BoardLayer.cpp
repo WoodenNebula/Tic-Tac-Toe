@@ -98,6 +98,8 @@ bool CBoardLayer::OnMouseButtonPressed(Engine::Events::InputEvents::CMouseButton
                 LOG(LogTicTacToe, Info, "Game ended with state: {}", (int)gameState);
                 });
         }
+
+        CTicTacToe::Get().Net_ReplicateGameState();
     }
     return true;
 }
