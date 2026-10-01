@@ -128,6 +128,28 @@ EGameState CTicTacToe::GetCurrentGameState()
     return DRAW;
 }
 
+void CTicTacToe::OnGameStateChanged(EGameState newState)
+{
+    switch (newState)
+    {
+    case Game::ONGOING:
+        break;
+    case Game::DRAW:
+        break;
+    case Game::X_WINS:
+    case Game::O_WINS:
+        // Defer overlay push until after event handling completes
+        CTicTacToe::Get().SubmitToMainThread([newState]() {
+            CTicTacToe::Get().PushOverlay(new CTicTacToeOverlayLayer());
+            LOG(LogTicTacToe, Info, "Game ended with state: {}", (int)newState);
+            });
+        break;
+    default:
+        break;
+    }
+}
+
+
 Point2D<float> CTicTacToe::GetNDCFromViewport(const Point2D<double>& ViewportCoords)
 {
     Point2D<uint32_t> ViewportSize = GetWindowDimensions();
@@ -146,7 +168,19 @@ bool CTicTacToe::Net_OnGameStateReceived(CNetPayloadReceivedEvent& event)
     auto [currentPlayer, receivedBoardState] = Net_UnpackGameState(event.GetPayload());
 
     LOG(LogTicTacToe, Success, "Game state received over net");
-    return true;
+
+    EGameState oldState = GetCurrentGameState();
+
+    m_CurrentPlayer = currentPlayer;
+    m_Board = receivedBoardState;
+
+    EGameState newState = GetCurrentGameState();
+
+    if(oldState != newState)
+        OnGameStateChanged(newState);
+
+    // let layers handle this event as well. TODO: convert and emit our own game specific event for this and dont expose the network event to game client at all
+    return false;
 }
 
 bool CTicTacToe::Net_ReplicateGameState() const
@@ -196,11 +230,11 @@ std::tuple <ECellState, BoardState> CTicTacToe::Net_UnpackGameState(const SNetPa
 
     for (size_t i = 0; i <= 2; i++)
     {
-        newBoard[i] = {
-            FromString(strPayload.at(i * 3 + 0)),
+        newBoard.push_back({
             FromString(strPayload.at(i * 3 + 1)),
             FromString(strPayload.at(i * 3 + 2)),
-        };
+            FromString(strPayload.at(i * 3 + 3)),
+        });
     }
     LOG(LogTicTacToe, Success, "Unpacked payload: {} -> {}, {}", strPayload, ToString(newCurrPlayer), ToString(newBoard));
 

@@ -48,7 +48,10 @@ public:
     SNetPayload Net_PackGameState() const;
     std::tuple < ECellState, BoardState> Net_UnpackGameState(const SNetPayload& NetPayload) const;
 
+    void OnGameStateChanged(EGameState newState);
+
     inline bool IsHost() const { return m_RequestedNetworkRole == Engine::Networking::ENetworkRole::Host; }
+    inline bool IsWaitingForOtherPlayer() const { return  GetCurrentPlayer() != (IsHost() ? ECellState::X : ECellState::O); }
 
 private:
     ECellState m_CurrentPlayer{ X };

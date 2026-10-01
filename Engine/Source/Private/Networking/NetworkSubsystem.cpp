@@ -71,6 +71,9 @@ void CNetworkSubsystem::Shutdown()
 void CNetworkSubsystem::OnEvent(Engine::Events::CEventBase& event)
 {
     LOG(LogNetworkSubsystem, Info, "Transferring network event to application");
+    if (event.GetEventType() == Engine::Events::EEventTypes::NetworkPacketReceived)
+        LOG(LogNetworkSubsystem, Info, "Packet Received");
+
     m_AppCallback(event);
 }
 
@@ -86,7 +89,8 @@ void CNetworkSubsystem::Update()
         Engine::Events::CEventDispatcher dispatcher(*(networkEvent.get()));
         dispatcher.DispatchEvent<Events::CNetworkClientConnectedEvent>(BIND_EVENT_CB(CNetworkSubsystem::OnClientConnected));
 
-        OnEvent(*networkEvent);
+        if(!networkEvent->Handled)
+            OnEvent(*networkEvent);
 
         m_NetworkEventQueue.pop();
     }
@@ -168,8 +172,6 @@ void CNetworkSubsystem::Async_ReceivePayload(
     using EResponse = Sockets::ERecieveResponse;
     while (!stopToken.stop_requested())
     {
-        Sockets::SSocketPayload payload;
-
         EResponse Response = EResponse::Ok;
         while (true)
         {
@@ -201,7 +203,7 @@ void CNetworkSubsystem::Async_ReceivePayload(
             {// mutex access
                 std::lock_guard lock(m_NetworkEventMutex);
                 m_NetworkEventQueue.push(
-                    std::make_unique<Events::CNetworkPacketReceivedEvent >(payload)
+                    std::make_unique<Events::CNetworkPacketReceivedEvent >(outPayload)
                 );
             }
 
@@ -244,6 +246,8 @@ void CNetworkSubsystem::Async_SendPayload(
                 }
                 break;
             }
+
+            bHasSendingPayload = false;
 
             {// mutex access
                 std::lock_guard lock(m_NetworkEventMutex);

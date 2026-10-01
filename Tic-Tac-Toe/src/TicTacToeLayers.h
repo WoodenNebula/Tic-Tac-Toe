@@ -84,7 +84,6 @@ private:
     void DrawX(int row, int col);
     void DrawO(int row, int col);
 
-
     bool OnMouseMoved(Engine::Events::InputEvents::CMouseMovedEvent& event);
     bool OnMouseButtonPressed(Engine::Events::InputEvents::CMouseButtonPressedEvent& event);
 

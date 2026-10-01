@@ -84,25 +84,19 @@ bool CBoardLayer::OnMouseButtonPressed(Engine::Events::InputEvents::CMouseButton
     SCellPosition cellPos = NDCToCellPosition(pos);
     LOG(LogTicTacToe, Info, "Mouse Button Pressed at Position: {} -> cell {}, {}", pos.ToString(), cellPos.Row, cellPos.Col);
 
-    if (cellPos.IsValid())
+    if (cellPos.IsValid() && !CTicTacToe::Get().IsWaitingForOtherPlayer())
     {
         CTicTacToe::Get().MakeMove(cellPos);
 
         EGameState gameState = CTicTacToe::Get().GetCurrentGameState();
 
-        if (gameState != EGameState::ONGOING)
-        {
-            // Defer overlay push until after event handling completes
-            CTicTacToe::Get().SubmitToMainThread([gameState]() {
-                CTicTacToe::Get().PushOverlay(new CTicTacToeOverlayLayer());
-                LOG(LogTicTacToe, Info, "Game ended with state: {}", (int)gameState);
-                });
-        }
+        CTicTacToe::Get().OnGameStateChanged(gameState);
 
         CTicTacToe::Get().Net_ReplicateGameState();
     }
     return true;
 }
+
 
 void CBoardLayer::DrawBoard()
 {
